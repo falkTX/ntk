@@ -356,7 +356,7 @@ void Fl_Double_Window::flush(int eraseoverlay) {
   }
 #if USE_XDBE
   if (use_xdbe) {
-    if (myi->backbuffer_bad || eraseoverlay) {
+    if (myi->backbuffer_bad) {
       // Make sure we do a complete redraw...
       if (myi->region) {XDestroyRegion(myi->region); myi->region = 0;}
       clear_damage(FL_DAMAGE_ALL);
