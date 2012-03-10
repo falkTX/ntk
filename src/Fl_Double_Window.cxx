@@ -338,7 +338,7 @@ void Fl_Double_Window::flush(int eraseoverlay) {
   if (!myi->other_xid) {
 #if USE_XDBE
     if (can_xdbe()) {
-      myi->other_xid = XdbeAllocateBackBufferName(fl_display, fl_xid(this), XdbeCopied);
+      myi->other_xid = XdbeAllocateBackBufferName(fl_display, fl_xid(this), XdbeUndefined);
       myi->backbuffer_bad = 1;
     } else
 #endif
@@ -361,8 +361,11 @@ void Fl_Double_Window::flush(int eraseoverlay) {
       if (myi->region) {XDestroyRegion(myi->region); myi->region = 0;}
       clear_damage(FL_DAMAGE_ALL);
       myi->backbuffer_bad = 0;
+
     }
 
+
+    XdbeBeginIdiom( fl_display );
     // Redraw as needed...
     if (damage()) {
       fl_clip_region(myi->region); myi->region = 0;
@@ -372,10 +375,14 @@ void Fl_Double_Window::flush(int eraseoverlay) {
     }
 
     // Copy contents of back buffer to window...
+
     XdbeSwapInfo s;
-    s.swap_window = fl_xid(this);
-    s.swap_action = XdbeCopied;
+    s.swap_window = myi->xid;
+    s.swap_action = XdbeUndefined;
     XdbeSwapBuffers(fl_display, &s, 1);
+
+    XdbeEndIdiom( fl_display );
+
     return;
   } else
 #endif
@@ -411,8 +418,13 @@ void Fl_Double_Window::flush(int eraseoverlay) {
   if (eraseoverlay) fl_clip_region(0);
   // on Irix (at least) it is faster to reduce the area copied to
   // the current clip region:
-  int X,Y,W,H; fl_clip_box(0,0,w(),h(),X,Y,W,H);
-  if (myi->other_xid) fl_copy_offscreen(X, Y, W, H, myi->other_xid, X, Y);
+#if USE_XDBE
+  if ( !use_xdbe )
+#endif
+  {
+      int X,Y,W,H; fl_clip_box(0,0,w(),h(),X,Y,W,H);
+      if (myi->other_xid) fl_copy_offscreen(X, Y, W, H, myi->other_xid, X, Y);
+  }
 }
 
 void Fl_Double_Window::resize(int X,int Y,int W,int H) {
@@ -422,10 +434,8 @@ void Fl_Double_Window::resize(int X,int Y,int W,int H) {
 #if USE_XDBE
   if (use_xdbe) {
     Fl_X* myi = Fl_X::i(this);
-    if (myi && myi->other_xid && (ow < w() || oh < h())) {
-      // STR #2152: Deallocate the back buffer to force creation of a new one.
-      XdbeDeallocateBackBufferName(fl_display,myi->other_xid);
-      myi->other_xid = 0;
+    if (myi && myi->other_xid && ( ow != w() || oh != h() ) ) {
+        myi->backbuffer_bad = 1;
     }
     return;
   }
