@@ -40,6 +40,10 @@
 #include <FL/Fl_Pixmap.H>
 #include <FL/Fl_RGB_Image.H>
 
+#if FLTK_USE_CAIRO
+#include <FL/Fl_Cairo.H>
+#endif
+
 class Fl_Graphics_Driver;
 class Fl_Font_Descriptor;
 /** \brief Points to the driver that currently receives all graphics requests */
@@ -115,14 +119,16 @@ private:
   Fl_Font font_; // current font
   Fl_Fontsize size_; // current font size
   Fl_Color color_; // current color
-  enum {LINE, LOOP, POLYGON, POINT_};
   int sptr;
   static const int matrix_stack_size = FL_MATRIX_STACK_SIZE;
   matrix stack[FL_MATRIX_STACK_SIZE];
   matrix m;
+protected:
+  enum {LINE, LOOP, POLYGON, POINT_};
   int n, p_size, gap_;
   XPOINT *p;
   int what;
+private:
   int fl_clip_state_number;
   int rstackptr;
   static const int region_stack_max = FL_REGION_STACK_SIZE - 1;
@@ -132,10 +138,11 @@ private:
   int counts[20];
 #endif
   Fl_Font_Descriptor *font_descriptor_;
-  void transformed_vertex0(COORD_T x, COORD_T y);
-  void fixloop();
   
 protected:
+  void transformed_vertex0(COORD_T x, COORD_T y);
+  void fixloop();
+
 /*  ** \brief red color for background and/or mixing if device does not support masking or alpha *
   uchar bg_r_; 
   ** \brief green color for background and/or mixing if device does not support masking or alpha *
@@ -470,8 +477,8 @@ class Fl_Xlib_Graphics_Driver : public Fl_Graphics_Driver {
 public:
   static const char *class_id;
   const char *class_name() {return class_id;};
-  void color(Fl_Color c);
-  void color(uchar r, uchar g, uchar b);
+  virtual void color(Fl_Color c);
+  virtual void color(uchar r, uchar g, uchar b);
   void draw(const char* str, int n, int x, int y);
   void draw(int angle, const char *str, int n, int x, int y);
   void rtl_draw(const char* str, int n, int x, int y);
@@ -489,6 +496,112 @@ public:
   int height();
   int descent();
 };
+
+#if FLTK_USE_CAIRO
+FL_EXPORT Fl_Color fl_color_add_alpha ( Fl_Color c, uchar alpha );
+
+class Fl_Cairo_Graphics_Driver : public Fl_Xlib_Graphics_Driver {
+
+struct ClipRect 
+{
+    int x, y, w, h;
+
+    ClipRect ( int X, int Y, int W, int H )
+        {
+            x = X;
+            y = Y;
+            w = W;
+            h = H;
+        }
+};
+
+    int rstackptr;
+    static const int region_stack_max = FL_REGION_STACK_SIZE - 1;
+    ClipRect *rstack[FL_REGION_STACK_SIZE];
+    
+public:
+
+    Fl_Cairo_Graphics_Driver ( );
+
+  /* static const char *class_id; */
+  /* const char *class_name() {return class_id;}; */
+
+    void color(Fl_Color c);
+    void color(uchar r, uchar g, uchar b);
+
+    void color ( Fl_Color c, uchar a );
+    void color (uchar r, uchar g, uchar b, uchar a );
+
+    void line_style(int style, int width=0, char* dashes=0);
+
+    void end_points ( void );
+
+    void push_clip ( int x, int y, int w, int h );
+    void pop_clip ( void );
+    void arc( int x, int y, int w, int h, double a1, double a2 );
+    void pie( int x, int y, int w, int h, double a1, double a2 );
+    void arc( double x, double y, double r, double a1, double a2 );
+    void line( int x1, int y1, int x2, int y2 );
+    void line( int x1, int y1, int x2, int y2, int x3, int y3 );
+    void rect ( int x, int y, int w, int h );
+    /* void rect ( int x, int y, int w, int h, Fl_Color c ); */
+    void rectf ( int x, int y, int w, int h );
+    /* void rectf ( int x, int y, int w, int h, Fl_Color c ); */
+    /* void scale ( double x, double y ); */
+    /* void scale ( double x ); */
+    void circle ( double x, double y, double r );
+
+    /* void translate ( double x, double y ); */
+    /* void rotate ( double r ); */
+
+    /* void begin_line ( void ); */
+
+    /* void vertex ( double x, double y ); */
+
+    /* void gap ( void ); */
+    void end_line ( void );
+    /* void begin_loop ( void ); */
+    void end_loop ( void );
+    /* void begin_complex_polygon ( void ); */
+    void end_complex_polygon ( void );
+    /* void begin_polygon ( void ); */
+    void end_polygon ( void );
+    /* void push_matrix ( void ); */
+    /* void pop_matrix ( void ); */
+    void push_no_clip ( void );
+    void curve( double x, double y, double x1, double y1, double x2, double y2, double x3, double y3 );
+
+    void loop ( int x, int y, int x1, int y1, int x2, int y2 );
+    void polygon ( int x, int y, int x1, int y1, int x2, int y2 );
+    void loop ( int x, int y, int x1, int y1, int x2, int y2, int x3, int y3 );
+    void polygon ( int x, int y, int x1, int y1, int x2, int y2, int x3, int y3 );
+    void xyline(int x, int y, int x1);
+    void xyline(int x, int y, int x1, int y2);
+    void xyline(int x, int y, int x1, int y2, int x3);
+    void yxline(int x, int y, int y1);
+    void yxline(int x, int y, int y1, int x2);
+    void yxline(int x, int y, int y1, int x2, int y3);
+    
+
+  /* void draw(const char* str, int n, int x, int y); */
+  /* void draw(int angle, const char *str, int n, int x, int y); */
+  /* void rtl_draw(const char* str, int n, int x, int y); */
+  /* void font(Fl_Font face, Fl_Fontsize size); */
+  /* void draw(Fl_Pixmap *pxm, int XP, int YP, int WP, int HP, int cx, int cy); */
+  /* void draw(Fl_Bitmap *pxm, int XP, int YP, int WP, int HP, int cx, int cy); */
+  /* void draw(Fl_RGB_Image *img, int XP, int YP, int WP, int HP, int cx, int cy); */
+  /* void draw_image(const uchar* buf, int X,int Y,int W,int H, int D=3, int L=0); */
+  /* void draw_image(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D=3); */
+  /* void draw_image_mono(const uchar* buf, int X,int Y,int W,int H, int D=1, int L=0); */
+  /* void draw_image_mono(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D=1); */
+  /* double width(const char *str, int n); */
+  /* double width(unsigned int c); */
+  /* void text_extents(const char*, int n, int& dx, int& dy, int& w, int& h); */
+  /* int height(); */
+  /* int descent();                                               */
+
+};
+#endif
 #endif
 
 /**

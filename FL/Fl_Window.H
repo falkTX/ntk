@@ -59,6 +59,7 @@ class FL_EXPORT Fl_Window : public Fl_Group {
 
   static char *default_xclass_;
 
+  friend class Fl;
   friend class Fl_X;
   Fl_X *i; // points at the system-specific stuff
 

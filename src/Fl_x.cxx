@@ -53,7 +53,11 @@
 #  include <X11/Xlib.h>
 #  include <X11/keysym.h>
 
+#if FLTK_USE_CAIRO
+static Fl_Cairo_Graphics_Driver fl_xlib_driver;
+#else
 static Fl_Xlib_Graphics_Driver fl_xlib_driver;
+#endif
 static Fl_Display_Device fl_xlib_display(&fl_xlib_driver);
 FL_EXPORT Fl_Graphics_Driver *fl_graphics_driver = (Fl_Graphics_Driver*)&fl_xlib_driver; // the current target device of graphics operations
 Fl_Surface_Device* Fl_Surface_Device::_surface = (Fl_Surface_Device*)&fl_xlib_display; // the current target surface of graphics operations
@@ -1604,6 +1608,8 @@ Fl_X* Fl_X::set_xid(Fl_Window* win, Window winxid) {
   Fl_X* xp = new Fl_X;
   xp->xid = winxid;
   xp->other_xid = 0;
+  xp->cc = 0;
+  xp->cs = 0;
   xp->setwindow(win);
   xp->next = Fl_X::first;
   xp->region = 0;
@@ -1959,9 +1965,8 @@ void Fl_Window::make_current() {
   current_ = this;
   fl_clip_region(0);
 
-#ifdef FLTK_USE_CAIRO
-  // update the cairo_t context
-  if (Fl::cairo_autolink_context()) Fl::cairo_make_current(this);
+#ifdef FLTK_HAVE_CAIRO
+  Fl::cairo_make_current(this);
 #endif
 }
 

@@ -63,22 +63,22 @@ void Fl_Menu_Window::show() {
 }
 
 void Fl_Menu_Window::flush() {
+
 #if HAVE_OVERLAY
   if (!fl_overlay_visual || !overlay()) {Fl_Single_Window::flush(); return;}
   Fl_X *myi = Fl_X::i(this);
   fl_window = myi->xid;
   if (!gc) {
 	  gc = XCreateGC(fl_display, myi->xid, 0, 0);
-# if defined(FLTK_USE_CAIRO)
-	  if(Fl::autolink_context()) Fl::cairo_make_current(gc); // capture gc changes automatically to update the cairo context adequately
-# endif
   }
   fl_gc = gc;
   fl_overlay = 1;
-  fl_clip_region(myi->region); myi->region = 0; current_ = this;
+  fl_clip_region(myi->region); myi->region = 0; x  current_ = this;
   draw();
   fl_overlay = 0;
 #else
+//  Fl::make_current(this);
+
   Fl_Single_Window::flush();
 #endif
 }
@@ -87,8 +87,8 @@ void Fl_Menu_Window::flush() {
 void Fl_Menu_Window::erase() {
 #if HAVE_OVERLAY
   if (!gc || !shown()) return;
-//XSetForeground(fl_display, gc, 0);
-//XFillRectangle(fl_display, fl_xid(this), gc, 0, 0, w(), h());
+  /* XSetForeground(fl_display, gc, 0); */
+  /* XFillRectangle(fl_display, fl_xid(this), gc, 0, 0, w(), h()); */
   XClearWindow(fl_display, fl_xid(this));
 #endif
 }

@@ -26,6 +26,8 @@
 //     http://www.fltk.org/str.php
 //
 
+#include <config.h>
+#include <FL/Fl_Cairo.H>
 #include <FL/Fl_Printer.H>
 
 #ifdef __APPLE__

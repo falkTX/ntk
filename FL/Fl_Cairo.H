@@ -62,7 +62,7 @@
 */
 class FL_EXPORT Fl_Cairo_State {
 public:
-  Fl_Cairo_State() : cc_(0), own_cc_(false), autolink_(false), window_(0), gc_(0) {}
+  Fl_Cairo_State() : cc_(0), own_cc_(false), autolink_(true), window_(0), gc_(0) {}
 
     // access attributes
     cairo_t* cc() const {return cc_;}		 ///< Gets the current cairo context
@@ -90,8 +90,11 @@ private:
 /** @} */
 
 # endif // FLTK_HAVE_CAIRO
+
+
 #endif // FL_CAIRO_H
 
 //
 // End of "$Id: Fl_Cairo.H 8198 2011-01-06 10:24:58Z manolo $" .
 //
+

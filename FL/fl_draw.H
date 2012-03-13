@@ -200,6 +200,10 @@ enum {
   FL_JOIN_BEVEL	= 0x3000	///< join style: line join is tidied
 };
 
+#if FLTK_USE_CAIRO
+FL_EXPORT Fl_Color fl_color_add_alpha ( Fl_Color c, uchar alpha );
+#endif
+
 // rectangles tweaked to exactly fill the pixel rectangle:
 
 /** 

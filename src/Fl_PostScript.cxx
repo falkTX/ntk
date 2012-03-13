@@ -26,6 +26,7 @@
 //
 
 #include <config.h>
+#include <FL/Fl_Cairo.H>
 #include <FL/Fl.H>
 #include <FL/fl_ask.H>
 #include <FL/fl_draw.H>

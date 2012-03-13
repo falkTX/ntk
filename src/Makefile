@@ -26,6 +26,7 @@
 #
 
 CPPFILES = \
+	Fl_Cairo_Graphics_Driver.cxx \
 	Fl.cxx \
 	Fl_Adjuster.cxx \
 	Fl_Bitmap.cxx \
@@ -136,6 +137,7 @@ CPPFILES = \
 	fl_diamond_box.cxx \
 	fl_dnd.cxx \
 	fl_draw.cxx \
+	Fl_Cairo.cxx \
 	fl_draw_image.cxx \
 	fl_draw_pixmap.cxx \
 	fl_encoding_latin1.cxx \

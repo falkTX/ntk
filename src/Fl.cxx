@@ -746,6 +746,8 @@ void Fl::flush() {
     for (Fl_X* i = Fl_X::first; i; i = i->next) {
       if (i->wait_for_expose) {damage_ = 1; continue;}
       Fl_Window* wi = i->w;
+      wi->make_current();
+//      Fl::cairo_make_current(wi);
       if (!wi->visible_r()) continue;
       if (wi->damage()) {i->flush(); wi->clear_damage();}
       // destroy damage regions for windows that don't use them:
@@ -1423,9 +1425,6 @@ void Fl_Window::hide() {
       fl_release_dc(fl_window, fl_gc);
       fl_window = (HWND)-1;
       fl_gc = 0;
-# ifdef FLTK_USE_CAIRO
-      if (Fl::cairo_autolink_context()) Fl::cairo_make_current((Fl_Window*) 0);
-# endif
     }
 #elif defined(__APPLE_QUARTZ__)
   Fl_X::q_release_context(ip);

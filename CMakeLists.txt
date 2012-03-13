@@ -362,7 +362,7 @@ endif(OPTION_CAIRO OR OPTION_CAIROEXT AND LIB_CAIRO)
 
 if(PKG_CAIRO_FOUND)
    set(FLTK_HAVE_CAIRO 1)
-   add_subdirectory(cairo)
+  # add_subdirectory(cairo)
    list(APPEND FLTK_LDLIBS -lcairo -lpixman-1)
    include_directories(${PKG_CAIRO_INCLUDE_DIRS})
    string(REPLACE ";" " " CAIROFLAGS "${PKG_CAIRO_CFLAGS}")

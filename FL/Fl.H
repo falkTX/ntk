@@ -1038,6 +1038,9 @@ public:
       @{ 
   */
 public:
+
+  static void cairo_set_drawable ( Fl_Window *w );
+
   // Cairo support API
   static cairo_t * cairo_make_current(Fl_Window* w);
    /** when FLTK_HAVE_CAIRO is defined and cairo_autolink_context() is true, 
@@ -1072,8 +1075,8 @@ public:
   static void cairo_cc(cairo_t * c, bool own=false){ cairo_state_.cc(c, own); } 
 
 private:
-  static cairo_t * cairo_make_current(void* gc);
-  static cairo_t * cairo_make_current(void* gc, int W, int H);
+  /* static cairo_t * cairo_make_current(void* gc); */
+  /* static cairo_t * cairo_make_current(void* gc, int W, int H); */
   static Fl_Cairo_State cairo_state_;
 public:
   /** @} */ 
@@ -1167,6 +1170,16 @@ public:
      @{ */
  /** @} */
 
+/* 0 default, 1 off 2 on */
+enum
+{ 
+    FL_ANTIALIAS_DEFAULT,
+    FL_ANTIALIAS_OFF,
+    FL_ANTIALIAS_ON
+};
+
+void fl_set_antialias ( int v );
+    
 #endif // !Fl_H
 
 //

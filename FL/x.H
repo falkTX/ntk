@@ -45,6 +45,7 @@
 #  define Fl_X_H
 
 #  include "Enumerations.H"
+#include <FL/Fl_Cairo.H>
 
 #  ifdef WIN32
 #    include "win32.H"
@@ -154,6 +155,10 @@ class FL_EXPORT Fl_X {
 public:
   Window xid;
   Window other_xid;
+#if FLTK_HAVE_CAIRO
+  cairo_t *cc;
+  cairo_surface_t *cs;
+#endif
   Fl_Window *w;
   Fl_Region region;
   Fl_X *next;

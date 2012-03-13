@@ -36,6 +36,8 @@
 #include <stdlib.h>
 #include "flstring.h"
 
+#include <FL/Fl_Cairo.H>
+
 #ifdef __APPLE_QUARTZ__
 #include <FL/fl_draw.H>
 #endif
@@ -102,7 +104,6 @@ int Fl_Window::y_root() const {
 }
 
 void Fl_Window::draw() {
-
   // The following is similar to Fl_Group::draw(), but ...
   //  - we draw the box with x=0 and y=0 instead of x() and y()
   //  - we don't draw a label
@@ -111,6 +112,10 @@ void Fl_Window::draw() {
     draw_box(box(),0,0,w(),h(),color()); // draw box with x/y = 0
   }
   draw_children();
+
+#if FLTK_HAVE_CAIRO
+  cairo_surface_flush( i->cs );
+#endif
 
 #ifdef __APPLE_QUARTZ__
   // on OS X, windows have no frame. To resize a window, we drag the lower right
@@ -135,10 +140,6 @@ void Fl_Window::draw() {
     }
   }
 #endif
-
-# if defined(FLTK_USE_CAIRO)
-  Fl::cairo_make_current(this); // checkout if an update is necessary
-# endif
 }
 
 void Fl_Window::label(const char *name) {

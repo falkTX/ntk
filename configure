@@ -1923,8 +1923,8 @@ _ACEOF
           CAIROFLAGS="`pkg-config --cflags cairo`"
           CAIROLIBS="-lcairo -lpixman-1"
           CXXFLAGS="$CAIROFLAGS $CXXFLAGS"
-	  LINKFLTKCAIRO="../lib/libfltk_cairo.a"
-	  FLTKCAIROOPTION="-L ../cairo -lfltk_cairo$SHAREDSUFFIX"
+#	  LINKFLTKCAIRO="../lib/libfltk_cairo.a"
+#	  FLTKCAIROOPTION="-L ../cairo -lfltk_cairo$SHAREDSUFFIX"
 	  LIBS="$CAIROLIBS $LIBS"
 	  	  LINKFLTK+=" $LINKFLTKCAIRO"
 else
@@ -1937,8 +1937,8 @@ _ACEOF
           CAIROFLAGS="`pkg-config --cflags cairo`"
           CAIROLIBS="-lcairo -lpixman-1"
           CXXFLAGS="$CAIROFLAGS $CXXFLAGS"
-	  LINKFLTKCAIRO="../lib/libfltk_cairo.a"
-	  FLTKCAIROOPTION="-L ../cairo -lfltk_cairo$SHAREDSUFFIX"
+#	  LINKFLTKCAIRO="../lib/libfltk_cairo.a"
+#	  FLTKCAIROOPTION="-L ../cairo -lfltk_cairo$SHAREDSUFFIX"
     fi
 fi
 

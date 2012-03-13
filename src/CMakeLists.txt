@@ -1,6 +1,8 @@
 include_regular_expression("[.][cxx|c|h]$")
 
 set(CPPFILES
+  Fl_Cairo.cxx
+  Fl_Cairo_Graphics_Driver.cxx
   Fl.cxx
   Fl_Adjuster.cxx
   Fl_Bitmap.cxx
