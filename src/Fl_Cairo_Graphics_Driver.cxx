@@ -61,40 +61,30 @@ static double line_width = 0.5;
 
 Fl_Cairo_Graphics_Driver::Fl_Cairo_Graphics_Driver ( )   : Fl_Xlib_Graphics_Driver ()
 {
-    rstackptr = 0;
+//    rstackptr = 0;
 }
 
-void Fl_Cairo_Graphics_Driver::push_no_clip ( void )
+void Fl_Cairo_Graphics_Driver::restore_clip ( void )
 {
     cairo_t *cr = Fl::cairo_cc();
 
-    Fl_Xlib_Graphics_Driver::push_no_clip();
+    if ( ! cr )
+        return;
 
-    cairo_save( cr );
+    Fl_Xlib_Graphics_Driver::restore_clip();
+
+    Fl_Region r = clip_region();
 
     cairo_reset_clip( cr );
-}
 
-void Fl_Cairo_Graphics_Driver::push_clip ( int x, int y, int w, int h )
-{
-    cairo_t *cr = Fl::cairo_cc();
-
-    Fl_Xlib_Graphics_Driver::push_clip( x, y, w, h );
-
-    cairo_save( cr );
-
-    cairo_rectangle( cr, x, y, w, h );
-
-    cairo_clip( cr );
-}
-
-void Fl_Cairo_Graphics_Driver::pop_clip ( void )
-{
-    cairo_t *cr = Fl::cairo_cc();
-
-    Fl_Xlib_Graphics_Driver::pop_clip();
-
-    cairo_restore( cr );
+    if ( r )
+    {
+        XRectangle rect;
+        XClipBox(r, &rect);
+        
+        cairo_rectangle( cr, rect.x, rect.y, rect.width, rect.height );
+        cairo_clip( cr );
+    }
 }
 
 void Fl_Cairo_Graphics_Driver::line_style ( int style, int t, char* )

@@ -344,7 +344,7 @@ protected:
   /** \brief see fl_clip_region(Fl_Region r). */
   void clip_region(Fl_Region r);
   /** \brief see fl_restore_clip(). */
-  void restore_clip();
+  virtual void restore_clip();
   
   // Images
   /** \brief see fl_draw_image(const uchar* buf, int X,int Y,int W,int H, int D, int L). */
@@ -502,23 +502,6 @@ FL_EXPORT Fl_Color fl_color_add_alpha ( Fl_Color c, uchar alpha );
 
 class Fl_Cairo_Graphics_Driver : public Fl_Xlib_Graphics_Driver {
 
-struct ClipRect 
-{
-    int x, y, w, h;
-
-    ClipRect ( int X, int Y, int W, int H )
-        {
-            x = X;
-            y = Y;
-            w = W;
-            h = H;
-        }
-};
-
-    int rstackptr;
-    static const int region_stack_max = FL_REGION_STACK_SIZE - 1;
-    ClipRect *rstack[FL_REGION_STACK_SIZE];
-    
 public:
 
     Fl_Cairo_Graphics_Driver ( );
@@ -534,41 +517,22 @@ public:
 
     void line_style(int style, int width=0, char* dashes=0);
 
-    void end_points ( void );
+    
+    void restore_clip ( void );
 
-    void push_clip ( int x, int y, int w, int h );
-    void pop_clip ( void );
     void arc( int x, int y, int w, int h, double a1, double a2 );
     void pie( int x, int y, int w, int h, double a1, double a2 );
     void arc( double x, double y, double r, double a1, double a2 );
     void line( int x1, int y1, int x2, int y2 );
     void line( int x1, int y1, int x2, int y2, int x3, int y3 );
     void rect ( int x, int y, int w, int h );
-    /* void rect ( int x, int y, int w, int h, Fl_Color c ); */
+    void end_points ( void );
     void rectf ( int x, int y, int w, int h );
-    /* void rectf ( int x, int y, int w, int h, Fl_Color c ); */
-    /* void scale ( double x, double y ); */
-    /* void scale ( double x ); */
     void circle ( double x, double y, double r );
-
-    /* void translate ( double x, double y ); */
-    /* void rotate ( double r ); */
-
-    /* void begin_line ( void ); */
-
-    /* void vertex ( double x, double y ); */
-
-    /* void gap ( void ); */
     void end_line ( void );
-    /* void begin_loop ( void ); */
     void end_loop ( void );
-    /* void begin_complex_polygon ( void ); */
     void end_complex_polygon ( void );
-    /* void begin_polygon ( void ); */
     void end_polygon ( void );
-    /* void push_matrix ( void ); */
-    /* void pop_matrix ( void ); */
-    void push_no_clip ( void );
     void curve( double x, double y, double x1, double y1, double x2, double y2, double x3, double y3 );
 
     void loop ( int x, int y, int x1, int y1, int x2, int y2 );
