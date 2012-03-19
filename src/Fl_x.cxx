@@ -1608,8 +1608,10 @@ Fl_X* Fl_X::set_xid(Fl_Window* win, Window winxid) {
   Fl_X* xp = new Fl_X;
   xp->xid = winxid;
   xp->other_xid = 0;
+#if FLTK_HAVE_CAIRO
   xp->cc = 0;
   xp->cs = 0;
+#endif
   xp->setwindow(win);
   xp->next = Fl_X::first;
   xp->region = 0;

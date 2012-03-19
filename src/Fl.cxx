@@ -746,9 +746,9 @@ void Fl::flush() {
     for (Fl_X* i = Fl_X::first; i; i = i->next) {
       if (i->wait_for_expose) {damage_ = 1; continue;}
       Fl_Window* wi = i->w;
-      wi->make_current();
 //      Fl::cairo_make_current(wi);
       if (!wi->visible_r()) continue;
+      wi->make_current();
       if (wi->damage()) {i->flush(); wi->clear_damage();}
       // destroy damage regions for windows that don't use them:
       if (i->region) {XDestroyRegion(i->region); i->region = 0;}

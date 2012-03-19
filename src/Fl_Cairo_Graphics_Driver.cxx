@@ -57,7 +57,9 @@
 #include <math.h>
 #include <FL/Fl_Device.H>
 
-static double line_width = 0.5;
+static double lw = 1;
+static double hlw;
+
 
 Fl_Cairo_Graphics_Driver::Fl_Cairo_Graphics_Driver ( )   : Fl_Xlib_Graphics_Driver ()
 {
@@ -91,13 +93,23 @@ void Fl_Cairo_Graphics_Driver::line_style ( int style, int t, char* )
 {
     cairo_t *cr = Fl::cairo_cc();
 
-    line_width = t > 0 ? t : 0.5;
+    if ( t == 0 || t == 1 )
+    {
+        double w1, w2;
+        w1 = w2 = 1.0;
+        cairo_device_to_user_distance (cr, &w1, &w2);
+        lw = w1 > w2 ? w1 : w2;
+    }
+    else
+        lw = t;
+
+    hlw = lw / 2.0;
     
-    cairo_set_line_width( cr, line_width );
+    cairo_set_line_width( cr, lw );
 
     if ( style & FL_DASH )
     {
-        const double dash[] = { line_width, line_width };
+        const double dash[] = { lw, lw };
         int len  = sizeof(dash) / sizeof(dash[0]);
 
         cairo_set_dash( cr, dash, len, 0 );
@@ -140,6 +152,9 @@ void Fl_Cairo_Graphics_Driver::color ( uchar r, uchar g, uchar b )
     cairo_t *cr = Fl::cairo_cc();
 
     Fl_Xlib_Graphics_Driver::color( r, g, b );
+
+    if ( ! cr )
+        return;
     
     cairo_set_source_rgb( cr, r /  255.0f, g / 255.0f, b / 255.0f );
 }
@@ -207,6 +222,9 @@ void Fl_Cairo_Graphics_Driver::color (uchar r, uchar g, uchar b, uchar a  )
     cairo_t *cr = Fl::cairo_cc();
 
     Fl_Xlib_Graphics_Driver::color( r, g, b );
+
+    if ( ! cr )
+        return;
 
     cairo_set_source_rgba( cr, r /  255.0f, g / 255.0f, b / 255.0f, a / 255.0f );
 }
@@ -287,7 +305,7 @@ void Fl_Cairo_Graphics_Driver::pie( int x, int y, int w, int h, double a1, doubl
     cairo_save( cr );
     cairo_translate( cr, cx, cy );
 //    cairo_scale( cr, w, 0 - h );
-    cairo_scale( cr, (w - line_width * 2) - 1.0f, 0 - ((h - line_width * 2) - 1.0f ));
+    cairo_scale( cr, (w - lw * 2) - 1.0f, 0 - ((h - lw * 2) - 1.0f ));
     cairo_arc( cr, 0.0, 0.0, 0.5, a1R, a2R );
     cairo_line_to( cr, 0, 0 );
     cairo_close_path( cr );
@@ -299,8 +317,8 @@ void Fl_Cairo_Graphics_Driver::line( int x1, int y1, int x2, int y2 )
 {
     cairo_t *cr = Fl::cairo_cc();
 
-    cairo_move_to( cr, x1, y1 );
-    cairo_line_to( cr, x2, y2 );
+    cairo_move_to( cr, x1 + 0.5, y1 + 0.5 );
+    cairo_line_to( cr, x2 + 0.5, y2 + 0.5 );
     cairo_stroke( cr );
 }
 
@@ -308,9 +326,9 @@ void Fl_Cairo_Graphics_Driver::line( int x1, int y1, int x2, int y2, int x3, int
 {
     cairo_t *cr = Fl::cairo_cc();
 
-    cairo_move_to( cr, x1, y1 );
-    cairo_line_to( cr, x2, y2 );
-    cairo_line_to( cr, x3, y3 );
+    cairo_move_to( cr, x1 + 0.5, y1 + 0.5 );
+    cairo_line_to( cr, x2 + 0.5, y2 + 0.5);
+    cairo_line_to( cr, x3 + 0.5, y3 + 0.5 );
     cairo_stroke( cr );
 }
 
@@ -321,11 +339,11 @@ void Fl_Cairo_Graphics_Driver::rect ( int x, int y, int w, int h )
 
     /* cairo draws lines half inside and half outside of the path... */
 
-    const double line_width = cairo_get_line_width( cr );
-    const double o = line_width / 2.0;    
+    /* const double line_width = cairo_get_line_width( cr ); */
+    /* const double o = line_width / 2.0;     */
 
-    cairo_rectangle( cr, x + o, y + o, w - line_width - 1, h - line_width - 1); 
-//    cairo_rectangle( cr, x, y, w, h );
+//    cairo_rectangle( cr, x + hlw, y + hlw, w - lw - 1, h - lw - 1); 
+    cairo_rectangle( cr, x + 0.5, y + 0.5, w, h );
     cairo_stroke( cr );
 }
 
@@ -334,7 +352,7 @@ void Fl_Cairo_Graphics_Driver::rectf ( int x, int y, int w, int h )
     cairo_t *cr = Fl::cairo_cc();
 
     /* cairo fills the inside of the path... */
-    cairo_rectangle( cr, x, y, w, h );
+    cairo_rectangle( cr, x + 0.5, y + 0.5, w, h );
     cairo_fill( cr );
 }
 
@@ -348,10 +366,10 @@ void Fl_Cairo_Graphics_Driver::end_line ( void )
        return;
    }
 
-   cairo_move_to( cr, p[0].x, p[0].y );
+   cairo_move_to( cr, p[0].x + 0.5, p[0].y + 0.5 );
 
    for (int i=1; i<n; i++)
-    cairo_line_to( cr, p[i].x, p[i].y);
+    cairo_line_to( cr, p[i].x + 0.5, p[i].y + 0.5 );
 
    cairo_stroke( cr );
 }
@@ -361,7 +379,7 @@ void Fl_Cairo_Graphics_Driver::end_points ( void )
    cairo_t *cr = Fl::cairo_cc();
 
    for (int i=0; i<n; i++)
-       cairo_rectangle( cr, p[1].x, p[1].y, 1, 1 );
+       cairo_rectangle( cr, p[1].x + 0.5, p[1].y + 0.5, 1, 1 );
 
    cairo_fill( cr );
 }
@@ -389,10 +407,10 @@ void Fl_Cairo_Graphics_Driver::end_complex_polygon ( void )
        return;
    }
 
-   cairo_move_to( cr, p[0].x, p[0].y );
+   cairo_move_to( cr, p[0].x + 0.5, p[0].y + 0.5);
 
    for (int i=1; i<n; i++)
-    cairo_line_to( cr, p[i].x, p[i].y);
+    cairo_line_to( cr, p[i].x + 0.5, p[i].y + 0.5);
 
    cairo_close_path( cr );
 
@@ -411,10 +429,10 @@ void Fl_Cairo_Graphics_Driver::end_polygon ( void )
        return;
    }
 
-   cairo_move_to( cr, p[0].x, p[0].y );
+   cairo_move_to( cr, p[0].x + 0.5, p[0].y + 0.5 );
 
    for (int i=1; i<n; i++)
-    cairo_line_to( cr, p[i].x, p[i].y);
+       cairo_line_to( cr, p[i].x + 0.5, p[i].y + 0.5 );
 
    cairo_close_path( cr );
    cairo_fill( cr );
@@ -432,9 +450,9 @@ void Fl_Cairo_Graphics_Driver::polygon ( int x, int y, int x1, int y1, int x2, i
 {
     cairo_t *cr = Fl::cairo_cc();
     
-    cairo_move_to( cr, x, y );
-    cairo_line_to( cr, x1, y1 );
-    cairo_line_to( cr, x2, y2 );
+    cairo_move_to( cr, x + 0.5, y + 0.5 );
+    cairo_line_to( cr, x1 + 0.5, y1 + 0.5 );
+    cairo_line_to( cr, x2 + 0.5, y2 + 0.5 );
     cairo_close_path( cr );
     cairo_fill( cr );
 }
@@ -443,10 +461,10 @@ void Fl_Cairo_Graphics_Driver::polygon ( int x, int y, int x1, int y1, int x2, i
 {
     cairo_t *cr = Fl::cairo_cc();
     
-    cairo_move_to( cr, x, y );
-    cairo_line_to( cr, x1, y1 );
-    cairo_line_to( cr, x2, y2 );
-    cairo_line_to( cr, x3, y3 );
+    cairo_move_to( cr, x + 0.5, y + 0.5 );
+    cairo_line_to( cr, x1 + 0.5, y1 + 0.5 );
+    cairo_line_to( cr, x2 + 0.5, y2 + 0.5 );
+    cairo_line_to( cr, x3 + 0.5, y3 + 0.5 );
     cairo_close_path( cr );
     cairo_fill( cr );
 }
@@ -455,9 +473,9 @@ void Fl_Cairo_Graphics_Driver::loop ( int x, int y, int x1, int y1, int x2, int 
 {
     cairo_t *cr = Fl::cairo_cc();
     
-    cairo_move_to( cr, x, y );
-    cairo_line_to( cr, x1, y1 );
-    cairo_line_to( cr, x2, y2 );
+    cairo_move_to( cr, x + 0.5, y + 0.5 );
+    cairo_line_to( cr, x1 + 0.5, y1 + 0.5 );
+    cairo_line_to( cr, x2 + 0.5, y2 + 0.5 );
     cairo_close_path( cr );
     cairo_stroke( cr );
 }
@@ -466,10 +484,10 @@ void Fl_Cairo_Graphics_Driver::loop ( int x, int y, int x1, int y1, int x2, int 
 {
     cairo_t *cr = Fl::cairo_cc();
     
-    cairo_move_to( cr, x, y );
-    cairo_line_to( cr, x1, y1 );
-    cairo_line_to( cr, x2, y2 );
-    cairo_line_to( cr, x3, y3 );
+    cairo_move_to( cr, x + 0.5, y + 0.5 );
+    cairo_line_to( cr, x1 + 0.5, y1 + 0.5 );
+    cairo_line_to( cr, x2 + 0.5, y2 + 0.5 );
+    cairo_line_to( cr, x3 + 0.5, y3 + 0.5 );
     cairo_close_path( cr );
     cairo_stroke( cr );
 }
@@ -479,8 +497,8 @@ void Fl_Cairo_Graphics_Driver::xyline ( int x, int y, int x1 )
 {
     cairo_t *cr = Fl::cairo_cc();
     
-    cairo_move_to( cr, x, y );
-    cairo_line_to( cr, x1, y );
+    cairo_move_to( cr, x + 0.5, y  + 0.5);
+    cairo_line_to( cr, x1 + 0.5, y + 0.5 );
     
     cairo_stroke( cr );
 }
@@ -489,9 +507,9 @@ void Fl_Cairo_Graphics_Driver::xyline ( int x, int y, int x1, int y2 )
 {
     cairo_t *cr = Fl::cairo_cc();
     
-    cairo_move_to( cr, x, y );
-    cairo_line_to( cr, x1, y );
-    cairo_line_to( cr, x1, y2 );
+    cairo_move_to( cr, x + 0.5, y + 0.5 );
+    cairo_line_to( cr, x1 + 0.5, y + 0.5 );
+    cairo_line_to( cr, x1 + 0.5, y2 + 0.5 );
 
     cairo_stroke( cr );
 }
@@ -500,10 +518,10 @@ void Fl_Cairo_Graphics_Driver::xyline ( int x, int y, int x1, int y2, int x3 )
 {
     cairo_t *cr = Fl::cairo_cc();
     
-    cairo_move_to( cr, x, y );
-    cairo_line_to( cr, x1, y );
-    cairo_line_to( cr, x1, y2 );
-    cairo_line_to( cr, x3, y2 );
+    cairo_move_to( cr, x + 0.5, y + 0.5 );
+    cairo_line_to( cr, x1 + 0.5, y + 0.5 );
+    cairo_line_to( cr, x1 + 0.5, y2 + 0.5 );
+    cairo_line_to( cr, x3 + 0.5, y2 + 0.5 );
 
     cairo_stroke( cr );
 }
@@ -512,8 +530,8 @@ void Fl_Cairo_Graphics_Driver::yxline ( int x, int y, int y1 )
 {
     cairo_t *cr = Fl::cairo_cc();
     
-    cairo_move_to( cr, x, y );
-    cairo_line_to( cr, x, y1 );
+    cairo_move_to( cr, x + 0.5, y + 0.5 );
+    cairo_line_to( cr, x + 0.5, y1 + 0.5 );
     
     cairo_stroke( cr );
 }
@@ -522,9 +540,9 @@ void Fl_Cairo_Graphics_Driver::yxline ( int x, int y, int y1, int x2 )
 {
     cairo_t *cr = Fl::cairo_cc();
     
-    cairo_move_to( cr, x, y );
-    cairo_line_to( cr, x, y1 );
-    cairo_line_to( cr, x2, y1 );
+    cairo_move_to( cr, x + 0.5, y + 0.5 );
+    cairo_line_to( cr, x + 0.5, y1 + 0.5 );
+    cairo_line_to( cr, x2 + 0.5, y1 + 0.5 );
 
     cairo_stroke( cr );
 }
@@ -533,10 +551,10 @@ void Fl_Cairo_Graphics_Driver::yxline ( int x, int y, int y1, int x2, int y3 )
 {
     cairo_t *cr = Fl::cairo_cc();
     
-    cairo_move_to( cr, x, y );
-    cairo_line_to( cr, x, y1 );
-    cairo_line_to( cr, x2, y1 );
-    cairo_line_to( cr, x2, y3 );
+    cairo_move_to( cr, x + 0.5, y + 0.5 );
+    cairo_line_to( cr, x + 0.5, y1 + 0.5 );
+    cairo_line_to( cr, x2 + 0.5, y1 + 0.5 );
+    cairo_line_to( cr, x2 + 0.5, y3 + 0.5 );
 
     cairo_stroke( cr );
 }

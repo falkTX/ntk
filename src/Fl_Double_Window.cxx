@@ -370,8 +370,9 @@ void Fl_Double_Window::flush(int eraseoverlay) {
     if (damage()) {
       fl_clip_region(myi->region); myi->region = 0;
       fl_window = myi->other_xid;
-
+#if FLTK_HAVE_CAIRO
       Fl::cairo_set_drawable( this );
+#endif
       draw();
 
       fl_window = myi->xid;
@@ -412,7 +413,9 @@ void Fl_Double_Window::flush(int eraseoverlay) {
     }
 #else // X:
     fl_window = myi->other_xid;
+#if FLTK_HAVE_CAIRO
     Fl::cairo_set_drawable( this );
+#endif
     draw();
     fl_window = myi->xid;
 #endif
