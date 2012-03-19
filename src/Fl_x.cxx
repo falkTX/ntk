@@ -54,10 +54,10 @@
 #  include <X11/keysym.h>
 
 #if FLTK_USE_CAIRO
-static Fl_Cairo_Graphics_Driver fl_xlib_driver;
-#else
-static Fl_Xlib_Graphics_Driver fl_xlib_driver;
+static Fl_Cairo_Graphics_Driver fl_cairo_driver;
 #endif
+static Fl_Xlib_Graphics_Driver fl_xlib_driver;
+
 static Fl_Display_Device fl_xlib_display(&fl_xlib_driver);
 FL_EXPORT Fl_Graphics_Driver *fl_graphics_driver = (Fl_Graphics_Driver*)&fl_xlib_driver; // the current target device of graphics operations
 Fl_Surface_Device* Fl_Surface_Device::_surface = (Fl_Surface_Device*)&fl_xlib_display; // the current target surface of graphics operations
@@ -65,6 +65,44 @@ Fl_Display_Device *Fl_Display_Device::_display = &fl_xlib_display;// the platfor
 
 ////////////////////////////////////////////////////////////////
 // interface to poll/select call:
+
+static bool use_cairo_stack[100];
+static int use_cairo_ptr = 0;
+
+FL_EXPORT void fl_push_use_cairo ( bool v ) 
+{
+#if FLTK_USE_CAIRO
+    if ( v )
+        fl_graphics_driver = &fl_cairo_driver;
+    else
+        fl_graphics_driver = &fl_xlib_driver;
+
+    if ( use_cairo_ptr < (int) (sizeof( use_cairo_stack ) / sizeof( bool ) ))
+        use_cairo_stack[++use_cairo_ptr] = v;
+#else
+    /* noop */
+    ;
+#endif
+}
+
+FL_EXPORT void fl_pop_use_cairo ( void ) 
+{
+#if FLTK_USE_CAIRO
+    bool v = false;
+
+    if ( use_cairo_ptr > 0 )
+        v = use_cairo_stack[--use_cairo_ptr];
+    
+    if ( v )
+        fl_graphics_driver = &fl_cairo_driver;
+    else
+        fl_graphics_driver = &fl_xlib_driver;
+#else
+    /* noop */
+    ;
+#endif
+}
+
 
 #  if USE_POLL
 

@@ -70,6 +70,10 @@ FL_EXPORT void fl_open_display();
 FL_EXPORT void fl_open_display(Display*);
 FL_EXPORT void fl_close_display();
 
+
+FL_EXPORT void fl_push_use_cairo( bool v );
+FL_EXPORT void fl_pop_use_cairo( void );
+
 // constant info about the X server connection:
 extern FL_EXPORT Display *fl_display;
 extern FL_EXPORT int fl_screen;
