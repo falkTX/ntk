@@ -116,28 +116,34 @@ public:
   struct matrix {double a, b, c, d, x, y;};
 private:
   static const matrix m0;
-  Fl_Font font_; // current font
-  Fl_Fontsize size_; // current font size
-  Fl_Color color_; // current color
-  int sptr;
+  static Fl_Font font_; // current font
+  static Fl_Fontsize size_; // current font size
+  static Fl_Color color_; // current color
+  static int sptr;
   static const int matrix_stack_size = FL_MATRIX_STACK_SIZE;
-  matrix stack[FL_MATRIX_STACK_SIZE];
-  matrix m;
+  static matrix stack[FL_MATRIX_STACK_SIZE];
+  static matrix m;
 protected:
   enum {LINE, LOOP, POLYGON, POINT_};
-  int n, p_size, gap_;
-  XPOINT *p;
-  int what;
+  static int n;
+  static int p_size;
+  static int gap_;
+  static XPOINT *p;
+  static int what;
 private:
-  int fl_clip_state_number;
-  int rstackptr;
+  static int fl_clip_state_number;
+  static int rstackptr;
   static const int region_stack_max = FL_REGION_STACK_SIZE - 1;
-  Fl_Region rstack[FL_REGION_STACK_SIZE];
+  static Fl_Region rstack[FL_REGION_STACK_SIZE];
 #ifdef WIN32
   int numcount;
   int counts[20];
 #endif
   Fl_Font_Descriptor *font_descriptor_;
+
+public:
+
+  static matrix *fl_matrix; /**< Points to the current coordinate transformation matrix */
   
 protected:
   void transformed_vertex0(COORD_T x, COORD_T y);
@@ -220,8 +226,6 @@ protected:
   friend void fl_draw_image(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D);
   friend FL_EXPORT void fl_draw_image_mono(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D);
   friend FL_EXPORT void gl_start();
-
-  matrix *fl_matrix; /**< Points to the current coordinate transformation matrix */
 
   /** \brief The constructor. */
   Fl_Graphics_Driver();
@@ -498,11 +502,12 @@ public:
 };
 
 #if FLTK_USE_CAIRO
-FL_EXPORT Fl_Color fl_color_add_alpha ( Fl_Color c, uchar alpha );
 
 class Fl_Cairo_Graphics_Driver : public Fl_Xlib_Graphics_Driver {
 
 public:
+
+//    void set_current(void);
 
     Fl_Cairo_Graphics_Driver ( );
 
@@ -574,6 +579,7 @@ public:
 class FL_EXPORT Fl_Surface_Device : public Fl_Device {
   /** \brief The graphics driver in use by this surface. */
   Fl_Graphics_Driver *_driver;
+public:
   static Fl_Surface_Device *_surface; // the surface that currently receives graphics output
 protected:
   /** \brief Constructor that sets the graphics driver to use for the created surface. */
@@ -596,7 +602,8 @@ public:
  \brief A display to which the computer can draw.
  */
 class FL_EXPORT Fl_Display_Device : public Fl_Surface_Device {
-  static Fl_Display_Device *_display; // the platform display device
+public:
+static Fl_Display_Device *_display; // the platform display device
 public:
   static const char *class_id;
   const char *class_name() {return class_id;};

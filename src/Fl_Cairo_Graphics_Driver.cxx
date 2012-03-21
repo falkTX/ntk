@@ -46,10 +46,55 @@
  */
 
 #include <config.h>
+#include <FL/Fl.H>
+
+double fl_hxo = 0.0;
+double fl_hyo = 0.5;
+double fl_vxo = 0.5;
+double fl_vyo = 0.0;
+double fl_vho = 1.0;
+double fl_hwo = 1.0;
+
+#define HXO(n) ( n + fl_hxo )
+#define HYO(n) ( n + fl_hyo )
+#define VXO(n) ( n + fl_vxo )
+#define VYO(n) ( n + fl_vyo )
+#define VHO(n) ( n + fl_vho )
+#define HWO(n) ( n + fl_hwo )
+
+Fl_Color fl_color_add_alpha ( Fl_Color c, uchar alpha )
+{
+    if ( !( c & 0xFFFFFF00 ) )
+    {
+        /* this is an indexed color or black */
+        if ( c & 0x000000FF )
+        {
+            /* this is an indexed color */
+            uchar r,g,b;
+
+            Fl::get_color( c, r, g, b );
+
+            c = fl_rgb_color( r, g, b );
+        }
+        else
+        {
+            /* this is black */
+            if ( 0 == alpha )
+            {
+                /* sorry, you can't have zero opacity because we don't
+                 * have enough bits and it doesn't make much sense anyway */
+                alpha = 255;
+            }
+            /* hack to represent black */
+            c = 0x01010100;
+        }
+    }
+
+    return ( c & 0xFFFFFF00 ) | alpha;
+}
 
 #if FLTK_USE_CAIRO
 
-#include <FL/Fl.H>
 #include <FL/x.H>
 #include <cairo/cairo.h>
 #include <FL/Fl_Cairo.H>
@@ -59,12 +104,33 @@
 
 static double lw = 1;
 static double hlw;
+static cairo_antialias_t aa = CAIRO_ANTIALIAS_GRAY;
 
+#define cairo_set_antialias( cr, aa )
 
 Fl_Cairo_Graphics_Driver::Fl_Cairo_Graphics_Driver ( )   : Fl_Xlib_Graphics_Driver ()
 {
 //    rstackptr = 0;
 }
+
+/* void Fl_Cairo_Graphics_Driver::set_current ( void ) */
+/* { */
+/*     Window root; */
+    
+/*     int x, y; */
+/*     unsigned int w, h, bw, d; */
+
+/*     XGetGeometry( fl_display, fl_window, &root, &x, &y, &w, &h, &bw, &d ); */
+
+/*     fl_cairo_surface = cairo_create_surface( fl_gc, w, h ); */
+
+/*     /\* FIXME: how are we going to free this? *\/ */
+/*     fl_cairo_context = cairo_create( fl_cairo_surface ); */
+
+/*     cairo_surface_destroy( fl_cairo_surface ); */
+    
+/*     fl_cairo_surface = 0; */
+/* } */
 
 void Fl_Cairo_Graphics_Driver::restore_clip ( void )
 {
@@ -75,9 +141,9 @@ void Fl_Cairo_Graphics_Driver::restore_clip ( void )
 
     Fl_Xlib_Graphics_Driver::restore_clip();
 
-    Fl_Region r = clip_region();
-
     cairo_reset_clip( cr );
+
+    Fl_Region r = clip_region();
 
     if ( r )
     {
@@ -130,18 +196,24 @@ void Fl_Cairo_Graphics_Driver::color ( Fl_Color c )
     {
         /* color is indexed, get the RGB value */
         Fl::get_color( c, r, g, b );
+
+        /* FIXME: temp! */
         color( r, g, b );
+       /* color( 255, 0, 0, 50 ); */
     }
     else
     {
-        /* lower 8 bits become alpha. */
-        // if (i & 0xffffff00) {
-        Fl::get_color( c, r, g, b );
+        Fl::get_color( c & 0xFFFFFF00, r, g, b );
 
+        /* lower 8 bits become alpha. */
         uchar a = c & 0x000000ff;
 
         if ( ! a )
             a = 255;
+
+        /* /\* HACK to represent black *\/ */
+        /* if ( ( c & 0xFFFFFF00 ) == 0x01010100 ) */
+        /*     r = g = b = 0; */
 
         color( r, g, b, a );
     }
@@ -166,45 +238,17 @@ void fl_set_antialias ( int v )
     switch ( v )
     {
         case FL_ANTIALIAS_DEFAULT:
-            cairo_set_antialias( cr, CAIRO_ANTIALIAS_DEFAULT );
+            cairo_set_antialias( cr, aa = CAIRO_ANTIALIAS_DEFAULT );
             break;
         case FL_ANTIALIAS_ON:
-            cairo_set_antialias( cr, CAIRO_ANTIALIAS_GRAY );
+            cairo_set_antialias( cr, aa = CAIRO_ANTIALIAS_GRAY );
             break;
         case FL_ANTIALIAS_OFF:
-            cairo_set_antialias( cr, CAIRO_ANTIALIAS_NONE );
+            cairo_set_antialias( cr, aa = CAIRO_ANTIALIAS_NONE );
             break;
     }
 }
 
-Fl_Color fl_color_add_alpha ( Fl_Color c, uchar alpha )
-{
-    if ( !( c & 0xFFFFFF00 ) )
-    {
-        /* this is an indexed color, or black */
-        if ( c & 0x000000FF )
-        {
-            /* this is an indexed color */
-            uchar r,g,b;
-
-            Fl::get_color( c, r, g, b );
-
-            c = fl_rgb_color( r, g, b );
-        }
-        else
-        {
-            /* this is black */
-            if ( 0 == alpha )
-            {
-                /* sorry, you can't have zero opacity because we don't
-                 * have enough bits and it doesn't make much sense anyway */
-                alpha = 255;
-            }
-        }
-    }
-
-    return ( c & 0xFFFFFF00 ) & alpha;
-}
 
 void Fl_Cairo_Graphics_Driver::color ( Fl_Color c, uchar a )
 {
@@ -221,7 +265,7 @@ void Fl_Cairo_Graphics_Driver::color (uchar r, uchar g, uchar b, uchar a  )
 {
     cairo_t *cr = Fl::cairo_cc();
 
-    Fl_Xlib_Graphics_Driver::color( r, g, b );
+//    Fl_Xlib_Graphics_Driver::color( r, g, b );
 
     if ( ! cr )
         return;
@@ -265,14 +309,25 @@ static void add_arc( int x, int y, int w, int h, double a1, double a2 )
     const double cx = x + ( 0.5f * w );
     const double cy = y + ( 0.5f * h );
 
+    /* cairo_save( cr ); */
+    /* cairo_translate( cr, cx, cy ); */
+    /* cairo_scale( cr, w, h ); */
+
+    /* if ( a1 >  a2 ) */
+    /*     cairo_arc( cr, 0.0, 0.0, 0.5, a1 * ( -M_PI / 180.0 ), a2 * ( -M_PI / 180.0 )); */
+    /* else */
+    /*     cairo_arc_negative( cr, 0.0, 0.0, 0.5, a1 * ( -M_PI / 180.0 ), a2 * ( -M_PI / 180.0 )); */
+
+
     cairo_save( cr );
     cairo_translate( cr, cx, cy );
-    cairo_scale( cr, w, h );
+    cairo_scale( cr, w - 1, h - 1 );
 
     if ( a1 >  a2 )
         cairo_arc( cr, 0.0, 0.0, 0.5, a1 * ( -M_PI / 180.0 ), a2 * ( -M_PI / 180.0 ));
     else
         cairo_arc_negative( cr, 0.0, 0.0, 0.5, a1 * ( -M_PI / 180.0 ), a2 * ( -M_PI / 180.0 ));
+
         
     cairo_restore( cr ); 
 }
@@ -290,6 +345,8 @@ void Fl_Cairo_Graphics_Driver::arc( double x, double y, double r, double a1, dou
 {
     cairo_t *cr = Fl::cairo_cc();
 
+    cairo_close_path( cr );
+
     cairo_arc( cr, x, y, r, a1 * ( -M_PI / 180.0 ), a2 * ( -M_PI / 180.0 ));
 }
 
@@ -300,7 +357,7 @@ void Fl_Cairo_Graphics_Driver::pie( int x, int y, int w, int h, double a1, doubl
     double a1R = a1 * ( M_PI / 180.0 );
     double a2R = a2 * ( M_PI / 180.0 );
 
-    float cx = x + 0.5f*w - 0.5f, cy = y + 0.5f*h - 0.5f;
+    float cx = x + 0.5 * w - 0.5f, cy = y + 0.5 * h - 0.5f;
     
     cairo_save( cr );
     cairo_translate( cr, cx, cy );
@@ -317,19 +374,60 @@ void Fl_Cairo_Graphics_Driver::line( int x1, int y1, int x2, int y2 )
 {
     cairo_t *cr = Fl::cairo_cc();
 
-    cairo_move_to( cr, x1 + 0.5, y1 + 0.5 );
-    cairo_line_to( cr, x2 + 0.5, y2 + 0.5 );
+    cairo_set_line_width( cr, lw );
+
+        
+    if ( x1 == x2 )
+    {
+        cairo_set_antialias( cr, CAIRO_ANTIALIAS_NONE );
+        /* vertical line */
+            
+        if ( y1 > y2 )
+        {
+            int t = y2;
+            y2 = y1;
+            y1 = t;
+        }
+
+        cairo_move_to( cr, VXO( x1 ), VYO( y1 ) );
+        cairo_line_to( cr, VXO( x2 ), VHO( y2 ) );
+    }
+    else if ( y1 == y2 )
+    {
+        cairo_set_antialias( cr, CAIRO_ANTIALIAS_NONE );
+        /* horizontal line */
+        cairo_move_to( cr, HXO( x1 ), HYO( y1 ) );
+        cairo_line_to( cr, HWO( x2 ), HYO( y2 ) );        
+    }
+    else
+    {
+        /* diagonal line */
+        cairo_move_to( cr, x1 , y1  );
+        cairo_line_to( cr, x2 , y2  );
+    }
+
     cairo_stroke( cr );
+
+    cairo_set_antialias( cr, aa );
 }
 
 void Fl_Cairo_Graphics_Driver::line( int x1, int y1, int x2, int y2, int x3, int y3 )
 {
     cairo_t *cr = Fl::cairo_cc();
 
-    cairo_move_to( cr, x1 + 0.5, y1 + 0.5 );
-    cairo_line_to( cr, x2 + 0.5, y2 + 0.5);
-    cairo_line_to( cr, x3 + 0.5, y3 + 0.5 );
+    cairo_set_line_width( cr, lw );
+
+    if ( lw <= 1 )
+    {
+        cairo_set_antialias( cr, CAIRO_ANTIALIAS_NONE );
+    }
+
+    cairo_move_to( cr, x1 , y1  );
+    cairo_line_to( cr, x2 , y2  );
+    cairo_line_to( cr, x3 , y3  );
     cairo_stroke( cr );
+
+    cairo_set_antialias( cr, aa );
 }
 
 
@@ -337,23 +435,33 @@ void Fl_Cairo_Graphics_Driver::rect ( int x, int y, int w, int h )
 {
     cairo_t *cr = Fl::cairo_cc();
 
+    cairo_set_line_width( cr, lw );
+
     /* cairo draws lines half inside and half outside of the path... */
 
     /* const double line_width = cairo_get_line_width( cr ); */
     /* const double o = line_width / 2.0;     */
 
+    cairo_set_antialias( cr, CAIRO_ANTIALIAS_NONE );
+    
 //    cairo_rectangle( cr, x + hlw, y + hlw, w - lw - 1, h - lw - 1); 
-    cairo_rectangle( cr, x + 0.5, y + 0.5, w, h );
+    cairo_rectangle( cr, VXO( x ), HYO( y  ), w - 1, h - 1 );
     cairo_stroke( cr );
+
+    cairo_set_antialias( cr, aa );
 }
 
 void Fl_Cairo_Graphics_Driver::rectf ( int x, int y, int w, int h )
 {
     cairo_t *cr = Fl::cairo_cc();
 
+    cairo_set_antialias( cr, CAIRO_ANTIALIAS_NONE );
+
     /* cairo fills the inside of the path... */
-    cairo_rectangle( cr, x + 0.5, y + 0.5, w, h );
+    cairo_rectangle( cr, x, y, w, h );
     cairo_fill( cr );
+
+    cairo_set_antialias( cr, aa );
 }
 
 void Fl_Cairo_Graphics_Driver::end_line ( void )
@@ -366,22 +474,35 @@ void Fl_Cairo_Graphics_Driver::end_line ( void )
        return;
    }
 
-   cairo_move_to( cr, p[0].x + 0.5, p[0].y + 0.5 );
+   if ( lw <= 1 )
+   {
+       cairo_set_antialias( cr, CAIRO_ANTIALIAS_NONE );
+   }
+
+   cairo_set_line_width( cr, lw );
+
+   cairo_move_to( cr, p[0].x + 0.5 , p[0].y + 0.5 );
 
    for (int i=1; i<n; i++)
-    cairo_line_to( cr, p[i].x + 0.5, p[i].y + 0.5 );
+    cairo_line_to( cr, p[i].x + 0.5 , p[i].y + 0.5 );
 
    cairo_stroke( cr );
+
+   cairo_set_antialias( cr, aa );
 }
 
 void Fl_Cairo_Graphics_Driver::end_points ( void )
 {
    cairo_t *cr = Fl::cairo_cc();
 
+   cairo_set_antialias( cr, CAIRO_ANTIALIAS_NONE );
+
    for (int i=0; i<n; i++)
-       cairo_rectangle( cr, p[1].x + 0.5, p[1].y + 0.5, 1, 1 );
+       cairo_rectangle( cr, p[1].x , p[1].y , 1, 1 );
 
    cairo_fill( cr );
+
+   cairo_set_antialias( cr, aa );
 }
 
 void Fl_Cairo_Graphics_Driver::end_loop ( void )
@@ -407,10 +528,10 @@ void Fl_Cairo_Graphics_Driver::end_complex_polygon ( void )
        return;
    }
 
-   cairo_move_to( cr, p[0].x + 0.5, p[0].y + 0.5);
+   cairo_move_to( cr, p[0].x , p[0].y );
 
    for (int i=1; i<n; i++)
-    cairo_line_to( cr, p[i].x + 0.5, p[i].y + 0.5);
+    cairo_line_to( cr, p[i].x , p[i].y );
 
    cairo_close_path( cr );
 
@@ -429,10 +550,10 @@ void Fl_Cairo_Graphics_Driver::end_polygon ( void )
        return;
    }
 
-   cairo_move_to( cr, p[0].x + 0.5, p[0].y + 0.5 );
+   cairo_move_to( cr, p[0].x , p[0].y  );
 
    for (int i=1; i<n; i++)
-       cairo_line_to( cr, p[i].x + 0.5, p[i].y + 0.5 );
+       cairo_line_to( cr, p[i].x , p[i].y  );
 
    cairo_close_path( cr );
    cairo_fill( cr );
@@ -450,9 +571,9 @@ void Fl_Cairo_Graphics_Driver::polygon ( int x, int y, int x1, int y1, int x2, i
 {
     cairo_t *cr = Fl::cairo_cc();
     
-    cairo_move_to( cr, x + 0.5, y + 0.5 );
-    cairo_line_to( cr, x1 + 0.5, y1 + 0.5 );
-    cairo_line_to( cr, x2 + 0.5, y2 + 0.5 );
+    cairo_move_to( cr, x , y  );
+    cairo_line_to( cr, x1 , y1  );
+    cairo_line_to( cr, x2 , y2  );
     cairo_close_path( cr );
     cairo_fill( cr );
 }
@@ -461,10 +582,10 @@ void Fl_Cairo_Graphics_Driver::polygon ( int x, int y, int x1, int y1, int x2, i
 {
     cairo_t *cr = Fl::cairo_cc();
     
-    cairo_move_to( cr, x + 0.5, y + 0.5 );
-    cairo_line_to( cr, x1 + 0.5, y1 + 0.5 );
-    cairo_line_to( cr, x2 + 0.5, y2 + 0.5 );
-    cairo_line_to( cr, x3 + 0.5, y3 + 0.5 );
+    cairo_move_to( cr, x , y  );
+    cairo_line_to( cr, x1 , y1  );
+    cairo_line_to( cr, x2 , y2  );
+    cairo_line_to( cr, x3 , y3  );
     cairo_close_path( cr );
     cairo_fill( cr );
 }
@@ -473,9 +594,9 @@ void Fl_Cairo_Graphics_Driver::loop ( int x, int y, int x1, int y1, int x2, int 
 {
     cairo_t *cr = Fl::cairo_cc();
     
-    cairo_move_to( cr, x + 0.5, y + 0.5 );
-    cairo_line_to( cr, x1 + 0.5, y1 + 0.5 );
-    cairo_line_to( cr, x2 + 0.5, y2 + 0.5 );
+    cairo_move_to( cr, x , y  );
+    cairo_line_to( cr, x1 , y1  );
+    cairo_line_to( cr, x2 , y2  );
     cairo_close_path( cr );
     cairo_stroke( cr );
 }
@@ -484,10 +605,10 @@ void Fl_Cairo_Graphics_Driver::loop ( int x, int y, int x1, int y1, int x2, int 
 {
     cairo_t *cr = Fl::cairo_cc();
     
-    cairo_move_to( cr, x + 0.5, y + 0.5 );
-    cairo_line_to( cr, x1 + 0.5, y1 + 0.5 );
-    cairo_line_to( cr, x2 + 0.5, y2 + 0.5 );
-    cairo_line_to( cr, x3 + 0.5, y3 + 0.5 );
+    cairo_move_to( cr, x , y  );
+    cairo_line_to( cr, x1 , y1  );
+    cairo_line_to( cr, x2 , y2  );
+    cairo_line_to( cr, x3 , y3  );
     cairo_close_path( cr );
     cairo_stroke( cr );
 }
@@ -496,67 +617,119 @@ void Fl_Cairo_Graphics_Driver::loop ( int x, int y, int x1, int y1, int x2, int 
 void Fl_Cairo_Graphics_Driver::xyline ( int x, int y, int x1 )
 {
     cairo_t *cr = Fl::cairo_cc();
-    
-    cairo_move_to( cr, x + 0.5, y  + 0.5);
-    cairo_line_to( cr, x1 + 0.5, y + 0.5 );
+
+    cairo_set_line_width( cr, lw );
+
+
+    if ( lw <= 1 )
+    {
+        cairo_set_antialias( cr, CAIRO_ANTIALIAS_NONE );
+    }
+
+    cairo_move_to( cr, HXO( x ), HYO( y ) );
+    cairo_line_to( cr, HWO( x1 ), HYO( y ) );
     
     cairo_stroke( cr );
+
+    cairo_set_antialias( cr, aa );
 }
 
 void Fl_Cairo_Graphics_Driver::xyline ( int x, int y, int x1, int y2 )
 {
     cairo_t *cr = Fl::cairo_cc();
+
+    cairo_set_line_width( cr, lw );
     
-    cairo_move_to( cr, x + 0.5, y + 0.5 );
-    cairo_line_to( cr, x1 + 0.5, y + 0.5 );
-    cairo_line_to( cr, x1 + 0.5, y2 + 0.5 );
+    if ( lw <= 1 )
+    {
+        cairo_set_antialias( cr, CAIRO_ANTIALIAS_NONE );
+    }
+
+    /* horizontal line */
+    cairo_move_to( cr, HXO( x ) , HYO( y ) );
+    cairo_line_to( cr, HWO( x1 ), HYO( y ) );
+    /* then vertical line */
+    cairo_line_to( cr, HWO( x1 ) , VYO( y2 ) );
 
     cairo_stroke( cr );
+
+    cairo_set_antialias( cr, aa );
+
 }
 
 void Fl_Cairo_Graphics_Driver::xyline ( int x, int y, int x1, int y2, int x3 )
 {
     cairo_t *cr = Fl::cairo_cc();
+
+    if ( lw <= 1 )
+    {
+        cairo_set_antialias( cr, CAIRO_ANTIALIAS_NONE );
+    }
     
-    cairo_move_to( cr, x + 0.5, y + 0.5 );
-    cairo_line_to( cr, x1 + 0.5, y + 0.5 );
-    cairo_line_to( cr, x1 + 0.5, y2 + 0.5 );
-    cairo_line_to( cr, x3 + 0.5, y2 + 0.5 );
+    cairo_move_to( cr, x , y  );
+    cairo_line_to( cr, x1 , y  );
+    cairo_line_to( cr, x1 , y2  );
+    cairo_line_to( cr, x3 , y2  );
 
     cairo_stroke( cr );
+
+    cairo_set_antialias( cr, aa );
 }
 
 void Fl_Cairo_Graphics_Driver::yxline ( int x, int y, int y1 )
 {
     cairo_t *cr = Fl::cairo_cc();
-    
-    cairo_move_to( cr, x + 0.5, y + 0.5 );
-    cairo_line_to( cr, x + 0.5, y1 + 0.5 );
+
+    cairo_set_line_width( cr, lw );
+
+    if ( lw <= 1 )
+    {
+        cairo_set_antialias( cr, CAIRO_ANTIALIAS_NONE );
+    }
+
+    cairo_move_to( cr, VXO( x ), VHO( y ) );
+    cairo_line_to( cr, VXO( x ), VYO( y1 ) );
     
     cairo_stroke( cr );
+
+    cairo_set_antialias( cr, aa );
 }
 
 void Fl_Cairo_Graphics_Driver::yxline ( int x, int y, int y1, int x2 )
 {
     cairo_t *cr = Fl::cairo_cc();
+
+    if ( lw <= 1 )
+    {
+        cairo_set_antialias( cr, CAIRO_ANTIALIAS_NONE );
+    }
     
-    cairo_move_to( cr, x + 0.5, y + 0.5 );
-    cairo_line_to( cr, x + 0.5, y1 + 0.5 );
-    cairo_line_to( cr, x2 + 0.5, y1 + 0.5 );
+    cairo_move_to( cr, x , y );
+    cairo_line_to( cr, x, y1  );
+    cairo_line_to( cr, x2, y1  );
 
     cairo_stroke( cr );
+
+    cairo_set_antialias( cr, aa );
 }
 
 void Fl_Cairo_Graphics_Driver::yxline ( int x, int y, int y1, int x2, int y3 )
 {
     cairo_t *cr = Fl::cairo_cc();
+
+    if ( lw <= 1 )
+    {
+        cairo_set_antialias( cr, CAIRO_ANTIALIAS_NONE );
+    }
     
-    cairo_move_to( cr, x + 0.5, y + 0.5 );
-    cairo_line_to( cr, x + 0.5, y1 + 0.5 );
-    cairo_line_to( cr, x2 + 0.5, y1 + 0.5 );
-    cairo_line_to( cr, x2 + 0.5, y3 + 0.5 );
+    cairo_move_to( cr, x , y  );
+    cairo_line_to( cr, x , y1  );
+    cairo_line_to( cr, x2 , y1  );
+    cairo_line_to( cr, x2 , y3  );
 
     cairo_stroke( cr );
+
+    cairo_set_antialias( cr, aa );
 }
 
 #else

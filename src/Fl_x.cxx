@@ -55,10 +55,12 @@
 
 #if FLTK_USE_CAIRO
 static Fl_Cairo_Graphics_Driver fl_cairo_driver;
+static Fl_Display_Device fl_cairo_display(&fl_cairo_driver);
 #endif
-static Fl_Xlib_Graphics_Driver fl_xlib_driver;
 
+static Fl_Xlib_Graphics_Driver fl_xlib_driver;
 static Fl_Display_Device fl_xlib_display(&fl_xlib_driver);
+
 FL_EXPORT Fl_Graphics_Driver *fl_graphics_driver = (Fl_Graphics_Driver*)&fl_xlib_driver; // the current target device of graphics operations
 Fl_Surface_Device* Fl_Surface_Device::_surface = (Fl_Surface_Device*)&fl_xlib_display; // the current target surface of graphics operations
 Fl_Display_Device *Fl_Display_Device::_display = &fl_xlib_display;// the platform display
@@ -73,9 +75,20 @@ FL_EXPORT void fl_push_use_cairo ( bool v )
 {
 #if FLTK_USE_CAIRO
     if ( v )
+    {
+        /* FIXME: why are there *SO MANY VERSIONS OF THE SAME THING*? */
         fl_graphics_driver = &fl_cairo_driver;
+        Fl_Surface_Device::_surface = (Fl_Surface_Device*)&fl_cairo_display;
+        Fl_Display_Device::_display = &fl_cairo_display;
+    }
     else
+    {
         fl_graphics_driver = &fl_xlib_driver;
+        Fl_Surface_Device::_surface = (Fl_Surface_Device*)&fl_xlib_display;
+        Fl_Display_Device::_display = &fl_xlib_display;
+    }
+
+    fl_restore_clip();
 
     if ( use_cairo_ptr < (int) (sizeof( use_cairo_stack ) / sizeof( bool ) ))
         use_cairo_stack[++use_cairo_ptr] = v;
@@ -92,11 +105,23 @@ FL_EXPORT void fl_pop_use_cairo ( void )
 
     if ( use_cairo_ptr > 0 )
         v = use_cairo_stack[--use_cairo_ptr];
-    
+
     if ( v )
+    {
+        /* FIXME: why are there *SO MANY VERSIONS OF THE SAME THING*? */
         fl_graphics_driver = &fl_cairo_driver;
+        Fl_Surface_Device::_surface = (Fl_Surface_Device*)&fl_cairo_display;
+        Fl_Display_Device::_display = &fl_cairo_display;
+    }
     else
+    {
         fl_graphics_driver = &fl_xlib_driver;
+        Fl_Surface_Device::_surface = (Fl_Surface_Device*)&fl_xlib_display;
+        Fl_Display_Device::_display = &fl_xlib_display;
+    }
+
+    fl_restore_clip();
+
 #else
     /* noop */
     ;

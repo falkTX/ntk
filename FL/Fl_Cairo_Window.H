@@ -64,8 +64,6 @@ protected:
   void draw() {
     Fl_Double_Window::draw();
     // manual method ? if yes explicitly get a cairo_context here
-    if (!Fl::cairo_autolink_context()) 
-      Fl::cairo_make_current(this); 
     if (draw_cb_) draw_cb_(this, Fl::cairo_cc());
   }
 

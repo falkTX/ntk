@@ -35,14 +35,11 @@
 #include <Carbon/Carbon.h>
 #endif
 
-// static Fl module initialization :
-Fl_Cairo_State Fl::cairo_state_;	///< contains all necesary info for current cairo context mapping
-
 /* 
     Creates transparently a cairo_surface_t object.
     gc is an HDC context in  WIN32, a CGContext* in Quartz, a display on X11
  */
-static cairo_surface_t * cairo_create_surface(void * gc, int W, int H) {
+cairo_surface_t * cairo_create_surface(void * gc, int W, int H) {
 # if defined(USE_X11)
     return cairo_xlib_surface_create(fl_display, fl_window, fl_visual->visual, W, H);
 # elif   defined(WIN32)
@@ -54,6 +51,8 @@ static cairo_surface_t * cairo_create_surface(void * gc, int W, int H) {
 # endif
 }
 
+cairo_surface_t *fl_cairo_surface;
+cairo_t *fl_cairo_context;
 
 cairo_t * 
 Fl::cairo_make_current(Fl_Window* wi) {
@@ -67,9 +66,9 @@ Fl::cairo_make_current(Fl_Window* wi) {
 //        cairo_surface_destroy( s );
     }
 
-    cairo_state_.window(wi);
+    fl_cairo_surface = wi->i->cs;
+    fl_cairo_context = wi->i->cc;
 
-    Fl::cairo_cc( wi->i->cc );
     return wi->i->cc;
 }
 

@@ -822,6 +822,8 @@ FL_EXPORT Fl_Color fl_contrast(Fl_Color fg, Fl_Color bg);
 
 FL_EXPORT Fl_Color fl_color_average(Fl_Color c1, Fl_Color c2, float weight);
 
+FL_EXPORT Fl_Color fl_color_add_alpha( Fl_Color c, uchar alpha );
+
 /** Returns a lighter version of the specified color. */
 inline Fl_Color fl_lighter(Fl_Color c) { return fl_color_average(c, FL_WHITE, .67f); }
 

@@ -1057,27 +1057,15 @@ public:
       You can use Fl::cairo_cc() to get the current cairo context anytime.
      \note Only available when configure has the --enable-cairo option
   */
-  static void cairo_autolink_context(bool alink) {cairo_state_.autolink(alink);}
-  /** 
-    Gets the current autolink mode for cairo support.
-    \retval false if no cairo context autolink is made for each window. 
-    \retval true if any fltk window is attached a cairo context when it 
-    is current. \see void cairo_autolink_context(bool alink) 
-    \note Only available when configure has the --enable-cairo option
- */
-  static bool cairo_autolink_context() {return cairo_state_.autolink();}
   /** Gets the current cairo context linked with a fltk window. */
-  static cairo_t * cairo_cc() { return cairo_state_.cc(); }
+  static cairo_t * cairo_cc() { return fl_cairo_context; }
   /** Sets the current cairo context to \p c.
       Set \p own to true if you want fltk to handle this cc deletion.
      \note Only available when configure has the --enable-cairo option
 */
-  static void cairo_cc(cairo_t * c, bool own=false){ cairo_state_.cc(c, own); } 
+//  static void cairo_cc(cairo_t * c, bool own=false){ cairo_state_.cc(c, own); } 
 
 private:
-  /* static cairo_t * cairo_make_current(void* gc); */
-  /* static cairo_t * cairo_make_current(void* gc, int W, int H); */
-  static Fl_Cairo_State cairo_state_;
 public:
   /** @} */ 
 

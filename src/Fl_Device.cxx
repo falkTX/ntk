@@ -47,6 +47,26 @@ const char *Fl_Cairo_Graphics_Driver::class_id = "Fl_Cairo_Graphics_Driver";
 #endif
 
 
+Fl_Font Fl_Graphics_Driver::font_; // current font
+Fl_Fontsize Fl_Graphics_Driver::size_; // current font size
+Fl_Color Fl_Graphics_Driver::color_; // current color
+int Fl_Graphics_Driver::sptr = 0;
+//const int Fl_Graphics_Driver::matrix_stack_size = FL_MATRIX_STACK_SIZE;
+Fl_Graphics_Driver::matrix Fl_Graphics_Driver::stack[FL_MATRIX_STACK_SIZE];
+Fl_Graphics_Driver::matrix Fl_Graphics_Driver::m = m0;
+Fl_Graphics_Driver::matrix *Fl_Graphics_Driver::fl_matrix = &m; /**< Points to the current coordinate transformation matrix */
+
+int Fl_Graphics_Driver::n = 0;
+int Fl_Graphics_Driver::p_size = 0;
+int Fl_Graphics_Driver::gap_ = 0;
+XPOINT *Fl_Graphics_Driver::p = 0;
+int Fl_Graphics_Driver::what = 0;
+int Fl_Graphics_Driver::fl_clip_state_number = 0;
+int Fl_Graphics_Driver::rstackptr = 0;
+//const int Fl_Graphics_Driver::region_stack_max = FL_REGION_STACK_SIZE - 1;
+Fl_Region Fl_Graphics_Driver::rstack[FL_REGION_STACK_SIZE];
+
+
 /** \brief Use this drawing surface for future graphics requests. */
 void Fl_Surface_Device::set_current(void)
 {
@@ -57,13 +77,13 @@ void Fl_Surface_Device::set_current(void)
 const Fl_Graphics_Driver::matrix Fl_Graphics_Driver::m0 = {1, 0, 0, 1, 0, 0};
 
 Fl_Graphics_Driver::Fl_Graphics_Driver() {
-  font_ = 0;
-  size_ = 0;
-  sptr=0; rstackptr=0; 
-  fl_clip_state_number=0;
-  m = m0; 
-  fl_matrix = &m; 
-  p = (XPOINT *)0;
+  /* font_ = 0; */
+  /* size_ = 0; */
+  /* sptr=0; rstackptr=0;  */
+  /* fl_clip_state_number=0; */
+  /* m = m0;  */
+  /* fl_matrix = &m;  */
+  /* p = (XPOINT *)0; */
   font_descriptor_ = NULL;
 };
 
@@ -75,7 +95,7 @@ void Fl_Graphics_Driver::text_extents(const char*t, int n, int& dx, int& dy, int
   dy = descent();
 }
 
-Fl_Display_Device::Fl_Display_Device(Fl_Graphics_Driver *graphics_driver) : Fl_Surface_Device( graphics_driver) {
+Fl_Display_Device::Fl_Display_Device(Fl_Graphics_Driver *graphics_driver) : Fl_Surface_Device( graphics_driver ) {
 #ifdef __APPLE__
   SInt32 versionMajor = 0;
   SInt32 versionMinor = 0;
