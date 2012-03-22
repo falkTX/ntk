@@ -374,6 +374,9 @@ void Fl_Double_Window::flush(int eraseoverlay) {
       Fl::cairo_set_drawable( this );
 #endif
       draw();
+#if FLTK_HAVE_CAIRO
+  cairo_surface_flush( myi->cs );
+#endif
 
       fl_window = myi->xid;
   
@@ -391,8 +394,11 @@ void Fl_Double_Window::flush(int eraseoverlay) {
     return;
   } else
 #endif
+
+  fl_clip_region(myi->region);
+
   if (damage() & ~FL_DAMAGE_EXPOSE) {
-    fl_clip_region(myi->region); myi->region = 0;
+       
 #ifdef WIN32
     HDC _sgc = fl_gc;
     fl_gc = fl_makeDC(myi->other_xid);
@@ -407,6 +413,7 @@ void Fl_Double_Window::flush(int eraseoverlay) {
       fl_begin_offscreen( myi->other_xid );
       fl_clip_region( 0 );   
       draw();
+
       fl_end_offscreen();
     } else {
       draw();
@@ -416,8 +423,20 @@ void Fl_Double_Window::flush(int eraseoverlay) {
 #if FLTK_HAVE_CAIRO
     Fl::cairo_set_drawable( this );
 #endif
+    fl_clip_region(myi->region);
+
     draw();
+
+#if FLTK_HAVE_CAIRO
+  cairo_surface_flush( myi->cs );
+#endif
+
     fl_window = myi->xid;
+
+    Fl::cairo_set_drawable( this );
+
+    fl_clip_region(myi->region);
+
 #endif
   }
   if (eraseoverlay) fl_clip_region(0);
@@ -430,6 +449,9 @@ void Fl_Double_Window::flush(int eraseoverlay) {
       int X,Y,W,H; fl_clip_box(0,0,w(),h(),X,Y,W,H);
       if (myi->other_xid) fl_copy_offscreen(X, Y, W, H, myi->other_xid, X, Y);
   }
+
+  myi->region = 0;
+
 }
 
 void Fl_Double_Window::resize(int X,int Y,int W,int H) {

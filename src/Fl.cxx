@@ -1701,7 +1701,9 @@ void Fl_Widget::damage(uchar fl, int X, int Y, int W, int H) {
 void Fl_Window::flush() {
   make_current();
 //if (damage() == FL_DAMAGE_EXPOSE && can_boxcheat(box())) fl_boxcheat = this;
+  /* FIXME: shouldn't this destroy the region? */
   fl_clip_region(i->region); i->region = 0;
+
   draw();
 }
 

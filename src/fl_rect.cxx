@@ -556,7 +556,7 @@ void Fl_Graphics_Driver::restore_clip() {
 
 void Fl_Graphics_Driver::clip_region(Fl_Region r) {
   Fl_Region oldr = rstack[rstackptr];
-  if (oldr) XDestroyRegion(oldr);
+  if (oldr && r != oldr ) XDestroyRegion(oldr);
   rstack[rstackptr] = r;
   fl_restore_clip();
 }
@@ -654,10 +654,10 @@ int Fl_Graphics_Driver::clip_box(int x, int y, int w, int h, int& X, int& Y, int
   if (!r) return 0;
 #if defined(USE_X11)
   switch (XRectInRegion(r, x, y, w, h)) {
-  case 0: // completely outside
+  case RectangleOut: // completely outside
     W = H = 0;
     return 2;
-  case 1: // completely inside:
+  case RectangleIn: // completely inside:
     return 0;
   default: // partial:
     break;
