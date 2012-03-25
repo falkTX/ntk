@@ -36,34 +36,6 @@
 // Fl_Window class will probably do double-buffer and this subclass
 // does nothing.
 
-#if USE_XDBE
-
-#include <X11/extensions/Xdbe.h>
-
-static int use_xdbe;
-
-static int can_xdbe() {
-  static int tried;
-  if (!tried) {
-    tried = 1;
-    int event_base, error_base;
-    if (!XdbeQueryExtension(fl_display, &event_base, &error_base)) return 0;
-    Drawable root = RootWindow(fl_display,fl_screen);
-    int numscreens = 1;
-    XdbeScreenVisualInfo *a = XdbeGetVisualInfo(fl_display,&root,&numscreens);
-    if (!a) return 0;
-    for (int j = 0; j < a->count; j++) {
-      if (a->visinfo[j].visual == fl_visual->visualid
-	  /*&& a->visinfo[j].perflevel > 0*/) {
-        use_xdbe = 1; break;
-      }
-    }
-    XdbeFreeVisualInfo(a);
-  }
-  return use_xdbe;
-}
-#endif
-
 void Fl_Double_Window::show() {
   Fl_Window::show();
 }
@@ -336,12 +308,6 @@ void Fl_Double_Window::flush(int eraseoverlay) {
     //make_current(); // make sure fl_gc is non-zero
   Fl_X *myi = Fl_X::i(this);
   if (!myi->other_xid) {
-#if USE_XDBE
-    if (can_xdbe()) {
-      myi->other_xid = XdbeAllocateBackBufferName(fl_display, fl_xid(this), XdbeUndefined);
-      myi->backbuffer_bad = 1;
-    } else
-#endif
 #if defined(USE_X11) || defined(WIN32)
     myi->other_xid = fl_create_offscreen(w(), h());
     clear_damage(FL_DAMAGE_ALL);
@@ -354,46 +320,6 @@ void Fl_Double_Window::flush(int eraseoverlay) {
 # error unsupported platform
 #endif
   }
-#if USE_XDBE
-  if (use_xdbe) {
-    if (myi->backbuffer_bad) {
-      // Make sure we do a complete redraw...
-      if (myi->region) {XDestroyRegion(myi->region); myi->region = 0;}
-      clear_damage(FL_DAMAGE_ALL);
-      myi->backbuffer_bad = 0;
-
-    }
-
-
-    XdbeBeginIdiom( fl_display );
-    // Redraw as needed...
-    if (damage()) {
-      fl_clip_region(myi->region); myi->region = 0;
-      fl_window = myi->other_xid;
-#if FLTK_HAVE_CAIRO
-      Fl::cairo_set_drawable( this );
-#endif
-      draw();
-#if FLTK_HAVE_CAIRO
-  cairo_surface_flush( myi->cs );
-#endif
-
-      fl_window = myi->xid;
-  
-    }
-
-    // Copy contents of back buffer to window...
-
-    XdbeSwapInfo s;
-    s.swap_window = myi->xid;
-    s.swap_action = XdbeUndefined;
-    XdbeSwapBuffers(fl_display, &s, 1);
-
-    XdbeEndIdiom( fl_display );
-
-    return;
-  } else
-#endif
 
   fl_clip_region(myi->region);
 
@@ -433,7 +359,9 @@ void Fl_Double_Window::flush(int eraseoverlay) {
 
     fl_window = myi->xid;
 
+#if FLTK_HAVE_CAIRO
     Fl::cairo_set_drawable( this );
+#endif
 
     fl_clip_region(myi->region);
 
@@ -442,9 +370,6 @@ void Fl_Double_Window::flush(int eraseoverlay) {
   if (eraseoverlay) fl_clip_region(0);
   // on Irix (at least) it is faster to reduce the area copied to
   // the current clip region:
-#if USE_XDBE
-  if ( !use_xdbe )
-#endif
   {
       int X,Y,W,H; fl_clip_box(0,0,w(),h(),X,Y,W,H);
       if (myi->other_xid) fl_copy_offscreen(X, Y, W, H, myi->other_xid, X, Y);
@@ -458,15 +383,6 @@ void Fl_Double_Window::resize(int X,int Y,int W,int H) {
   int ow = w();
   int oh = h();
   Fl_Window::resize(X,Y,W,H);
-#if USE_XDBE
-  if (use_xdbe) {
-    Fl_X* myi = Fl_X::i(this);
-    if (myi && myi->other_xid && ( ow != w() || oh != h() ) ) {
-        myi->backbuffer_bad = 1;
-    }
-    return;
-  }
-#endif
   Fl_X* myi = Fl_X::i(this);
   if (myi && myi->other_xid && (ow != w() || oh != h())) {
     fl_delete_offscreen(myi->other_xid);
@@ -477,9 +393,6 @@ void Fl_Double_Window::resize(int X,int Y,int W,int H) {
 void Fl_Double_Window::hide() {
   Fl_X* myi = Fl_X::i(this);
   if (myi && myi->other_xid) {
-#if USE_XDBE
-    if (!use_xdbe)
-#endif
       fl_delete_offscreen(myi->other_xid);
   }
   Fl_Window::hide();

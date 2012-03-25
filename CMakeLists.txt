@@ -127,7 +127,6 @@ find_file(HAVE_SYS_DIR_H sys/dir.h)
 find_file(HAVE_SYS_NDIR_H sys/ndir.h)
 find_file(HAVE_SYS_SELECT_H sys/select.h)
 find_file(HAVE_SYS_STDTYPES_H sys/stdtypes.h)
-find_path(HAVE_XDBE_H Xdbe.h PATH_SUFFIXES X11/extensions extensions)
 
 mark_as_advanced(HAVE_ALSA_ASOUNDLIB_H HAVE_DIRENT_H HAVE_DLFCN_H)
 mark_as_advanced(HAVE_FREETYPE_H HAVE_GL_GL_H HAVE_GL_GLU_H)
@@ -135,7 +134,7 @@ mark_as_advanced(HAVE_LIBPNG_PNG_H HAVE_LOCALE_H HAVE_NDIR_H)
 mark_as_advanced(HAVE_OPENGL_GLU_H HAVE_PNG_H HAVE_PTHREAD_H)
 mark_as_advanced(HAVE_STDIO_H HAVE_STRINGS_H HAVE_SYS_DIR_H)
 mark_as_advanced(HAVE_SYS_NDIR_H HAVE_SYS_SELECT_H)
-mark_as_advanced(HAVE_SYS_STDTYPES_H HAVE_XDBE_H)
+mark_as_advanced(HAVE_SYS_STDTYPES_H)
 
 # where to find freetype headers
 find_path(FREETYPE_PATH freetype/config/ftheader.h PATH_SUFFIXES freetype2)
@@ -534,18 +533,6 @@ if(OPTION_USE_XFT)
 else()
    set(FLTK_XFT_FOUND FALSE)
 endif(OPTION_USE_XFT)
-
-#######################################################################
-if(X11_FOUND)
-   option(OPTION_USE_XDBE "use lib Xdbe" ON)
-endif(X11_FOUND)
-
-if(OPTION_USE_XDBE AND HAVE_XDBE_H)
-   set(HAVE_XDBE 1)
-   set(FLTK_XDBE_FOUND TRUE)
-else()
-   set(FLTK_XDBE_FOUND FALSE)
-endif(OPTION_USE_XDBE AND HAVE_XDBE_H)
 
 #######################################################################
 # final setup and config

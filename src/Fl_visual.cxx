@@ -84,10 +84,6 @@ int Fl::visual(int flags) {
 
 #else
 
-#if USE_XDBE
-#include <X11/extensions/Xdbe.h>
-#endif
-
 static int test_visual(XVisualInfo& v, int flags) {
   if (v.screen != fl_screen) return 0;
 #if USE_COLORMAP
@@ -104,30 +100,10 @@ static int test_visual(XVisualInfo& v, int flags) {
   // simpler if we can't use colormapped visuals at all:
   if (v.c_class != StaticColor && v.c_class != TrueColor) return 0;
 #endif
-#if USE_XDBE
-  if (flags & FL_DOUBLE) {
-    static XdbeScreenVisualInfo *xdbejunk;
-    if (!xdbejunk) {
-      int event_base, error_base;
-      if (!XdbeQueryExtension(fl_display, &event_base, &error_base)) return 0;
-      Drawable root = RootWindow(fl_display,fl_screen);
-      int numscreens = 1;
-      xdbejunk = XdbeGetVisualInfo(fl_display,&root,&numscreens);
-      if (!xdbejunk) return 0;
-    }
-    for (int j = 0; ; j++) {
-      if (j >= xdbejunk->count) return 0;
-      if (xdbejunk->visinfo[j].visual == v.visualid) break;
-    }
-  }
-#endif
   return 1;
 }
 
 int Fl::visual(int flags) {
-#if USE_XDBE == 0
-  if (flags & FL_DOUBLE) return 0;
-#endif
   fl_open_display();
   // always use default if possible:
   if (test_visual(*fl_visual, flags)) return 1;

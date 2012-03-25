@@ -85,11 +85,6 @@ if test -d $includedir/FL/images; then
 	CXXFLAGS="-I$includedir/FL/images $CXXFLAGS"
 fi
 
-if test -f "$libdir/libfltk_cairo.a"; then
-	CFLAGS="$CAIROFLAGS $CFLAGS"
-	CXXFLAGS="$CAIROFLAGS $CXXFLAGS"
-fi
-
 # libraries to link with:
 LIBNAME="@LIBNAME@"
 DSONAME="@DSONAME@"
@@ -256,8 +251,8 @@ if test x$use_images = xyes; then
 fi
 
 if test x$use_cairo = xyes; then
-    LDLIBS="-lfltk_cairo$SHAREDSUFFIX $CAIROLIBS $LDLIBS"
-    LDSTATIC="$libdir/libfltk_cairo.a $CAIROLIBS $LDSTATIC"
+    LDLIBS="$CAIROLIBS $LDLIBS"
+    LDSTATIC="$CAIROLIBS $LDSTATIC"
 fi
 
 LDLIBS="$DSOLINK $LDFLAGS $libs $LDLIBS"
@@ -377,7 +372,7 @@ if test "$echo_libs" = "yes"; then
     fi
 
     if test x$use_cairo = xyes; then
-        USELIBS="$libdir/libfltk_cairo.a $USELIBS"
+        USELIBS="$USELIBS"
     fi
 
     if test x$use_images = xyes; then
