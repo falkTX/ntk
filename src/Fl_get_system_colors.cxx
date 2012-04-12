@@ -266,158 +266,46 @@ Fl_Image	*Fl::scheme_bg_ = (Fl_Image *)0;    // current background image for the
 
 static Fl_Pixmap	tile(tile_xpm);
 
-/**
-    Gets or sets the current widget scheme. NULL will use
-    the scheme defined in the FLTK_SCHEME environment
-    variable or the scheme resource under X11. Otherwise,
-    any of the following schemes can be used:</P>
-    
-    <ul>
-    
-    	<li>"none" - This is the default look-n-feel which resembles old
-    	Windows (95/98/Me/NT/2000) and old GTK/KDE</li>
-    
-    	<li>"plastic" - This scheme is inspired by the Aqua user interface
-    	on Mac OS X</li>
-    
-    	<li>"gtk+" - This scheme is inspired by the Red Hat Bluecurve
-    	theme</li>
-    
-    </ul>
-*/
 int Fl::scheme(const char *s) {
-  if (!s) {
-    if ((s = getenv("FLTK_SCHEME")) == NULL) {
-#if !defined(WIN32) && !defined(__APPLE__)
-      const char* key = 0;
-      if (Fl::first_window()) key = Fl::first_window()->xclass();
-      if (!key) key = "fltk";
-      fl_open_display();
-      s = XGetDefault(fl_display, key, "scheme");
-#endif // !WIN32 && !__APPLE__
-    }
-  }
 
-  if (s) {
-    if (!strcasecmp(s, "none") || !strcasecmp(s, "base") || !*s) s = 0;
-    else s = strdup(s);
-  }
-  if (scheme_) free((void*)scheme_);
-  scheme_ = s;
-
-  // Save the new scheme in the FLTK_SCHEME env var so that child processes
-  // inherit it...
-  static char e[1024];
-  strcpy(e,"FLTK_SCHEME=");
-  if (s) strlcat(e,s,sizeof(e));
-  putenv(e);
-
+    printf( "Setting Fl::scheme() is obsolete" );
   // Load the scheme...
   return reload_scheme();
 }
 
 int Fl::reload_scheme() {
-  Fl_Window *win;
+    Fl_Window *win;
 
-  if (scheme_ && !strcasecmp(scheme_, "plastic")) {
-    // Update the tile image to match the background color...
-    uchar r, g, b;
-    int nr, ng, nb;
-    int i;
-//    static uchar levels[3] = { 0xff, 0xef, 0xe8 };
-    // OSX 10.3 and higher use a background with less contrast...
-    static uchar levels[3] = { 0xff, 0xf8, 0xf4 };
-
-    get_color(FL_GRAY, r, g, b);
-
-//    printf("FL_GRAY = 0x%02x 0x%02x 0x%02x\n", r, g, b);
-
-    for (i = 0; i < 3; i ++) {
-      nr = levels[i] * r / 0xe8;
-      if (nr > 255) nr = 255;
-
-      ng = levels[i] * g / 0xe8;
-      if (ng > 255) ng = 255;
-
-      nb = levels[i] * b / 0xe8;
-      if (nb > 255) nb = 255;
-
-      sprintf(tile_cmap[i], "%c c #%02x%02x%02x", "Oo."[i], nr, ng, nb);
-//      puts(tile_cmap[i]);
-    }
-
-    tile.uncache();
-
-    if (!scheme_bg_) scheme_bg_ = new Fl_Tiled_Image(&tile, w(), h());
-
-    // Load plastic buttons, etc...
-    set_boxtype(FL_UP_FRAME,        FL_PLASTIC_UP_FRAME);
-    set_boxtype(FL_DOWN_FRAME,      FL_PLASTIC_DOWN_FRAME);
-    set_boxtype(FL_THIN_UP_FRAME,   FL_PLASTIC_UP_FRAME);
-    set_boxtype(FL_THIN_DOWN_FRAME, FL_PLASTIC_DOWN_FRAME);
-
-    set_boxtype(FL_UP_BOX,          FL_PLASTIC_UP_BOX);
-    set_boxtype(FL_DOWN_BOX,        FL_PLASTIC_DOWN_BOX);
-    set_boxtype(FL_THIN_UP_BOX,     FL_PLASTIC_THIN_UP_BOX);
-    set_boxtype(FL_THIN_DOWN_BOX,   FL_PLASTIC_THIN_DOWN_BOX);
-    set_boxtype(_FL_ROUND_UP_BOX,   FL_PLASTIC_ROUND_UP_BOX);
-    set_boxtype(_FL_ROUND_DOWN_BOX, FL_PLASTIC_ROUND_DOWN_BOX);
-
-    // Use standard size scrollbars...
-    Fl::scrollbar_size(16);
-  } else if (scheme_ && !strcasecmp(scheme_, "gtk+")) {
-    // Use a GTK+ inspired look-n-feel...
-    if (scheme_bg_) {
-      delete scheme_bg_;
-      scheme_bg_ = (Fl_Image *)0;
-    }
-
-    set_boxtype(FL_UP_FRAME,        FL_GTK_UP_FRAME);
-    set_boxtype(FL_DOWN_FRAME,      FL_GTK_DOWN_FRAME);
-    set_boxtype(FL_THIN_UP_FRAME,   FL_GTK_THIN_UP_FRAME);
-    set_boxtype(FL_THIN_DOWN_FRAME, FL_GTK_THIN_DOWN_FRAME);
-
-    set_boxtype(FL_UP_BOX,          FL_GTK_UP_BOX);
-    set_boxtype(FL_DOWN_BOX,        FL_GTK_DOWN_BOX);
-    set_boxtype(FL_THIN_UP_BOX,     FL_GTK_THIN_UP_BOX);
-    set_boxtype(FL_THIN_DOWN_BOX,   FL_GTK_THIN_DOWN_BOX);
-    set_boxtype(_FL_ROUND_UP_BOX,   FL_GTK_ROUND_UP_BOX);
-    set_boxtype(_FL_ROUND_DOWN_BOX, FL_GTK_ROUND_DOWN_BOX);
-
-    // Use slightly thinner scrollbars...
-    Fl::scrollbar_size(15);
-  } else {
     // Use the standard FLTK look-n-feel...
     if (scheme_bg_) {
-      delete scheme_bg_;
-      scheme_bg_ = (Fl_Image *)0;
+        delete scheme_bg_;
+        scheme_bg_ = (Fl_Image *)0;
     }
-
+  
     set_boxtype(FL_UP_FRAME,        fl_up_frame, D1, D1, D2, D2);
     set_boxtype(FL_DOWN_FRAME,      fl_down_frame, D1, D1, D2, D2);
     set_boxtype(FL_THIN_UP_FRAME,   fl_thin_up_frame, 1, 1, 2, 2);
     set_boxtype(FL_THIN_DOWN_FRAME, fl_thin_down_frame, 1, 1, 2, 2);
-
+  
     set_boxtype(FL_UP_BOX,          fl_up_box, D1, D1, D2, D2);
     set_boxtype(FL_DOWN_BOX,        fl_down_box, D1, D1, D2, D2);
     set_boxtype(FL_THIN_UP_BOX,     fl_thin_up_box, 1, 1, 2, 2);
     set_boxtype(FL_THIN_DOWN_BOX,   fl_thin_down_box, 1, 1, 2, 2);
     set_boxtype(_FL_ROUND_UP_BOX,   fl_round_up_box, 3, 3, 6, 6);
     set_boxtype(_FL_ROUND_DOWN_BOX, fl_round_down_box, 3, 3, 6, 6);
-
+  
     // Use standard size scrollbars...
     Fl::scrollbar_size(16);
-  }
 
-  // Set (or clear) the background tile for all windows...
-  for (win = first_window(); win; win = next_window(win)) {
-    win->labeltype(scheme_bg_ ? FL_NORMAL_LABEL : FL_NO_LABEL);
-    win->align(FL_ALIGN_CENTER | FL_ALIGN_INSIDE | FL_ALIGN_CLIP);
-    win->image(scheme_bg_);
-    win->redraw();
-  }
+// Set (or clear) the background tile for all windows...
+    for (win = first_window(); win; win = next_window(win)) {
+        win->labeltype(scheme_bg_ ? FL_NORMAL_LABEL : FL_NO_LABEL);
+        win->align(FL_ALIGN_CENTER | FL_ALIGN_INSIDE | FL_ALIGN_CLIP);
+        win->image(scheme_bg_);
+        win->redraw();
+    }
 
-  return 1;
+    return 1;
 }
 
 

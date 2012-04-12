@@ -145,13 +145,11 @@ CPPFILES = \
 	fl_engraved_label.cxx \
 	fl_file_dir.cxx \
 	fl_font.cxx \
-	fl_gtk.cxx \
 	fl_labeltype.cxx \
 	fl_line_style.cxx \
 	fl_open_uri.cxx \
 	fl_oval_box.cxx \
 	fl_overlay.cxx \
-	fl_plastic.cxx \
 	fl_read_image.cxx \
 	fl_rect.cxx \
 	fl_round_box.cxx \

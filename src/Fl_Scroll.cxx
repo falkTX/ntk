@@ -74,8 +74,6 @@ void Fl_Scroll::draw_clip(void* v,int X, int Y, int W, int H) {
     case _FL_SHADOW_FRAME :
     case _FL_ROUNDED_FRAME :
     case _FL_OVAL_FRAME :
-    case _FL_PLASTIC_UP_FRAME :
-    case _FL_PLASTIC_DOWN_FRAME :
         if (s->parent() == (Fl_Group *)s->window() && Fl::scheme_bg_) {
 	  Fl::scheme_bg_->draw(X-(X%((Fl_Tiled_Image *)Fl::scheme_bg_)->image()->w()),
 	                       Y-(Y%((Fl_Tiled_Image *)Fl::scheme_bg_)->image()->h()),

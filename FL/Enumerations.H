@@ -493,24 +493,6 @@ enum Fl_Boxtype { // boxtypes (if you change these you must fix fl_boxtype.C):
   _FL_OSHADOW_BOX,		///< see figure 1
   _FL_OVAL_FRAME,		///< see figure 1
   _FL_OFLAT_BOX,		///< see figure 1
-  _FL_PLASTIC_UP_BOX,		///< plastic version of FL_UP_BOX
-  _FL_PLASTIC_DOWN_BOX,		///< plastic version of FL_DOWN_BOX
-  _FL_PLASTIC_UP_FRAME,		///< plastic version of FL_UP_FRAME
-  _FL_PLASTIC_DOWN_FRAME,	///< plastic version of FL_DOWN_FRAME
-  _FL_PLASTIC_THIN_UP_BOX,	///< plastic version of FL_THIN_UP_BOX
-  _FL_PLASTIC_THIN_DOWN_BOX,	///< plastic version of FL_THIN_DOWN_BOX
-  _FL_PLASTIC_ROUND_UP_BOX,	///< plastic version of FL_ROUND_UP_BOX
-  _FL_PLASTIC_ROUND_DOWN_BOX,	///< plastic version of FL_ROUND_DOWN_BOX
-  _FL_GTK_UP_BOX,		///< gtk+ version of FL_UP_BOX
-  _FL_GTK_DOWN_BOX,		///< gtk+ version of FL_DOWN_BOX
-  _FL_GTK_UP_FRAME,		///< gtk+ version of FL_UP_FRAME
-  _FL_GTK_DOWN_FRAME,		///< gtk+ version of FL_DOWN_RAME
-  _FL_GTK_THIN_UP_BOX,		///< gtk+ version of FL_THIN_UP_BOX
-  _FL_GTK_THIN_DOWN_BOX,	///< gtk+ version of FL_THIN_DOWN_BOX
-  _FL_GTK_THIN_UP_FRAME,	///< gtk+ version of FL_UP_FRAME
-  _FL_GTK_THIN_DOWN_FRAME,	///< gtk+ version of FL_THIN_DOWN_FRAME
-  _FL_GTK_ROUND_UP_BOX,		///< gtk+ version of FL_ROUND_UP_BOX
-  _FL_GTK_ROUND_DOWN_BOX,	///< gtk+ version of FL_ROUND_DOWN_BOX
   FL_FREE_BOXTYPE		///< the first free box type for creation of new box types
 };
 extern FL_EXPORT Fl_Boxtype fl_define_FL_ROUND_UP_BOX();
@@ -535,27 +517,25 @@ extern FL_EXPORT Fl_Boxtype fl_define_FL_OVAL_BOX();
 #define FL_OVAL_FRAME (Fl_Boxtype)(fl_define_FL_OVAL_BOX()+2)
 #define FL_OFLAT_BOX (Fl_Boxtype)(fl_define_FL_OVAL_BOX()+3)
 
-extern FL_EXPORT Fl_Boxtype fl_define_FL_PLASTIC_UP_BOX();
-#define FL_PLASTIC_UP_BOX fl_define_FL_PLASTIC_UP_BOX()
-#define FL_PLASTIC_DOWN_BOX (Fl_Boxtype)(fl_define_FL_PLASTIC_UP_BOX()+1)
-#define FL_PLASTIC_UP_FRAME (Fl_Boxtype)(fl_define_FL_PLASTIC_UP_BOX()+2)
-#define FL_PLASTIC_DOWN_FRAME (Fl_Boxtype)(fl_define_FL_PLASTIC_UP_BOX()+3)
-#define FL_PLASTIC_THIN_UP_BOX (Fl_Boxtype)(fl_define_FL_PLASTIC_UP_BOX()+4)
-#define FL_PLASTIC_THIN_DOWN_BOX (Fl_Boxtype)(fl_define_FL_PLASTIC_UP_BOX()+5)
-#define FL_PLASTIC_ROUND_UP_BOX (Fl_Boxtype)(fl_define_FL_PLASTIC_UP_BOX()+6)
-#define FL_PLASTIC_ROUND_DOWN_BOX (Fl_Boxtype)(fl_define_FL_PLASTIC_UP_BOX()+7)
+#define FL_PLASTIC_UP_BOX FL_UP_BOX
+#define FL_PLASTIC_DOWN_BOX FL_DOWN_BOX
+#define FL_PLASTIC_UP_FRAME FL_UP_FRAME
+#define FL_PLASTIC_DOWN_FRAME FL_DOWN_FRAME
+#define FL_PLASTIC_THIN_UP_BOX FL_THIN_UP_BOX
+#define FL_PLASTIC_THIN_DOWN_BOX FL_THIN_DOWN_BOX
+#define FL_PLASTIC_ROUND_UP_BOX FL_ROUND_UP_BOX
+#define FL_PLASTIC_ROUND_DOWN_BOX FL_ROUND_DOWN_BOX
 
-extern FL_EXPORT Fl_Boxtype fl_define_FL_GTK_UP_BOX();
-#define FL_GTK_UP_BOX fl_define_FL_GTK_UP_BOX()
-#define FL_GTK_DOWN_BOX (Fl_Boxtype)(fl_define_FL_GTK_UP_BOX()+1)
-#define FL_GTK_UP_FRAME (Fl_Boxtype)(fl_define_FL_GTK_UP_BOX()+2)
-#define FL_GTK_DOWN_FRAME (Fl_Boxtype)(fl_define_FL_GTK_UP_BOX()+3)
-#define FL_GTK_THIN_UP_BOX (Fl_Boxtype)(fl_define_FL_GTK_UP_BOX()+4)
-#define FL_GTK_THIN_DOWN_BOX (Fl_Boxtype)(fl_define_FL_GTK_UP_BOX()+5)
-#define FL_GTK_THIN_UP_FRAME (Fl_Boxtype)(fl_define_FL_GTK_UP_BOX()+6)
-#define FL_GTK_THIN_DOWN_FRAME (Fl_Boxtype)(fl_define_FL_GTK_UP_BOX()+7)
-#define FL_GTK_ROUND_UP_BOX (Fl_Boxtype)(fl_define_FL_GTK_UP_BOX()+8)
-#define FL_GTK_ROUND_DOWN_BOX (Fl_Boxtype)(fl_define_FL_GTK_UP_BOX()+9)
+#define FL_GTK_UP_BOX FL_UP_BOX
+#define FL_GTK_DOWN_BOX FL_DOWN_BOX
+#define FL_GTK_UP_FRAME FL_UP_FRAME
+#define FL_GTK_DOWN_FRAME FL_DOWN_FRAME
+#define FL_GTK_THIN_UP_BOX FL_THIN_UP_BOX
+#define FL_GTK_THIN_UP_FRAME FL_THIN_UP_FRAME
+#define FL_GTK_THIN_DOWN_FRAME FL_THIN_DOWN_FRAME
+#define FL_GTK_THIN_DOWN_BOX FL_THIN_DOWN_BOX
+#define FL_GTK_ROUND_UP_BOX FL_ROUND_UP_BOX
+#define FL_GTK_ROUND_DOWN_BOX FL_ROUND_DOWN_BOX
 
 // conversions of box types to other boxtypes:
 /**

@@ -54,8 +54,6 @@ void Fl_Light_Button::draw() {
     switch (down_box()) {
       case FL_DOWN_BOX :
       case FL_UP_BOX :
-      case _FL_PLASTIC_DOWN_BOX :
-      case _FL_PLASTIC_UP_BOX :
         // Check box...
         draw_box(down_box(), x()+dx, y()+dy, W, W, FL_BACKGROUND2_COLOR);
 	if (value()) {
@@ -135,13 +133,13 @@ void Fl_Light_Button::draw() {
     int ww = W/2+1;
     int xx = dx;
     if (w()<ww+2*xx) xx = (w()-ww)/2;
-    if (Fl::scheme() && !strcmp(Fl::scheme(), "plastic")) {
-      col = active_r() ? selection_color() : fl_inactive(selection_color());
-      fl_color(value() ? col : fl_color_average(col, FL_BLACK, 0.5f));
-      fl_pie(x()+xx, y()+dy+1, ww, hh, 0, 360);
-    } else {
+    /* if (Fl::scheme() && !strcmp(Fl::scheme(), "plastic")) { */
+    /*   col = active_r() ? selection_color() : fl_inactive(selection_color()); */
+    /*   fl_color(value() ? col : fl_color_average(col, FL_BLACK, 0.5f)); */
+    /*   fl_pie(x()+xx, y()+dy+1, ww, hh, 0, 360); */
+    /* } else { */
       draw_box(FL_THIN_DOWN_BOX, x()+xx, y()+dy+1, ww, hh, col);
-    }
+    /* } */
     dx = (ww + 2 * dx - W) / 2;
   }
   draw_label(x()+W+2*dx, y(), w()-W-2*dx, h());

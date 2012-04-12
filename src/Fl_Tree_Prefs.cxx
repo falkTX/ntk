@@ -153,14 +153,6 @@ Fl_Tree_Prefs::Fl_Tree_Prefs() {
   _sortorder              = FL_TREE_SORT_NONE;
   _selectbox              = FL_FLAT_BOX;
   _selectmode             = FL_TREE_SELECT_SINGLE;
-  // Let fltk's current 'scheme' affect defaults
-  if ( Fl::scheme() ) {
-    if ( strcmp(Fl::scheme(), "gtk+") == 0 ) {
-      _selectbox = _FL_GTK_THIN_UP_BOX;
-    } else if ( strcmp(Fl::scheme(), "plastic") == 0 ) {
-      _selectbox = _FL_PLASTIC_THIN_UP_BOX;
-    }
-  }
 }
 
 //
