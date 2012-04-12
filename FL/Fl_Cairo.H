@@ -39,11 +39,11 @@
 # include <FL/Fl_Export.H>
 
 # if defined(USE_X11) // X11
-#  include <cairo-xlib.h>
+#  include <cairo/cairo-xlib.h>
 # elif defined(WIN32)
-#  include <cairo-win32.h>
+#  include <cairo/cairo-win32.h>
 # elif defined(__APPLE_QUARTZ__)
-#  include <cairo-quartz.h>
+#  include <cairo/cairo-quartz.h>
 # else
 #  error Cairo is not supported on that platform.
 # endif
