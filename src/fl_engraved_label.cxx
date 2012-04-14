@@ -51,7 +51,7 @@ static void innards(
 static void fl_shadow_label(
     const Fl_Label* o, int X, int Y, int W, int H, Fl_Align align)
 {
-  static int data[2][3] = {{2,2,FL_DARK3},{0,0,0}};
+  static int data[2][3] = {{1,1,FL_DARK3},{0,0,0}};
   innards(o, X, Y, W, H, align, data, 2);
 }
 
