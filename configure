@@ -1381,7 +1381,7 @@ Optional Features:
   --enable-FEATURE[=ARG]  include FEATURE [ARG=yes]
   --enable-cygwin         use the Cygwin libraries (default=no)
   --enable-x11            use Cygwin with X11 (default=no)
-  --enable-cairoext       use fltk code instrumentation for cairo extended use (default=no)
+  --enable-cairoext       use ntk code instrumentation for cairo extended use (default=no)
   --enable-cairo          use lib Cairo  (default=no)
   --enable-debug          turn on debugging default=no
   --enable-cp936          turn on CP936 default=no
@@ -2496,22 +2496,22 @@ fi
 	;;
 esac
 
-LINKFLTK="../lib/libfltk.a"
-LINKFLTKFORMS="../lib/libfltk_forms.a"
-LINKFLTKGL="../lib/libfltk_gl.a"
-LINKFLTKIMG="../lib/libfltk_images.a"
+LINKFLTK="../lib/libntk.a"
+LINKFLTKFORMS="../lib/libntk_forms.a"
+LINKFLTKGL="../lib/libntk_gl.a"
+LINKFLTKIMG="../lib/libntk_images.a"
 GLDEMOS="gldemos"
 
 LIBEXT=".a"
-LIBNAME="../lib/libfltk.a"
-FLLIBNAME="../lib/libfltk_forms.a"
-GLLIBNAME="../lib/libfltk_gl.a"
-IMGLIBNAME="../lib/libfltk_images.a"
+LIBNAME="../lib/libntk.a"
+FLLIBNAME="../lib/libntk_forms.a"
+GLLIBNAME="../lib/libntk_gl.a"
+IMGLIBNAME="../lib/libntk_images.a"
 
-LIBBASENAME="libfltk.a"
-FLLIBBASENAME="libfltk_forms.a"
-GLLIBBASENAME="libfltk_gl.a"
-IMGLIBBASENAME="libfltk_images.a"
+LIBBASENAME="libntk.a"
+FLLIBBASENAME="libntk_forms.a"
+GLLIBBASENAME="libntk_gl.a"
+IMGLIBBASENAME="libntk_images.a"
 
 CAIRODIR=""
 CAIROFLAGS=""
@@ -2616,91 +2616,91 @@ if test x$enable_shared = xyes; then
 
     case $uname in
 	Darwin*)
-            DSONAME="libfltk.$FL_API_VERSION.dylib"
-            FLDSONAME="libfltk_forms.$FL_API_VERSION.dylib"
-            GLDSONAME="libfltk_gl.$FL_API_VERSION.dylib"
-            IMGDSONAME="libfltk_images.$FL_API_VERSION.dylib"
+            DSONAME="libntk.$FL_API_VERSION.dylib"
+            FLDSONAME="libntk_forms.$FL_API_VERSION.dylib"
+            GLDSONAME="libntk_gl.$FL_API_VERSION.dylib"
+            IMGDSONAME="libntk_images.$FL_API_VERSION.dylib"
 	    DSOCOMMAND="\$(CXX) \$(ARCHFLAGS) \$(DSOFLAGS) -dynamiclib -lc -o"
 	    ;;
 
 	SunOS* | UNIX_S*)
-            DSONAME="libfltk.so.$FL_API_VERSION"
-            FLDSONAME="libfltk_forms.so.$FL_API_VERSION"
-            GLDSONAME="libfltk_gl.so.$FL_API_VERSION"
-            IMGDSONAME="libfltk_images.so.$FL_API_VERSION"
+            DSONAME="libntk.so.$FL_API_VERSION"
+            FLDSONAME="libntk_forms.so.$FL_API_VERSION"
+            GLDSONAME="libntk_gl.so.$FL_API_VERSION"
+            IMGDSONAME="libntk_images.so.$FL_API_VERSION"
 	    DSOCOMMAND="\$(CXX) \$(DSOFLAGS) -h \$@ \$(LDLIBS) -G $DEBUGFLAG -o"
 	    if test "x$libdir" != "x/usr/lib"; then
 		    DSOLINK="-R$libdir"
             fi
 	    ;;
 	HP-UX*)
-            DSONAME="libfltk.sl.$FL_API_VERSION"
-            FLDSONAME="libfltk_forms.sl.$FL_API_VERSION"
-            GLDSONAME="libfltk_gl.sl.$FL_API_VERSION"
-            IMGDSONAME="libfltk_images.sl.$FL_API_VERSION"
+            DSONAME="libntk.sl.$FL_API_VERSION"
+            FLDSONAME="libntk_forms.sl.$FL_API_VERSION"
+            GLDSONAME="libntk_gl.sl.$FL_API_VERSION"
+            IMGDSONAME="libntk_images.sl.$FL_API_VERSION"
 	    DSOCOMMAND="ld \$(DSOFLAGS) -b -z +h \$@ $DEBUGFLAG -o"
 	    if test "x$libdir" != "x/usr/lib"; then
 		    DSOLINK="-Wl,-rpath,$libdir"
             fi
 	    ;;
 	IRIX*)
-            DSONAME="libfltk.so.$FL_API_VERSION"
-            FLDSONAME="libfltk_forms.so.$FL_API_VERSION"
-            GLDSONAME="libfltk_gl.so.$FL_API_VERSION"
-            IMGDSONAME="libfltk_images.so.$FL_API_VERSION"
+            DSONAME="libntk.so.$FL_API_VERSION"
+            FLDSONAME="libntk_forms.so.$FL_API_VERSION"
+            GLDSONAME="libntk_gl.so.$FL_API_VERSION"
+            IMGDSONAME="libntk_images.so.$FL_API_VERSION"
             DSOCOMMAND="\$(CXX) \$(DSOFLAGS) -Wl,-soname,\$@,-set_version,sgi1.1 \$(LDLIBS) -shared $DEBUGFLAG -o"
 	    if test "x$libdir" != "x/usr/lib" -a "x$libdir" != "x/usr/lib32" -a "x$libdir" != "x/usr/lib64"; then
 		    DSOLINK="-Wl,-rpath,$libdir"
             fi
 	    ;;
 	OSF1*)
-            DSONAME="libfltk.so.$FL_API_VERSION"
-            FLDSONAME="libfltk_forms.so.$FL_API_VERSION"
-            GLDSONAME="libfltk_gl.so.$FL_API_VERSION"
-            IMGDSONAME="libfltk_images.so.$FL_API_VERSION"
+            DSONAME="libntk.so.$FL_API_VERSION"
+            FLDSONAME="libntk_forms.so.$FL_API_VERSION"
+            GLDSONAME="libntk_gl.so.$FL_API_VERSION"
+            IMGDSONAME="libntk_images.so.$FL_API_VERSION"
             DSOCOMMAND="\$(CXX) \$(DSOFLAGS) -Wl,-soname,\$@ \$(LDLIBS) -shared $DEBUGFLAG -o"
 	    if test "x$libdir" != "x/usr/lib" -a "x$libdir" != "x/usr/lib32"; then
 		    DSOLINK="-Wl,-rpath,$libdir"
             fi
 	    ;;
 	Linux* | *BSD*)
-            DSONAME="libfltk.so.$FL_API_VERSION"
-            FLDSONAME="libfltk_forms.so.$FL_API_VERSION"
-            GLDSONAME="libfltk_gl.so.$FL_API_VERSION"
-            IMGDSONAME="libfltk_images.so.$FL_API_VERSION"
+            DSONAME="libntk.so.$FL_API_VERSION"
+            FLDSONAME="libntk_forms.so.$FL_API_VERSION"
+            GLDSONAME="libntk_gl.so.$FL_API_VERSION"
+            IMGDSONAME="libntk_images.so.$FL_API_VERSION"
             DSOCOMMAND="\$(CXX) \$(DSOFLAGS) -Wl,-soname,\$@ \$(LDLIBS) -shared -fPIC $DEBUGFLAG -o"
 	    if test "x$libdir" != "x/usr/lib" -a "x$libdir" != "x/usr/lib64"; then
 		    DSOLINK="-Wl,-rpath,$libdir"
             fi
 	    ;;
 	AIX*)
-            DSONAME="libfltk_s.a"
-            FLDSONAME="libfltk_forms_s.a"
-            GLDSONAME="libfltk_gl_s.a"
-            IMGDSONAME="libfltk_images_s.a"
+            DSONAME="libntk_s.a"
+            FLDSONAME="libntk_forms_s.a"
+            GLDSONAME="libntk_gl_s.a"
+            IMGDSONAME="libntk_images_s.a"
             DSOCOMMAND="\$(CXX) \$(DSOFLAGS) -Wl,-bexpall,-bM:SRE,-bnoentry -o"
             SHAREDSUFFIX="_s"
             ;;
         CYGWIN* | MINGW*)
 	    PICFLAG=0
 	    if test x$enable_cygwin != xyes; then
-		DSONAME="mgwfltknox-$FL_API_VERSION.dll"
-		FLDSONAME="mgwfltknox_forms-$FL_API_VERSION.dll"
-		GLDSONAME="mgwfltknox_gl-$FL_API_VERSION.dll"
-		IMGDSONAME="mgwfltknox_images-$FL_API_VERSION.dll"
-		CAIRODSONAME="mgwfltknox_cairo-$FL_API_VERSION.dll"
+		DSONAME="mgwntknox-$FL_API_VERSION.dll"
+		FLDSONAME="mgwntknox_forms-$FL_API_VERSION.dll"
+		GLDSONAME="mgwntknox_gl-$FL_API_VERSION.dll"
+		IMGDSONAME="mgwntknox_images-$FL_API_VERSION.dll"
+		CAIRODSONAME="mgwntknox_cairo-$FL_API_VERSION.dll"
 	    else
 		if test x$enable_x11 = xyes; then
-		    DSONAME="cygfltk-$FL_API_VERSION.dll"
-		    FLDSONAME="cygfltk_forms-$FL_API_VERSION.dll"
-		    GLDSONAME="cygfltk_gl-$FL_API_VERSION.dll"
-		    IMGDSONAME="cygfltk_images-$FL_API_VERSION.dll"
+		    DSONAME="cygntk-$FL_API_VERSION.dll"
+		    FLDSONAME="cygntk_forms-$FL_API_VERSION.dll"
+		    GLDSONAME="cygntk_gl-$FL_API_VERSION.dll"
+		    IMGDSONAME="cygntk_images-$FL_API_VERSION.dll"
 		else
-		    DSONAME="cygfltknox-$FL_API_VERSION.dll"
-		    FLDSONAME="cygfltknox_forms-$FL_API_VERSION.dll"
-		    GLDSONAME="cygfltknox_gl-$FL_API_VERSION.dll"
-		    IMGDSONAME="cygfltknox_images-$FL_API_VERSION.dll"
-		    CAIRODSONAME="cygfltknox_cairo-$FL_API_VERSION.dll"
+		    DSONAME="cygntknox-$FL_API_VERSION.dll"
+		    FLDSONAME="cygntknox_forms-$FL_API_VERSION.dll"
+		    GLDSONAME="cygntknox_gl-$FL_API_VERSION.dll"
+		    IMGDSONAME="cygntknox_images-$FL_API_VERSION.dll"
+		    CAIRODSONAME="cygntknox_cairo-$FL_API_VERSION.dll"
 		fi
 	    fi
 	    #-----------------------------------------------------------
@@ -2716,15 +2716,15 @@ if test x$enable_shared = xyes; then
 	*)
             { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Shared libraries may not be supported.  Trying -shared option with compiler." >&5
 $as_echo "$as_me: WARNING: Shared libraries may not be supported.  Trying -shared option with compiler." >&2;}
-            DSONAME="libfltk.so.$FL_API_VERSION"
-            FLDSONAME="libfltk_forms.so.$FL_API_VERSION"
-            GLDSONAME="libfltk_gl.so.$FL_API_VERSION"
-            IMGDSONAME="libfltk_images.so.$FL_API_VERSION"
+            DSONAME="libntk.so.$FL_API_VERSION"
+            FLDSONAME="libntk_forms.so.$FL_API_VERSION"
+            GLDSONAME="libntk_gl.so.$FL_API_VERSION"
+            IMGDSONAME="libntk_images.so.$FL_API_VERSION"
             DSOCOMMAND="\$(CXX) \$(DSOFLAGS) -Wl,-soname,\$@ \$(LDLIBS) -shared $DEBUGFLAG -o"
 	    ;;
     esac
 
-    LINKSHARED="-L../src $FLTKCAIROOPTION -lfltk_images$SHAREDSUFFIX -lfltk_forms$SHAREDSUFFIX -lfltk$SHAREDSUFFIX"
+    LINKSHARED="-L../src $FLTKCAIROOPTION -lntk_images$SHAREDSUFFIX -lntk_forms$SHAREDSUFFIX -lntk$SHAREDSUFFIX"
 else
     DSOCOMMAND="echo"
     DSOLINK=""
@@ -2736,7 +2736,7 @@ else
     PICFLAG=0
     SHAREDSUFFIX=""
     FLUID="fluid"
-    LINKSHARED="$LINKFLTKCAIRO ../lib/libfltk_images.a ../lib/libfltk_forms.a ../lib/libfltk.a"
+    LINKSHARED="$LINKFLTKCAIRO ../lib/libntk_images.a ../lib/libntk_forms.a ../lib/libntk.a"
 fi
 
 
@@ -5978,7 +5978,7 @@ STATICIMAGELIBS=""
 
 
 
-# Handle the JPEG lib linking mode (use fltk local or system lib)
+# Handle the JPEG lib linking mode (use ntk local or system lib)
 # If --enable-(resp. --disable-)localjpeg parameter is not set by user
 # Then we check the JPEG lib usability, with result in sysjpeglib_ok variable
 # Check whether --enable-localjpeg was given.
@@ -6043,8 +6043,8 @@ fi
 if test x$enable_localjpeg = xyes -o x$sysjpeglib_ok = xno; then
     JPEGINC="-I../jpeg"
     JPEG="jpeg"
-    IMAGELIBS="-lfltk_jpeg $IMAGELIBS"
-    STATICIMAGELIBS="\$libdir/libfltk_jpeg.a $STATICIMAGELIBS"
+    IMAGELIBS="-lntk_jpeg $IMAGELIBS"
+    STATICIMAGELIBS="\$libdir/libntk_jpeg.a $STATICIMAGELIBS"
     $as_echo "#define HAVE_LIBJPEG 1" >>confdefs.h
 
     #ac_cv_lib_jpeg_jpeg_CreateCompress=no # from ima: should not be necessary
@@ -6062,7 +6062,7 @@ else
 
 fi
 
-# Handle the ZLIB lib linking mode (use fltk local or system lib)
+# Handle the ZLIB lib linking mode (use ntk local or system lib)
 # If --enable-(resp. --disable-)localzlib parameter is not set by user
 # Then we check the ZLIB lib usability, with result in syszlib_ok variable
 # Check whether --enable-localzlib was given.
@@ -6127,9 +6127,9 @@ fi
 if test x$enable_localzlib = xyes -o x$syszlib_ok = xno ; then
     ZLIBINC="-I../zlib"
     ZLIB="zlib"
-    LIBS="-lfltk_z $LIBS"
-    IMAGELIBS="-lfltk_z $IMAGELIBS"
-    STATICIMAGELIBS="\$libdir/libfltk_z.a $STATICIMAGELIBS"
+    LIBS="-lntk_z $LIBS"
+    IMAGELIBS="-lntk_z $IMAGELIBS"
+    STATICIMAGELIBS="\$libdir/libntk_z.a $STATICIMAGELIBS"
     $as_echo "#define HAVE_LIBZ 1" >>confdefs.h
 
     ac_cv_lib_z_gzgets=no # fc: is still necessary ?
@@ -6148,7 +6148,7 @@ else
 
 fi
 
-# Handle the PNG lib linking mode (use fltk local or system lib)
+# Handle the PNG lib linking mode (use ntk local or system lib)
 # If --enable-(resp. --disable-)localpng parameter is not set by user
 # Then we check the png lib usability with result in syspng_lib variable
 # Check whether --enable-localpng was given.
@@ -6226,8 +6226,8 @@ fi
 if test x$enable_localpng = xyes -o x$syspnglib_ok = xno ; then
     PNGINC="-I../png"
     PNG="png"
-    IMAGELIBS="-lfltk_png $IMAGELIBS"
-    STATICIMAGELIBS="\$libdir/libfltk_png.a $STATICIMAGELIBS"
+    IMAGELIBS="-lntk_png $IMAGELIBS"
+    STATICIMAGELIBS="\$libdir/libntk_png.a $STATICIMAGELIBS"
     $as_echo "#define HAVE_LIBPNG 1" >>confdefs.h
 
     $as_echo "#define HAVE_PNG_H 1" >>confdefs.h
@@ -7895,7 +7895,7 @@ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
     # bugs in the X headers up through Solaris 7.
     #
     # Unlike the other compiler/optimization settings, this one is placed
-    # in CFLAGS and CXXFLAGS so that fltk-config will provide the option
+    # in CFLAGS and CXXFLAGS so that ntk-config will provide the option
     # to clients - otherwise client apps will not compile properly...
     if test "$uname" = SunOS; then
 	{ $as_echo "$as_me:${as_lineno-$LINENO}: checking if GCC supports -fpermissive" >&5
@@ -8015,8 +8015,8 @@ $as_echo "$as_me: WARNING: The AIX C and C++ compilers are known not to correctl
 	    # should contribute the necessary options via the STR form..
 	    { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Building FLTK with default compiler optimizations" >&5
 $as_echo "$as_me: WARNING: Building FLTK with default compiler optimizations" >&2;}
-	    { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Send the FLTK developers your uname and compiler options via http://www.fltk.org/str.php" >&5
-$as_echo "$as_me: WARNING: Send the FLTK developers your uname and compiler options via http://www.fltk.org/str.php" >&2;}
+	    { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Send the FLTK developers your uname and compiler options via http://www.ntk.org/str.php" >&5
+$as_echo "$as_me: WARNING: Send the FLTK developers your uname and compiler options via http://www.ntk.org/str.php" >&2;}
 	    ;;
     esac
 fi
@@ -8035,19 +8035,19 @@ case $uname in
  	msyspath=`mount | grep '\/usr' | grep -v '\/usr\/bin' | cut -d ' ' -f -1 | sed -e 's/\\\/\// g'`
      # Then substitute that in the WIN32 path instead of /usr
  	cat >>confdefs.h <<_ACEOF
-#define FLTK_DOCDIR "$msyspath/local/share/doc/fltk"
+#define FLTK_DOCDIR "$msyspath/local/share/doc/ntk"
 _ACEOF
 
     ;;
   *)
     if test x$prefix = xNONE; then
 	cat >>confdefs.h <<_ACEOF
-#define FLTK_DOCDIR "/usr/local/share/doc/fltk"
+#define FLTK_DOCDIR "/usr/local/share/doc/ntk"
 _ACEOF
 
     else
 	cat >>confdefs.h <<_ACEOF
-#define FLTK_DOCDIR "$prefix/share/doc/fltk"
+#define FLTK_DOCDIR "$prefix/share/doc/ntk"
 _ACEOF
 
     fi
@@ -8056,12 +8056,12 @@ esac
 
 if test x$prefix = xNONE; then
     cat >>confdefs.h <<_ACEOF
-#define FLTK_DATADIR "/usr/local/share/fltk"
+#define FLTK_DATADIR "/usr/local/share/ntk"
 _ACEOF
 
 else
     cat >>confdefs.h <<_ACEOF
-#define FLTK_DATADIR "$prefix/share/fltk"
+#define FLTK_DATADIR "$prefix/share/ntk"
 _ACEOF
 
 fi
@@ -8098,7 +8098,7 @@ echo "                 libdir=$libdir"
 echo "                 mandir=$mandir"
 case $uname in
   MINGW*)
-    echo "                 MSys docpath=$msyspath/local/share/doc/fltk"
+    echo "                 MSys docpath=$msyspath/local/share/doc/ntk"
   ;;
 esac
 echo "       Graphics: $graphics"
@@ -8146,7 +8146,7 @@ fi
 
 ac_config_headers="$ac_config_headers config.h:configh.in"
 
-ac_config_files="$ac_config_files makeinclude fltk.list fltk-config fltk.spec FL/Makefile"
+ac_config_files="$ac_config_files makeinclude ntk.list ntk-config ntk.spec FL/Makefile"
 
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
@@ -8853,9 +8853,9 @@ do
   case $ac_config_target in
     "config.h") CONFIG_HEADERS="$CONFIG_HEADERS config.h:configh.in" ;;
     "makeinclude") CONFIG_FILES="$CONFIG_FILES makeinclude" ;;
-    "fltk.list") CONFIG_FILES="$CONFIG_FILES fltk.list" ;;
-    "fltk-config") CONFIG_FILES="$CONFIG_FILES fltk-config" ;;
-    "fltk.spec") CONFIG_FILES="$CONFIG_FILES fltk.spec" ;;
+    "ntk.list") CONFIG_FILES="$CONFIG_FILES ntk.list" ;;
+    "ntk-config") CONFIG_FILES="$CONFIG_FILES ntk-config" ;;
+    "ntk.spec") CONFIG_FILES="$CONFIG_FILES ntk.spec" ;;
     "FL/Makefile") CONFIG_FILES="$CONFIG_FILES FL/Makefile" ;;
 
   *) as_fn_error $? "invalid argument: \`$ac_config_target'" "$LINENO" 5;;
@@ -9444,5 +9444,5 @@ $as_echo "$as_me: WARNING: unrecognized options: $ac_unrecognized_opts" >&2;}
 fi
 
 
-chmod +x fltk-config
+chmod +x ntk-config
 
