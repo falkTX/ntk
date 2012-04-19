@@ -22,7 +22,7 @@
 #
 # Please report all bugs and problems on the following page:
 #
-#      http://www.fltk.org/str.php
+#      http://www.ntk.org/str.php
 #
 
 CPPFILES = \
@@ -164,6 +164,13 @@ CPPFILES = \
 	fl_vertex.cxx \
 	screen_xywh.cxx \
 	fl_utf8.cxx \
+	Fl_Theme.cxx \
+	Fl_Theme_Chooser.cxx \
+	Cairo_Theme.cxx \
+	Gleam_Theme.cxx \
+	Clean_Theme.cxx \
+	Crystal_Theme.cxx \
+	themes.cxx \
 	ps_image.cxx
 	
 OBJCPPFILES = \
@@ -237,35 +244,35 @@ $(LIBNAME): $(OBJECTS)
 	$(LIBCOMMAND) $@ $(OBJECTS)
 	$(RANLIB) $@
 
-libfltk.so.1.3: $(OBJECTS)
+libntk.so.1.3: $(OBJECTS)
 	echo $(DSOCOMMAND) $@ ...
 	$(DSOCOMMAND) $@ $(OBJECTS)
-	$(RM) libfltk.so
-	$(LN) libfltk.so.1.3 libfltk.so
+	$(RM) libntk.so
+	$(LN) libntk.so.1.3 libntk.so
 
-libfltk.sl.1.3: $(OBJECTS)
+libntk.sl.1.3: $(OBJECTS)
 	echo $(DSOCOMMAND) $@ ...
 	$(DSOCOMMAND) $@ $(OBJECTS)
-	$(RM) libfltk.sl
-	$(LN) libfltk.sl.1.3 libfltk.sl
+	$(RM) libntk.sl
+	$(LN) libntk.sl.1.3 libntk.sl
 
-libfltk.1.3.dylib: $(OBJECTS)
+libntk.1.3.dylib: $(OBJECTS)
 	echo $(DSOCOMMAND) $@ ...
 	$(DSOCOMMAND) $@ \
 		-install_name $(libdir)/$@ \
 		-current_version 1.3.0 \
 		-compatibility_version 1.3.0 \
 		$(OBJECTS) $(LDLIBS)
-	$(RM) libfltk.dylib
-	$(LN) libfltk.1.3.dylib libfltk.dylib
+	$(RM) libntk.dylib
+	$(LN) libntk.1.3.dylib libntk.dylib
 
-libfltk_s.a: $(OBJECTS)
-	echo $(DSOCOMMAND) libfltk_s.o ...
-	$(DSOCOMMAND) libfltk_s.o $(OBJECTS) $(IMAGELIBS)
-	echo $(LIBCOMMAND) libfltk_s.a libfltk_s.o
+libntk_s.a: $(OBJECTS)
+	echo $(DSOCOMMAND) libntk_s.o ...
+	$(DSOCOMMAND) libntk_s.o $(OBJECTS) $(IMAGELIBS)
+	echo $(LIBCOMMAND) libntk_s.a libntk_s.o
 	$(RM) $@
-	$(LIBCOMMAND) libfltk_s.a libfltk_s.o
-	$(CHMOD) +x libfltk_s.a
+	$(LIBCOMMAND) libntk_s.a libntk_s.o
+	$(CHMOD) +x libntk_s.a
 
 $(FLLIBNAME): $(FLOBJECTS)
 	echo $(LIBCOMMAND) $@ ...
@@ -273,35 +280,35 @@ $(FLLIBNAME): $(FLOBJECTS)
 	$(LIBCOMMAND) $@ $(FLOBJECTS)
 	$(RANLIB) $@
 
-libfltk_forms.so.1.3: $(FLOBJECTS) libfltk.so.1.3
+libntk_forms.so.1.3: $(FLOBJECTS) libntk.so.1.3
 	echo $(DSOCOMMAND) $@ ...
-	$(DSOCOMMAND) $@ $(FLOBJECTS) -L. -lfltk
-	$(RM) libfltk_forms.so
-	$(LN) libfltk_forms.so.1.3 libfltk_forms.so
+	$(DSOCOMMAND) $@ $(FLOBJECTS) -L. -lntk
+	$(RM) libntk_forms.so
+	$(LN) libntk_forms.so.1.3 libntk_forms.so
 
-libfltk_forms.sl.1.3: $(FLOBJECTS) libfltk.sl.1.3
+libntk_forms.sl.1.3: $(FLOBJECTS) libntk.sl.1.3
 	echo $(DSOCOMMAND) $@ ...
-	$(DSOCOMMAND) $@ $(FLOBJECTS) -L. -lfltk
-	$(RM) libfltk_forms.sl
-	$(LN) libfltk_forms.sl.1.3 libfltk_forms.sl
+	$(DSOCOMMAND) $@ $(FLOBJECTS) -L. -lntk
+	$(RM) libntk_forms.sl
+	$(LN) libntk_forms.sl.1.3 libntk_forms.sl
 
-libfltk_forms.1.3.dylib: $(FLOBJECTS) libfltk.1.3.dylib
+libntk_forms.1.3.dylib: $(FLOBJECTS) libntk.1.3.dylib
 	echo $(DSOCOMMAND) $@ ...
 	$(DSOCOMMAND) $@ \
 		-install_name $(libdir)/$@ \
 		-current_version 1.3.0 \
 		-compatibility_version 1.3.0 \
-		$(FLOBJECTS) -L. $(LDLIBS) -lfltk
-	$(RM) libfltk_forms.dylib
-	$(LN) libfltk_forms.1.3.dylib libfltk_forms.dylib
+		$(FLOBJECTS) -L. $(LDLIBS) -lntk
+	$(RM) libntk_forms.dylib
+	$(LN) libntk_forms.1.3.dylib libntk_forms.dylib
 
-libfltk_forms_s.a: $(FLOBJECTS)
-	echo $(DSOCOMMAND) libfltk_forms_s.o ...
-	$(DSOCOMMAND) libfltk_forms_s.o $(FLOBJECTS)
-	echo $(LIBCOMMAND) libfltk_forms_s.a libfltk_forms_s.o
+libntk_forms_s.a: $(FLOBJECTS)
+	echo $(DSOCOMMAND) libntk_forms_s.o ...
+	$(DSOCOMMAND) libntk_forms_s.o $(FLOBJECTS)
+	echo $(LIBCOMMAND) libntk_forms_s.a libntk_forms_s.o
 	$(RM) $@
-	$(LIBCOMMAND) libfltk_forms_s.a libfltk_forms_s.o
-	$(CHMOD) +x libfltk_forms_s.a
+	$(LIBCOMMAND) libntk_forms_s.a libntk_forms_s.o
+	$(CHMOD) +x libntk_forms_s.a
 
 $(GLLIBNAME): $(GLOBJECTS)
 	echo $(LIBCOMMAND) $@ ...
@@ -309,35 +316,35 @@ $(GLLIBNAME): $(GLOBJECTS)
 	$(LIBCOMMAND) $@ $(GLOBJECTS)
 	$(RANLIB) $@
 
-libfltk_gl.so.1.3: $(GLOBJECTS) libfltk.so.1.3
+libntk_gl.so.1.3: $(GLOBJECTS) libntk.so.1.3
 	echo $(DSOCOMMAND) $@ ...
-	$(DSOCOMMAND) $@ $(GLOBJECTS) -L. -lfltk
-	$(RM) libfltk_gl.so
-	$(LN) libfltk_gl.so.1.3 libfltk_gl.so
+	$(DSOCOMMAND) $@ $(GLOBJECTS) -L. -lntk
+	$(RM) libntk_gl.so
+	$(LN) libntk_gl.so.1.3 libntk_gl.so
 
-libfltk_gl.sl.1.3: $(GLOBJECTS) libfltk.sl.1.3
+libntk_gl.sl.1.3: $(GLOBJECTS) libntk.sl.1.3
 	echo $(DSOCOMMAND) $@ ...
-	$(DSOCOMMAND) $@ $(GLOBJECTS) -L. -lfltk
-	$(RM) libfltk_gl.sl
-	$(LN) libfltk_gl.sl.1.3 libfltk_gl.sl
+	$(DSOCOMMAND) $@ $(GLOBJECTS) -L. -lntk
+	$(RM) libntk_gl.sl
+	$(LN) libntk_gl.sl.1.3 libntk_gl.sl
 
-libfltk_gl.1.3.dylib: $(GLOBJECTS) libfltk.1.3.dylib
+libntk_gl.1.3.dylib: $(GLOBJECTS) libntk.1.3.dylib
 	echo $(DSOCOMMAND) $@ ...
 	$(DSOCOMMAND) $@ \
 		-install_name $(libdir)/$@ \
 		-current_version 1.3.0 \
 		-compatibility_version 1.3.0 \
-		$(GLOBJECTS) -L. $(GLDLIBS) -lfltk
-	$(RM) libfltk_gl.dylib
-	$(LN) libfltk_gl.1.3.dylib libfltk_gl.dylib
+		$(GLOBJECTS) -L. $(GLDLIBS) -lntk
+	$(RM) libntk_gl.dylib
+	$(LN) libntk_gl.1.3.dylib libntk_gl.dylib
 
-libfltk_gl_s.a: $(GLOBJECTS)
-	echo $(DSOCOMMAND) libfltk_gl_s.o ...
-	$(DSOCOMMAND) libfltk_gl_s.o $(GLOBJECTS)
-	echo $(LIBCOMMAND) libfltk_gl_s.a libfltk_gl_s.o
+libntk_gl_s.a: $(GLOBJECTS)
+	echo $(DSOCOMMAND) libntk_gl_s.o ...
+	$(DSOCOMMAND) libntk_gl_s.o $(GLOBJECTS)
+	echo $(LIBCOMMAND) libntk_gl_s.a libntk_gl_s.o
 	$(RM) $@
-	$(LIBCOMMAND) libfltk_gl_s.a libfltk_gl_s.o
-	$(CHMOD) +x libfltk_gl_s.a
+	$(LIBCOMMAND) libntk_gl_s.a libntk_gl_s.o
+	$(CHMOD) +x libntk_gl_s.a
 
 $(IMGLIBNAME): $(IMGOBJECTS)
 	echo $(LIBCOMMAND) $@ ...
@@ -345,39 +352,39 @@ $(IMGLIBNAME): $(IMGOBJECTS)
 	$(LIBCOMMAND) $@ $(IMGOBJECTS)
 	$(RANLIB) $@
 
-libfltk_images.so.1.3: $(IMGOBJECTS) libfltk.so.1.3
+libntk_images.so.1.3: $(IMGOBJECTS) libntk.so.1.3
 	echo $(DSOCOMMAND) $@ ...
-	$(DSOCOMMAND) $@ $(IMGOBJECTS) -L. $(IMAGELIBS) -lfltk
-	$(RM) libfltk_images.so
-	$(LN) libfltk_images.so.1.3 libfltk_images.so
+	$(DSOCOMMAND) $@ $(IMGOBJECTS) -L. $(IMAGELIBS) -lntk
+	$(RM) libntk_images.so
+	$(LN) libntk_images.so.1.3 libntk_images.so
 
-libfltk_images.sl.1.3: $(IMGOBJECTS) libfltk.sl.1.3
+libntk_images.sl.1.3: $(IMGOBJECTS) libntk.sl.1.3
 	echo $(DSOCOMMAND) $@ ...
-	$(DSOCOMMAND) $@ $(IMGOBJECTS) -L. $(IMAGELIBS) -lfltk
-	$(RM) libfltk_images.sl
-	$(LN) libfltk_images.sl.1.3 libfltk_images.sl
+	$(DSOCOMMAND) $@ $(IMGOBJECTS) -L. $(IMAGELIBS) -lntk
+	$(RM) libntk_images.sl
+	$(LN) libntk_images.sl.1.3 libntk_images.sl
 
-libfltk_images.1.3.dylib: $(IMGOBJECTS) libfltk.1.3.dylib
+libntk_images.1.3.dylib: $(IMGOBJECTS) libntk.1.3.dylib
 	echo $(DSOCOMMAND) $@ ...
 	$(DSOCOMMAND) $@ \
 		-install_name $(libdir)/$@ \
 		-current_version 1.3.0 \
 		-compatibility_version 1.3.0 \
-		$(IMGOBJECTS)  -L. $(LDLIBS) $(IMAGELIBS) -lfltk
-	$(RM) libfltk_images.dylib
-	$(LN) libfltk_images.1.3.dylib libfltk_images.dylib
+		$(IMGOBJECTS)  -L. $(LDLIBS) $(IMAGELIBS) -lntk
+	$(RM) libntk_images.dylib
+	$(LN) libntk_images.1.3.dylib libntk_images.dylib
 
-libfltk_images_s.a: $(IMGOBJECTS)
-	echo $(DSOCOMMAND) libfltk_images_s.o ...
-	$(DSOCOMMAND) libfltk_images_s.o $(IMGOBJECTS)
-	echo $(LIBCOMMAND) libfltk_images_s.a libfltk_images_s.o
+libntk_images_s.a: $(IMGOBJECTS)
+	echo $(DSOCOMMAND) libntk_images_s.o ...
+	$(DSOCOMMAND) libntk_images_s.o $(IMGOBJECTS)
+	echo $(LIBCOMMAND) libntk_images_s.a libntk_images_s.o
 	$(RM) $@
-	$(LIBCOMMAND) libfltk_images_s.a libfltk_images_s.o
-	$(CHMOD) +x libfltk_images_s.a
+	$(LIBCOMMAND) libntk_images_s.a libntk_images_s.o
+	$(CHMOD) +x libntk_images_s.a
 
 #-----------------------------------------------------------------
-# - the import libraries libfltk*.dll.a and the .dll files
-#   are created from the libfltk*.a files. They are built
+# - the import libraries libntk*.dll.a and the .dll files
+#   are created from the libntk*.a files. They are built
 #   into the src dir.
 # - The _images, _gl, _forms and dlls must be linked
 #   against the import libraries in the src dir.
@@ -387,84 +394,84 @@ libfltk_images_s.a: $(IMGOBJECTS)
 # cygwin GDI shared libraries
 #-----------------------------------------------------------------
 
-cygfltknox-1.3.dll: $(LIBNAME)
+cygntknox-1.3.dll: $(LIBNAME)
 	echo $(DSOCOMMAND) $(LIBNAME) ...
 	$(DSOCOMMAND) $(LIBNAME) -Wl,--no-whole-archive \
-		-Wl,--out-implib=libfltk.dll.a $(LDLIBS)
+		-Wl,--out-implib=libntk.dll.a $(LDLIBS)
 
-cygfltknox_forms-1.3.dll: $(FLLIBNAME) cygfltknox-1.3.dll
+cygntknox_forms-1.3.dll: $(FLLIBNAME) cygntknox-1.3.dll
 	echo $(DSOCOMMAND) $(FLLIBNAME) ...
 	$(DSOCOMMAND) $(FLLIBNAME) -Wl,--no-whole-archive \
-		-Wl,--out-implib=libfltk_forms.dll.a \
-		-L. -lfltk $(LDLIBS)
+		-Wl,--out-implib=libntk_forms.dll.a \
+		-L. -lntk $(LDLIBS)
 
-cygfltknox_gl-1.3.dll: $(GLLIBNAME) cygfltknox-1.3.dll
+cygntknox_gl-1.3.dll: $(GLLIBNAME) cygntknox-1.3.dll
 	echo $(DSOCOMMAND) $(GLLIBNAME) ...
 	$(DSOCOMMAND) $(GLLIBNAME) -Wl,--no-whole-archive \
-		-Wl,--out-implib=libfltk_gl.dll.a \
-		-L. -lfltk $(GLDLIBS)
+		-Wl,--out-implib=libntk_gl.dll.a \
+		-L. -lntk $(GLDLIBS)
 
-cygfltknox_images-1.3.dll: $(IMGLIBNAME) cygfltknox-1.3.dll
+cygntknox_images-1.3.dll: $(IMGLIBNAME) cygntknox-1.3.dll
 	echo $(DSOCOMMAND) $(IMGLIBNAME) ...
 	$(DSOCOMMAND) $(IMGLIBNAME) -Wl,--no-whole-archive \
-		-Wl,--out-implib=libfltk_images.dll.a \
-		-L. -lfltk -Wl,--exclude-libs -Wl,libfltk_png.a \
+		-Wl,--out-implib=libntk_images.dll.a \
+		-L. -lntk -Wl,--exclude-libs -Wl,libntk_png.a \
 			$(IMAGELIBS) $(LDLIBS)
 
 #-----------------------------------------------------------------
 # cygwin X11 shared libraries
 #-----------------------------------------------------------------
 
-cygfltk-1.3.dll: $(LIBNAME)
+cygntk-1.3.dll: $(LIBNAME)
 	echo $(DSOCOMMAND) $(LIBNAME) ...
 	$(DSOCOMMAND) $(LIBNAME) -Wl,--no-whole-archive \
-		-Wl,--out-implib=libfltk.dll.a $(LDLIBS)
+		-Wl,--out-implib=libntk.dll.a $(LDLIBS)
 
-cygfltk_forms-1.3.dll: $(FLLIBNAME) cygfltk-1.3.dll
+cygntk_forms-1.3.dll: $(FLLIBNAME) cygntk-1.3.dll
 	echo $(DSOCOMMAND) $(FLLIBNAME) ...
 	$(DSOCOMMAND) $(FLLIBNAME) -Wl,--no-whole-archive \
-		-Wl,--out-implib=libfltk_forms.dll.a \
-		-L. -lfltk $(LDLIBS)
+		-Wl,--out-implib=libntk_forms.dll.a \
+		-L. -lntk $(LDLIBS)
 
-cygfltk_gl-1.3.dll: $(GLLIBNAME) cygfltk-1.3.dll
+cygntk_gl-1.3.dll: $(GLLIBNAME) cygntk-1.3.dll
 	echo $(DSOCOMMAND) $(GLLIBNAME) ...
 	$(DSOCOMMAND) $(GLLIBNAME) -Wl,--no-whole-archive \
-		-Wl,--out-implib=libfltk_gl.dll.a \
-		-L. -lfltk $(GLDLIBS)
+		-Wl,--out-implib=libntk_gl.dll.a \
+		-L. -lntk $(GLDLIBS)
 
-cygfltk_images-1.3.dll: $(IMGLIBNAME) cygfltk-1.3.dll
+cygntk_images-1.3.dll: $(IMGLIBNAME) cygntk-1.3.dll
 	echo $(DSOCOMMAND) $(IMGLIBNAME) ...
 	$(DSOCOMMAND) $(IMGLIBNAME) -Wl,--no-whole-archive \
-		-Wl,--out-implib=libfltk_images.dll.a \
-		-L. -lfltk -Wl,--exclude-libs -Wl,libfltk_png.a \
+		-Wl,--out-implib=libntk_images.dll.a \
+		-L. -lntk -Wl,--exclude-libs -Wl,libntk_png.a \
 			$(IMAGELIBS) $(LDLIBS)
 
-mgwfltknox-1.3.dll: $(LIBNAME)
+mgwntknox-1.3.dll: $(LIBNAME)
 	echo $(DSOCOMMAND) $(LIBNAME) ...
 	$(DSOCOMMAND) $(LIBNAME) -Wl,--no-whole-archive \
-		-Wl,--out-implib=libfltk.dll.a $(LDLIBS)
+		-Wl,--out-implib=libntk.dll.a $(LDLIBS)
 
-mgwfltknox_forms-1.3.dll: $(FLLIBNAME) mgwfltknox-1.3.dll
+mgwntknox_forms-1.3.dll: $(FLLIBNAME) mgwntknox-1.3.dll
 	echo $(DSOCOMMAND) $(FLLIBNAME) ...
 	$(DSOCOMMAND) $(FLLIBNAME) -Wl,--no-whole-archive \
-		-Wl,--out-implib=libfltk_forms.dll.a \
-		-L. -lfltk $(LDLIBS)
+		-Wl,--out-implib=libntk_forms.dll.a \
+		-L. -lntk $(LDLIBS)
 
-mgwfltknox_gl-1.3.dll: $(GLLIBNAME) mgwfltknox-1.3.dll
+mgwntknox_gl-1.3.dll: $(GLLIBNAME) mgwntknox-1.3.dll
 	echo $(DSOCOMMAND) $(GLLIBNAME) ...
 	$(DSOCOMMAND) $(GLLIBNAME) -Wl,--no-whole-archive \
-		-Wl,--out-implib=libfltk_gl.dll.a \
-		-L. -lfltk $(GLDLIBS)
+		-Wl,--out-implib=libntk_gl.dll.a \
+		-L. -lntk $(GLDLIBS)
 
 #-----------------------------------------------------
 # See STR #1585 for --exclude-libs
 #-----------------------------------------------------
 
-mgwfltknox_images-1.3.dll: $(IMGLIBNAME) mgwfltknox-1.3.dll
+mgwntknox_images-1.3.dll: $(IMGLIBNAME) mgwntknox-1.3.dll
 	echo $(DSOCOMMAND) $(IMGLIBNAME) ...
 	$(DSOCOMMAND) $(IMGLIBNAME) -Wl,--no-whole-archive \
-		-Wl,--out-implib=libfltk_images.dll.a \
-		-L. -lfltk -Wl,--exclude-libs -Wl,libfltk_png.a \
+		-Wl,--out-implib=libntk_images.dll.a \
+		-L. -lntk -Wl,--exclude-libs -Wl,libntk_png.a \
 			$(IMAGELIBS) $(LDLIBS)
 
 clean:
@@ -472,10 +479,10 @@ clean:
 	-$(RM) $(DSONAME) $(FLDSONAME) $(GLDSONAME) $(IMGDSONAME) \
 		$(LIBNAME) $(FLLIBNAME) $(GLLIBNAME) \
 		$(IMGLIBNAME) \
-		libfltk.so libfltk_forms.so libfltk_gl.so libfltk_images.so \
-		libfltk.sl libfltk_forms.sl libfltk_gl.sl libfltk_images.sl \
-		libfltk.dylib libfltk_forms.dylib \
-		libfltk_gl.dylib libfltk_images.dylib \
+		libntk.so libntk_forms.so libntk_gl.so libntk_images.so \
+		libntk.sl libntk_forms.sl libntk_gl.sl libntk_images.sl \
+		libntk.dylib libntk_forms.dylib \
+		libntk_gl.dylib libntk_images.dylib \
 		cmap core
 
 depend:	$(CPPFILES) $(MMFILES) $(FLCPPFILES) $(GLCPPFILES) $(IMGCPPFILES) $(CFILES) $(UTF8CFILES)
@@ -491,6 +498,7 @@ include makedepend
 # (like "*xft*") here:
 Fl_get_key.o:	Fl_get_key_mac.cxx Fl_get_key_win32.cxx
 Fl_Native_File_Chooser.o : Fl_Native_File_Chooser_WIN32.cxx
+Fl_Theme_Chooser.o : Fl_Theme_Chooser.cxx
 Fl_Native_File_Chooser_MAC.o:	Fl_Native_File_Chooser_MAC.mm
 Fl.o:		Fl_win32.cxx
 Fl_cocoa.o:	Fl_cocoa.mm
@@ -570,237 +578,237 @@ install: $(LIBNAME) $(DSONAME) \
 		$(RANLIB) $(DESTDIR)$(libdir)/$(GLLIBBASENAME); \
 	fi
 	$(RANLIB) $(DESTDIR)$(libdir)/$(IMGLIBBASENAME)
-	if test x$(DSONAME) = xlibfltk.so.1.3; then\
-		$(RM) $(DESTDIR)$(libdir)/libfltk.so*;\
-		$(INSTALL_LIB) libfltk.so.1.3 $(DESTDIR)$(libdir); \
-		$(LN) libfltk.so.1.3 $(DESTDIR)$(libdir)/libfltk.so;\
+	if test x$(DSONAME) = xlibntk.so.1.3; then\
+		$(RM) $(DESTDIR)$(libdir)/libntk.so*;\
+		$(INSTALL_LIB) libntk.so.1.3 $(DESTDIR)$(libdir); \
+		$(LN) libntk.so.1.3 $(DESTDIR)$(libdir)/libntk.so;\
 	fi
-	if test x$(DSONAME) = xlibfltk.sl.1.3; then\
-		$(RM) $(DESTDIR)$(libdir)/libfltk.sl*;\
-		$(INSTALL_LIB) libfltk.sl.1.3 $(DESTDIR)$(libdir); \
-		$(LN) libfltk.sl.1.3 $(DESTDIR)$(libdir)/libfltk.sl;\
+	if test x$(DSONAME) = xlibntk.sl.1.3; then\
+		$(RM) $(DESTDIR)$(libdir)/libntk.sl*;\
+		$(INSTALL_LIB) libntk.sl.1.3 $(DESTDIR)$(libdir); \
+		$(LN) libntk.sl.1.3 $(DESTDIR)$(libdir)/libntk.sl;\
 	fi
-	if test x$(DSONAME) = xlibfltk.1.3.dylib; then\
-		$(RM) $(DESTDIR)$(libdir)/libfltk.*dylib;\
-		$(INSTALL_LIB) libfltk.1.3.dylib $(DESTDIR)$(libdir); \
-		$(LN) libfltk.1.3.dylib $(DESTDIR)$(libdir)/libfltk.dylib;\
+	if test x$(DSONAME) = xlibntk.1.3.dylib; then\
+		$(RM) $(DESTDIR)$(libdir)/libntk.*dylib;\
+		$(INSTALL_LIB) libntk.1.3.dylib $(DESTDIR)$(libdir); \
+		$(LN) libntk.1.3.dylib $(DESTDIR)$(libdir)/libntk.dylib;\
 	fi
-	if test x$(DSONAME) = xlibfltk_s.a; then\
-		$(RM) $(DESTDIR)$(libdir)/libfltk_s.a;\
-		$(INSTALL_LIB) libfltk_s.a $(DESTDIR)$(libdir); \
+	if test x$(DSONAME) = xlibntk_s.a; then\
+		$(RM) $(DESTDIR)$(libdir)/libntk_s.a;\
+		$(INSTALL_LIB) libntk_s.a $(DESTDIR)$(libdir); \
 	fi
-	if test x$(DSONAME) = xcygfltknox-1.3.dll; then\
+	if test x$(DSONAME) = xcygntknox-1.3.dll; then\
 		$(RM) $(DESTDIR)$(bindir)/$(DSONAME);\
 		$(INSTALL_LIB) $(DSONAME) $(DESTDIR)$(bindir); \
-		$(RM) $(DESTDIR)$(libdir)/libfltk.dll.a;\
-		$(INSTALL_LIB) libfltk.dll.a $(DESTDIR)$(libdir); \
+		$(RM) $(DESTDIR)$(libdir)/libntk.dll.a;\
+		$(INSTALL_LIB) libntk.dll.a $(DESTDIR)$(libdir); \
 	fi
-	if test x$(DSONAME) = xmgwfltknox-1.3.dll; then\
+	if test x$(DSONAME) = xmgwntknox-1.3.dll; then\
 		$(RM) $(DESTDIR)$(bindir)/$(DSONAME);\
 		$(INSTALL_LIB) $(DSONAME) $(DESTDIR)$(bindir); \
-		$(RM) $(DESTDIR)$(libdir)/libfltk.dll.a;\
-		$(INSTALL_LIB) libfltk.dll.a $(DESTDIR)$(libdir); \
+		$(RM) $(DESTDIR)$(libdir)/libntk.dll.a;\
+		$(INSTALL_LIB) libntk.dll.a $(DESTDIR)$(libdir); \
 	fi
-	if test x$(FLDSONAME) = xlibfltk_forms.so.1.3; then\
-		$(RM) $(DESTDIR)$(libdir)/libfltk_forms.so*;\
-		$(INSTALL_LIB) libfltk_forms.so.1.3 $(DESTDIR)$(libdir); \
-		$(LN) libfltk_forms.so.1.3 $(DESTDIR)$(libdir)/libfltk_forms.so;\
+	if test x$(FLDSONAME) = xlibntk_forms.so.1.3; then\
+		$(RM) $(DESTDIR)$(libdir)/libntk_forms.so*;\
+		$(INSTALL_LIB) libntk_forms.so.1.3 $(DESTDIR)$(libdir); \
+		$(LN) libntk_forms.so.1.3 $(DESTDIR)$(libdir)/libntk_forms.so;\
 	fi
-	if test x$(FLDSONAME) = xlibfltk_forms.sl.1.3; then\
-		$(RM) $(DESTDIR)$(libdir)/libfltk_forms.sl*;\
-		$(INSTALL_LIB) libfltk_forms.sl.1.3 $(DESTDIR)$(libdir); \
-		$(LN) libfltk_forms.sl.1.3 $(DESTDIR)$(libdir)/libfltk_forms.sl;\
+	if test x$(FLDSONAME) = xlibntk_forms.sl.1.3; then\
+		$(RM) $(DESTDIR)$(libdir)/libntk_forms.sl*;\
+		$(INSTALL_LIB) libntk_forms.sl.1.3 $(DESTDIR)$(libdir); \
+		$(LN) libntk_forms.sl.1.3 $(DESTDIR)$(libdir)/libntk_forms.sl;\
 	fi
-	if test x$(FLDSONAME) = xlibfltk_forms.1.3.dylib; then\
-		$(RM) $(DESTDIR)$(libdir)/libfltk_forms.*dylib;\
-		$(INSTALL_LIB) libfltk_forms.1.3.dylib $(DESTDIR)$(libdir); \
-		$(LN) libfltk_forms.1.3.dylib $(DESTDIR)$(libdir)/libfltk_forms.dylib;\
+	if test x$(FLDSONAME) = xlibntk_forms.1.3.dylib; then\
+		$(RM) $(DESTDIR)$(libdir)/libntk_forms.*dylib;\
+		$(INSTALL_LIB) libntk_forms.1.3.dylib $(DESTDIR)$(libdir); \
+		$(LN) libntk_forms.1.3.dylib $(DESTDIR)$(libdir)/libntk_forms.dylib;\
 	fi
-	if test x$(FLDSONAME) = xlibfltk_forms_s.a; then\
-		$(RM) $(DESTDIR)$(libdir)/libfltk_forms_s.a;\
-		$(INSTALL_LIB) libfltk_forms_s.a $(DESTDIR)$(libdir); \
+	if test x$(FLDSONAME) = xlibntk_forms_s.a; then\
+		$(RM) $(DESTDIR)$(libdir)/libntk_forms_s.a;\
+		$(INSTALL_LIB) libntk_forms_s.a $(DESTDIR)$(libdir); \
 	fi
-	if test x$(FLDSONAME) = xcygfltknox_forms-1.3.dll; then\
+	if test x$(FLDSONAME) = xcygntknox_forms-1.3.dll; then\
 		$(RM) $(DESTDIR)$(bindir)/$(FLDSONAME);\
 		$(INSTALL_LIB) $(FLDSONAME) $(DESTDIR)$(bindir); \
-		$(RM) $(DESTDIR)$(libdir)/libfltk_forms.dll.a;\
-		$(INSTALL_LIB) libfltk_forms.dll.a $(DESTDIR)$(libdir); \
+		$(RM) $(DESTDIR)$(libdir)/libntk_forms.dll.a;\
+		$(INSTALL_LIB) libntk_forms.dll.a $(DESTDIR)$(libdir); \
 	fi
-	if test x$(FLDSONAME) = xmgwfltknox_forms-1.3.dll; then\
+	if test x$(FLDSONAME) = xmgwntknox_forms-1.3.dll; then\
 		$(RM) $(DESTDIR)$(bindir)/$(FLDSONAME);\
 		$(INSTALL_LIB) $(FLDSONAME) $(DESTDIR)$(bindir); \
-		$(RM) $(DESTDIR)$(libdir)/libfltk_forms.dll.a;\
-		$(INSTALL_LIB) libfltk_forms.dll.a $(DESTDIR)$(libdir); \
+		$(RM) $(DESTDIR)$(libdir)/libntk_forms.dll.a;\
+		$(INSTALL_LIB) libntk_forms.dll.a $(DESTDIR)$(libdir); \
 	fi
-	if test x$(GLDSONAME) = xlibfltk_gl.so.1.3; then\
-		$(RM) $(DESTDIR)$(libdir)/libfltk_gl.so*;\
-		$(INSTALL_LIB) libfltk_gl.so.1.3 $(DESTDIR)$(libdir); \
-		$(LN) libfltk_gl.so.1.3 $(DESTDIR)$(libdir)/libfltk_gl.so;\
+	if test x$(GLDSONAME) = xlibntk_gl.so.1.3; then\
+		$(RM) $(DESTDIR)$(libdir)/libntk_gl.so*;\
+		$(INSTALL_LIB) libntk_gl.so.1.3 $(DESTDIR)$(libdir); \
+		$(LN) libntk_gl.so.1.3 $(DESTDIR)$(libdir)/libntk_gl.so;\
 	fi
-	if test x$(GLDSONAME) = xlibfltk_gl.sl.1.3; then\
-		$(RM) $(DESTDIR)$(libdir)/libfltk_gl.sl*;\
-		$(INSTALL_LIB) libfltk_gl.sl.1.3 $(DESTDIR)$(libdir); \
-		$(LN) libfltk_gl.sl.1.3 $(DESTDIR)$(libdir)/libfltk_gl.sl;\
+	if test x$(GLDSONAME) = xlibntk_gl.sl.1.3; then\
+		$(RM) $(DESTDIR)$(libdir)/libntk_gl.sl*;\
+		$(INSTALL_LIB) libntk_gl.sl.1.3 $(DESTDIR)$(libdir); \
+		$(LN) libntk_gl.sl.1.3 $(DESTDIR)$(libdir)/libntk_gl.sl;\
 	fi
-	if test x$(GLDSONAME) = xlibfltk_gl.1.3.dylib; then\
-		$(RM) $(DESTDIR)$(libdir)/libfltk_gl.*dylib;\
-		$(INSTALL_LIB) libfltk_gl.1.3.dylib $(DESTDIR)$(libdir); \
-		$(LN) libfltk_gl.1.3.dylib $(DESTDIR)$(libdir)/libfltk_gl.dylib;\
+	if test x$(GLDSONAME) = xlibntk_gl.1.3.dylib; then\
+		$(RM) $(DESTDIR)$(libdir)/libntk_gl.*dylib;\
+		$(INSTALL_LIB) libntk_gl.1.3.dylib $(DESTDIR)$(libdir); \
+		$(LN) libntk_gl.1.3.dylib $(DESTDIR)$(libdir)/libntk_gl.dylib;\
 	fi
-	if test x$(GLDSONAME) = xlibfltk_gl_s.a; then\
-		$(RM) $(DESTDIR)$(libdir)/libfltk_gl_s.a;\
-		$(INSTALL_LIB) libfltk_gl_s.a $(DESTDIR)$(libdir); \
+	if test x$(GLDSONAME) = xlibntk_gl_s.a; then\
+		$(RM) $(DESTDIR)$(libdir)/libntk_gl_s.a;\
+		$(INSTALL_LIB) libntk_gl_s.a $(DESTDIR)$(libdir); \
 	fi
-	if test x$(GLDSONAME) = xcygfltknox_gl-1.3.dll; then\
+	if test x$(GLDSONAME) = xcygntknox_gl-1.3.dll; then\
 		$(RM) $(DESTDIR)$(bindir)/$(GLDSONAME);\
 		$(INSTALL_LIB) $(GLDSONAME) $(DESTDIR)$(bindir); \
-		$(RM) $(DESTDIR)$(libdir)/libfltk_gl.dll.a;\
-		$(INSTALL_LIB) libfltk_gl.dll.a $(DESTDIR)$(libdir); \
+		$(RM) $(DESTDIR)$(libdir)/libntk_gl.dll.a;\
+		$(INSTALL_LIB) libntk_gl.dll.a $(DESTDIR)$(libdir); \
 	fi
-	if test x$(GLDSONAME) = xmgwfltknox_gl-1.3.dll; then\
+	if test x$(GLDSONAME) = xmgwntknox_gl-1.3.dll; then\
 		$(RM) $(DESTDIR)$(bindir)/$(GLDSONAME);\
 		$(INSTALL_LIB) $(GLDSONAME) $(DESTDIR)$(bindir); \
-		$(RM) $(DESTDIR)$(libdir)/libfltk_gl.dll.a;\
-		$(INSTALL_LIB) libfltk_gl.dll.a $(DESTDIR)$(libdir); \
+		$(RM) $(DESTDIR)$(libdir)/libntk_gl.dll.a;\
+		$(INSTALL_LIB) libntk_gl.dll.a $(DESTDIR)$(libdir); \
 	fi
-	if test x$(IMGDSONAME) = xlibfltk_images.so.1.3; then\
-		$(RM) $(DESTDIR)$(libdir)/libfltk_images.so*;\
-		$(INSTALL_LIB) libfltk_images.so.1.3 $(DESTDIR)$(libdir); \
-		$(LN) libfltk_images.so.1.3 $(DESTDIR)$(libdir)/libfltk_images.so;\
+	if test x$(IMGDSONAME) = xlibntk_images.so.1.3; then\
+		$(RM) $(DESTDIR)$(libdir)/libntk_images.so*;\
+		$(INSTALL_LIB) libntk_images.so.1.3 $(DESTDIR)$(libdir); \
+		$(LN) libntk_images.so.1.3 $(DESTDIR)$(libdir)/libntk_images.so;\
 	fi
-	if test x$(IMGDSONAME) = xlibfltk_images.sl.1.3; then\
-		$(RM) $(DESTDIR)$(libdir)/libfltk_images.sl*;\
-		$(INSTALL_LIB) libfltk_images.sl.1.3 $(DESTDIR)$(libdir); \
-		$(LN) libfltk_images.sl.1.3 $(DESTDIR)$(libdir)/libfltk_images.sl;\
+	if test x$(IMGDSONAME) = xlibntk_images.sl.1.3; then\
+		$(RM) $(DESTDIR)$(libdir)/libntk_images.sl*;\
+		$(INSTALL_LIB) libntk_images.sl.1.3 $(DESTDIR)$(libdir); \
+		$(LN) libntk_images.sl.1.3 $(DESTDIR)$(libdir)/libntk_images.sl;\
 	fi
-	if test x$(IMGDSONAME) = xlibfltk_images.1.3.dylib; then\
-		$(RM) $(DESTDIR)$(libdir)/libfltk_images.*dylib;\
-		$(INSTALL_LIB) libfltk_images.1.3.dylib $(DESTDIR)$(libdir); \
-		$(LN) libfltk_images.1.3.dylib $(DESTDIR)$(libdir)/libfltk_images.dylib;\
+	if test x$(IMGDSONAME) = xlibntk_images.1.3.dylib; then\
+		$(RM) $(DESTDIR)$(libdir)/libntk_images.*dylib;\
+		$(INSTALL_LIB) libntk_images.1.3.dylib $(DESTDIR)$(libdir); \
+		$(LN) libntk_images.1.3.dylib $(DESTDIR)$(libdir)/libntk_images.dylib;\
 	fi
-	if test x$(IMGDSONAME) = xlibfltk_images_s.a; then\
-		$(RM) $(DESTDIR)$(libdir)/libfltk_images_s.a;\
-		$(INSTALL_LIB) libfltk_images_s.a $(DESTDIR)$(libdir); \
+	if test x$(IMGDSONAME) = xlibntk_images_s.a; then\
+		$(RM) $(DESTDIR)$(libdir)/libntk_images_s.a;\
+		$(INSTALL_LIB) libntk_images_s.a $(DESTDIR)$(libdir); \
 	fi
-	if test x$(IMGDSONAME) = xcygfltknox_images-1.3.dll; then\
+	if test x$(IMGDSONAME) = xcygntknox_images-1.3.dll; then\
 		$(RM) $(DESTDIR)$(bindir)/$(IMGDSONAME); \
 		$(INSTALL_LIB) $(IMGDSONAME) $(DESTDIR)$(bindir); \
-		$(RM) $(DESTDIR)$(libdir)/libfltk_images.dll.a;\
-		$(INSTALL_LIB) libfltk_images.dll.a $(DESTDIR)$(libdir); \
+		$(RM) $(DESTDIR)$(libdir)/libntk_images.dll.a;\
+		$(INSTALL_LIB) libntk_images.dll.a $(DESTDIR)$(libdir); \
 	fi
-	if test x$(IMGDSONAME) = xmgwfltknox_images-1.3.dll; then\
+	if test x$(IMGDSONAME) = xmgwntknox_images-1.3.dll; then\
 		$(RM) $(DESTDIR)$(bindir)/$(IMGDSONAME); \
 		$(INSTALL_LIB) $(IMGDSONAME) $(DESTDIR)$(bindir); \
-		$(RM) $(DESTDIR)$(libdir)/libfltk_images.dll.a;\
-		$(INSTALL_LIB) libfltk_images.dll.a $(DESTDIR)$(libdir); \
+		$(RM) $(DESTDIR)$(libdir)/libntk_images.dll.a;\
+		$(INSTALL_LIB) libntk_images.dll.a $(DESTDIR)$(libdir); \
 	fi
 
 
 uninstall:
 	echo "Uninstalling libraries..."
 	$(RM) $(DESTDIR)$(libdir)/$(LIBBASENAME)
-	if test x$(DSONAME) = xlibfltk.so.1.3; then\
-		$(RM) $(DESTDIR)$(libdir)/libfltk.so*;\
+	if test x$(DSONAME) = xlibntk.so.1.3; then\
+		$(RM) $(DESTDIR)$(libdir)/libntk.so*;\
 	fi
-	if test x$(DSONAME) = xlibfltk.sl.1.3; then\
-		$(RM) $(DESTDIR)$(libdir)/libfltk.sl*;\
+	if test x$(DSONAME) = xlibntk.sl.1.3; then\
+		$(RM) $(DESTDIR)$(libdir)/libntk.sl*;\
 	fi
-	if test x$(DSONAME) = xlibfltk.1.3.dylib; then\
-		$(RM) $(DESTDIR)$(libdir)/libfltk.*dylib;\
+	if test x$(DSONAME) = xlibntk.1.3.dylib; then\
+		$(RM) $(DESTDIR)$(libdir)/libntk.*dylib;\
 	fi
-	if test x$(DSONAME) = xlibfltk_s.a; then\
-		$(RM) $(DESTDIR)$(libdir)/libfltk_s.a;\
+	if test x$(DSONAME) = xlibntk_s.a; then\
+		$(RM) $(DESTDIR)$(libdir)/libntk_s.a;\
 	fi
-	if test x$(DSONAME) = xcygfltknox-1.3.dll; then\
+	if test x$(DSONAME) = xcygntknox-1.3.dll; then\
 		$(RM) $(DESTDIR)$(bindir)/$(DSONAME); \
-		$(RM) $(DESTDIR)$(libdir)/libfltk.dll.a;\
+		$(RM) $(DESTDIR)$(libdir)/libntk.dll.a;\
 	fi
-	if test x$(DSONAME) = xcygfltk-1.3.dll; then\
+	if test x$(DSONAME) = xcygntk-1.3.dll; then\
 		$(RM) $(DESTDIR)$(bindir)/$(DSONAME); \
-		$(RM) $(DESTDIR)$(libdir)/libfltk.dll.a;\
+		$(RM) $(DESTDIR)$(libdir)/libntk.dll.a;\
 	fi
-	if test x$(DSONAME) = xmgwfltknox-1.3.dll; then\
+	if test x$(DSONAME) = xmgwntknox-1.3.dll; then\
 		$(RM) $(DESTDIR)$(bindir)/$(DSONAME); \
-		$(RM) $(DESTDIR)$(libdir)/libfltk.dll.a;\
+		$(RM) $(DESTDIR)$(libdir)/libntk.dll.a;\
 	fi
 	$(RM) $(DESTDIR)$(libdir)/$(FLLIBBASENAME);
-	if test x$(FLDSONAME) = xlibfltk_forms.so.1.3; then\
-		$(RM) $(DESTDIR)$(libdir)/libfltk_forms.so*;\
+	if test x$(FLDSONAME) = xlibntk_forms.so.1.3; then\
+		$(RM) $(DESTDIR)$(libdir)/libntk_forms.so*;\
 	fi
-	if test x$(FLDSONAME) = xlibfltk_forms.sl.1.3; then\
-		$(RM) $(DESTDIR)$(libdir)/libfltk_forms.sl*;\
+	if test x$(FLDSONAME) = xlibntk_forms.sl.1.3; then\
+		$(RM) $(DESTDIR)$(libdir)/libntk_forms.sl*;\
 	fi
-	if test x$(FLDSONAME) = xlibfltk_forms.1.3.dylib; then\
-		$(RM) $(DESTDIR)$(libdir)/libfltk_forms.*dylib;\
+	if test x$(FLDSONAME) = xlibntk_forms.1.3.dylib; then\
+		$(RM) $(DESTDIR)$(libdir)/libntk_forms.*dylib;\
 	fi
-	if test x$(FLDSONAME) = xlibfltk_forms_s.a; then\
-		$(RM) $(DESTDIR)$(libdir)/libfltk_forms_s.a;\
+	if test x$(FLDSONAME) = xlibntk_forms_s.a; then\
+		$(RM) $(DESTDIR)$(libdir)/libntk_forms_s.a;\
 	fi
-	if test x$(FLDSONAME) = xcygfltknox_forms-1.3.dll; then\
+	if test x$(FLDSONAME) = xcygntknox_forms-1.3.dll; then\
 		$(RM) $(DESTDIR)$(bindir)/$(FLDSONAME); \
-		$(RM) $(DESTDIR)$(libdir)/libfltk_forms.dll.a;\
+		$(RM) $(DESTDIR)$(libdir)/libntk_forms.dll.a;\
 	fi
-	if test x$(FLDSONAME) = xcygfltk_forms-1.3.dll; then\
+	if test x$(FLDSONAME) = xcygntk_forms-1.3.dll; then\
 		$(RM) $(DESTDIR)$(bindir)/$(FLDSONAME); \
-		$(RM) $(DESTDIR)$(libdir)/libfltk_forms.dll.a;\
+		$(RM) $(DESTDIR)$(libdir)/libntk_forms.dll.a;\
 	fi
-	if test x$(FLDSONAME) = xmgwfltknox_forms-1.3.dll; then\
+	if test x$(FLDSONAME) = xmgwntknox_forms-1.3.dll; then\
 		$(RM) $(DESTDIR)$(bindir)/$(FLDSONAME); \
-		$(RM) $(DESTDIR)$(libdir)/libfltk_forms.dll.a;\
+		$(RM) $(DESTDIR)$(libdir)/libntk_forms.dll.a;\
 	fi
 	if test x$(GLLIBNAME) != x; then\
 		$(RM) $(DESTDIR)$(libdir)/$(GLLIBBASENAME);\
 	fi
-	if test x$(GLDSONAME) = xlibfltk_gl.so.1.3; then\
-		$(RM) $(DESTDIR)$(libdir)/libfltk_gl.so*;\
+	if test x$(GLDSONAME) = xlibntk_gl.so.1.3; then\
+		$(RM) $(DESTDIR)$(libdir)/libntk_gl.so*;\
 	fi
-	if test x$(GLDSONAME) = xlibfltk_gl.sl.1.3; then\
-		$(RM) $(DESTDIR)$(libdir)/libfltk_gl.sl*;\
+	if test x$(GLDSONAME) = xlibntk_gl.sl.1.3; then\
+		$(RM) $(DESTDIR)$(libdir)/libntk_gl.sl*;\
 	fi
-	if test x$(GLDSONAME) = xlibfltk_gl.1.3.dylib; then\
-		$(RM) $(DESTDIR)$(libdir)/libfltk_gl.*dylib;\
+	if test x$(GLDSONAME) = xlibntk_gl.1.3.dylib; then\
+		$(RM) $(DESTDIR)$(libdir)/libntk_gl.*dylib;\
 	fi
-	if test x$(GLDSONAME) = xlibfltk_gl_s.a; then\
-		$(RM) $(DESTDIR)$(libdir)/libfltk_gl_s.a;\
+	if test x$(GLDSONAME) = xlibntk_gl_s.a; then\
+		$(RM) $(DESTDIR)$(libdir)/libntk_gl_s.a;\
 	fi
-	if test x$(GLDSONAME) = xcygfltknox_gl-1.3.dll; then\
+	if test x$(GLDSONAME) = xcygntknox_gl-1.3.dll; then\
 		$(RM) $(DESTDIR)$(bindir)/$(GLDSONAME); \
-		$(RM) $(DESTDIR)$(libdir)/libfltk_gl.dll.a;\
+		$(RM) $(DESTDIR)$(libdir)/libntk_gl.dll.a;\
 	fi
-	if test x$(GLDSONAME) = xcygfltk_gl-1.3.dll; then\
+	if test x$(GLDSONAME) = xcygntk_gl-1.3.dll; then\
 		$(RM) $(DESTDIR)$(bindir)/$(GLDSONAME); \
-		$(RM) $(DESTDIR)$(libdir)/libfltk_gl.dll.a;\
+		$(RM) $(DESTDIR)$(libdir)/libntk_gl.dll.a;\
 	fi
-	if test x$(GLDSONAME) = xmgwfltknox_gl-1.3.dll; then\
+	if test x$(GLDSONAME) = xmgwntknox_gl-1.3.dll; then\
 		$(RM) $(DESTDIR)$(bindir)/$(GLDSONAME); \
-		$(RM) $(DESTDIR)$(libdir)/libfltk_gl.dll.a;\
+		$(RM) $(DESTDIR)$(libdir)/libntk_gl.dll.a;\
 	fi
 	if test x$(IMGLIBNAME) != x; then\
 		$(RM) $(DESTDIR)$(libdir)/$(IMGLIBBASENAME);\
 	fi
-	if test x$(IMGDSONAME) = xlibfltk_images.so.1.3; then\
-		$(RM) $(DESTDIR)$(libdir)/libfltk_images.so*;\
+	if test x$(IMGDSONAME) = xlibntk_images.so.1.3; then\
+		$(RM) $(DESTDIR)$(libdir)/libntk_images.so*;\
 	fi
-	if test x$(IMGDSONAME) = xlibfltk_images.sl.1.3; then\
-		$(RM) $(DESTDIR)$(libdir)/libfltk_images.sl*;\
+	if test x$(IMGDSONAME) = xlibntk_images.sl.1.3; then\
+		$(RM) $(DESTDIR)$(libdir)/libntk_images.sl*;\
 	fi
-	if test x$(IMGDSONAME) = xlibfltk_images.1.3.dylib; then\
-		$(RM) $(DESTDIR)$(libdir)/libfltk_images.*dylib;\
+	if test x$(IMGDSONAME) = xlibntk_images.1.3.dylib; then\
+		$(RM) $(DESTDIR)$(libdir)/libntk_images.*dylib;\
 	fi
-	if test x$(IMGDSONAME) = xlibfltk_images_s.a; then\
-		$(RM) $(DESTDIR)$(libdir)/libfltk_images_s.a;\
+	if test x$(IMGDSONAME) = xlibntk_images_s.a; then\
+		$(RM) $(DESTDIR)$(libdir)/libntk_images_s.a;\
 	fi
-	if test x$(IMGDSONAME) = xcygfltknox_images-1.3.dll; then\
+	if test x$(IMGDSONAME) = xcygntknox_images-1.3.dll; then\
 		$(RM) $(DESTDIR)$(bindir)/$(IMGDSONAME); \
-		$(RM) $(DESTDIR)$(libdir)/libfltk_images.dll.a;\
+		$(RM) $(DESTDIR)$(libdir)/libntk_images.dll.a;\
 	fi
-	if test x$(IMGDSONAME) = xcygfltk_images-1.3.dll; then\
+	if test x$(IMGDSONAME) = xcygntk_images-1.3.dll; then\
 		$(RM) $(DESTDIR)$(bindir)/$(IMGDSONAME); \
-		$(RM) $(DESTDIR)$(libdir)/libfltk_images.dll.a;\
+		$(RM) $(DESTDIR)$(libdir)/libntk_images.dll.a;\
 	fi
-	if test x$(IMGDSONAME) = xmgwfltknox_images-1.3.dll; then\
+	if test x$(IMGDSONAME) = xmgwntknox_images-1.3.dll; then\
 		$(RM) $(DESTDIR)$(bindir)/$(IMGDSONAME); \
-		$(RM) $(DESTDIR)$(libdir)/libfltk_images.dll.a;\
+		$(RM) $(DESTDIR)$(libdir)/libntk_images.dll.a;\
 	fi
 
 #

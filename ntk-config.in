@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# "$Id: fltk-config.in 8149 2011-01-01 00:10:38Z mike $"
+# "$Id: ntk-config.in 8149 2011-01-01 00:10:38Z mike $"
 #
 # FLTK configuration utility.
 #
@@ -25,7 +25,7 @@
 #
 # Please report all bugs and problems on the following page:
 #
-#      http://www.fltk.org/str.php
+#      http://www.ntk.org/str.php
 #
 
 MAJOR_VERSION=@FL_MAJOR_VERSION@
@@ -34,7 +34,7 @@ PATCH_VERSION=@FL_PATCH_VERSION@
 VERSION="$MAJOR_VERSION.$MINOR_VERSION.$PATCH_VERSION"
 APIVERSION="$MAJOR_VERSION.$MINOR_VERSION"
 
-### BEGIN fltk-config
+### BEGIN ntk-config
 selfdir=`dirname "$0"`
 
 prefix=@prefix@
@@ -64,17 +64,17 @@ if test -f "$selfdir/FL/Fl_Window.H"; then
 	includedir="$selfdir"
 	libdir="$selfdir/lib"
 
-	if test -f "$libdir/libfltk_jpeg.a"; then
+	if test -f "$libdir/libntk_jpeg.a"; then
 		CFLAGS="-I$includedir/jpeg $CFLAGS"
 		CXXFLAGS="-I$includedir/jpeg $CXXFLAGS"
 	fi
 
-	if test -f "$libdir/libfltk_z.a"; then
+	if test -f "$libdir/libntk_z.a"; then
 		CFLAGS="-I$includedir/zlib $CFLAGS"
 		CXXFLAGS="-I$includedir/zlib $CXXFLAGS"
 	fi
 
-	if test -f "$libdir/libfltk_png.a"; then
+	if test -f "$libdir/libntk_png.a"; then
 		CFLAGS="-I$includedir/png $CFLAGS"
 		CXXFLAGS="-I$includedir/png $CXXFLAGS"
 	fi
@@ -96,7 +96,7 @@ SHAREDSUFFIX="@SHAREDSUFFIX@"
 
 usage ()
 {
-    echo "Usage: fltk-config [OPTIONS]
+    echo "Usage: ntk-config [OPTIONS]
 Options:
 	[--version]
 	[--api-version]
@@ -234,20 +234,20 @@ else
 fi
 
 # Calculate needed libraries
-LDSTATIC="$libdir/libfltk.a $LDLIBS"
-LDLIBS="-lfltk$SHAREDSUFFIX $LDLIBS"
+LDSTATIC="$libdir/libntk.a $LDLIBS"
+LDLIBS="-lntk$SHAREDSUFFIX $LDLIBS"
 
 if test x$use_forms = xyes; then
-    LDLIBS="-lfltk_forms$SHAREDSUFFIX $LDLIBS"
-    LDSTATIC="$libdir/libfltk_forms.a $LDSTATIC"
+    LDLIBS="-lntk_forms$SHAREDSUFFIX $LDLIBS"
+    LDSTATIC="$libdir/libntk_forms.a $LDSTATIC"
 fi
 if test x$use_gl = xyes; then
-    LDLIBS="-lfltk_gl$SHAREDSUFFIX @GLLIB@ $LDLIBS"
-    LDSTATIC="$libdir/libfltk_gl.a @GLLIB@ $LDSTATIC"
+    LDLIBS="-lntk_gl$SHAREDSUFFIX @GLLIB@ $LDLIBS"
+    LDSTATIC="$libdir/libntk_gl.a @GLLIB@ $LDSTATIC"
 fi
 if test x$use_images = xyes; then
-    LDLIBS="-lfltk_images$SHAREDSUFFIX $IMAGELIBS $LDLIBS"
-    LDSTATIC="$libdir/libfltk_images.a $STATICIMAGELIBS $LDSTATIC"
+    LDLIBS="-lntk_images$SHAREDSUFFIX $IMAGELIBS $LDLIBS"
+    LDSTATIC="$libdir/libntk_images.a $STATICIMAGELIBS $LDSTATIC"
 fi
 
 if test x$use_cairo = xyes; then
@@ -316,7 +316,7 @@ if test -n "$post"; then
 	<key>CFBundleExecutable</key>
 	<string>$post</string>
 	<key>CFBundleIdentifier</key>
-	<string>org.fltk.$id</string>
+	<string>org.ntk.$id</string>
 	<key>CFBundleName</key>
 	<string>$post</string>
 	<key>CFBundlePackageType</key>
@@ -361,14 +361,14 @@ if test "$echo_ldstaticflags" = "yes"; then
 fi
 
 if test "$echo_libs" = "yes"; then
-    USELIBS="$libdir/libfltk.a"
+    USELIBS="$libdir/libntk.a"
 
     if test x$use_forms = xyes; then
-        USELIBS="$libdir/libfltk_forms.a $USELIBS"
+        USELIBS="$libdir/libntk_forms.a $USELIBS"
     fi
 
     if test x$use_gl = xyes; then
-        USELIBS="$libdir/libfltk_gl.a $USELIBS"
+        USELIBS="$libdir/libntk_gl.a $USELIBS"
     fi
 
     if test x$use_cairo = xyes; then
@@ -376,9 +376,9 @@ if test "$echo_libs" = "yes"; then
     fi
 
     if test x$use_images = xyes; then
-        USELIBS="$libdir/libfltk_images.a $USELIBS"
+        USELIBS="$libdir/libntk_images.a $USELIBS"
 
-        for lib in fltk_jpeg fltk_png fltk_z; do
+        for lib in ntk_jpeg ntk_png ntk_z; do
             if test -f $libdir/lib$lib.a; then
                 USELIBS="$libdir/lib$lib.a $USELIBS"
             fi
@@ -397,5 +397,5 @@ if test "$echo_includedir" = "yes"; then
 fi
 
 #
-# End of "$Id: fltk-config.in 8149 2011-01-01 00:10:38Z mike $".
+# End of "$Id: ntk-config.in 8149 2011-01-01 00:10:38Z mike $".
 #

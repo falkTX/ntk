@@ -36,6 +36,7 @@
 #include <FL/fl_draw.H>
 #include <ctype.h>
 #include "flstring.h"
+#include <FL/themes.H>
 
 #if defined(WIN32) || defined(__APPLE__)
 int XParseGeometry(const char*, int*, int*, unsigned int*, unsigned int*);

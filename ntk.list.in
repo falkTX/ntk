@@ -1,5 +1,5 @@
 #
-# "$Id: fltk.list.in 8661 2011-05-14 18:11:56Z AlbrechtS $"
+# "$Id: ntk.list.in 8661 2011-05-14 18:11:56Z AlbrechtS $"
 #
 # EPM product list file for the Fast Light Tool Kit (FLTK).
 #
@@ -24,7 +24,7 @@
 #
 # Please report all bugs and problems on the following page:
 #
-#      http://www.fltk.org/str.php
+#      http://www.ntk.org/str.php
 #
 
 %product Fast Light Tool Kit (FLTK)
@@ -47,7 +47,7 @@ $datadir=@datadir@
 $includedir=@includedir@
 $libdir=@libdir@
 $mandir=@mandir@
-$docdir=${datadir}/doc/fltk
+$docdir=${datadir}/doc/ntk
 
 $CAT1EXT=@CAT1EXT@
 $CAT3EXT=@CAT3EXT@
@@ -65,53 +65,53 @@ $ZLIB=@ZLIB@
 
 %if DSONAME
 %system aix
-f 0555 root sys $libdir/libfltk_s.a src/libfltk_s.a nostrip()
+f 0555 root sys $libdir/libntk_s.a src/libntk_s.a nostrip()
 %system hpux
-f 0555 root sys $libdir/libfltk.sl.@FL_API_VERSION@ src/libfltk.sl.@FL_API_VERSION@ nostrip()
+f 0555 root sys $libdir/libntk.sl.@FL_API_VERSION@ src/libntk.sl.@FL_API_VERSION@ nostrip()
 %system darwin
-f 0555 root sys $libdir/libfltk.@FL_API_VERSION@.dylib src/libfltk.@FL_API_VERSION@.dylib nostrip()
+f 0555 root sys $libdir/libntk.@FL_API_VERSION@.dylib src/libntk.@FL_API_VERSION@.dylib nostrip()
 %system !aix !darwin !hpux
-f 0555 root sys $libdir/libfltk.so.@FL_API_VERSION@ src/libfltk.so.@FL_API_VERSION@ nostrip()
+f 0555 root sys $libdir/libntk.so.@FL_API_VERSION@ src/libntk.so.@FL_API_VERSION@ nostrip()
 %system all
 
 %system aix
-f 0555 root sys $libdir/libfltk_forms_s.a src/libfltk_forms_s.a nostrip()
+f 0555 root sys $libdir/libntk_forms_s.a src/libntk_forms_s.a nostrip()
 %system hpux
-f 0555 root sys $libdir/libfltk_forms.sl.@FL_API_VERSION@ src/libfltk_forms.sl.@FL_API_VERSION@ nostrip()
+f 0555 root sys $libdir/libntk_forms.sl.@FL_API_VERSION@ src/libntk_forms.sl.@FL_API_VERSION@ nostrip()
 %system darwin
-f 0555 root sys $libdir/libfltk_forms.@FL_API_VERSION@.dylib src/libfltk_forms.@FL_API_VERSION@.dylib nostrip()
+f 0555 root sys $libdir/libntk_forms.@FL_API_VERSION@.dylib src/libntk_forms.@FL_API_VERSION@.dylib nostrip()
 %system !aix !darwin !hpux
-f 0555 root sys $libdir/libfltk_forms.so.@FL_API_VERSION@ src/libfltk_forms.so.@FL_API_VERSION@ nostrip()
+f 0555 root sys $libdir/libntk_forms.so.@FL_API_VERSION@ src/libntk_forms.so.@FL_API_VERSION@ nostrip()
 %system all
 
 %system aix
-f 0555 root sys $libdir/libfltk_images_s.a src/libfltk_images_s.a nostrip()
+f 0555 root sys $libdir/libntk_images_s.a src/libntk_images_s.a nostrip()
 %system hpux
-f 0555 root sys $libdir/libfltk_images.sl.@FL_API_VERSION@ src/libfltk_images.sl.@FL_API_VERSION@ nostrip()
+f 0555 root sys $libdir/libntk_images.sl.@FL_API_VERSION@ src/libntk_images.sl.@FL_API_VERSION@ nostrip()
 %system darwin
-f 0555 root sys $libdir/libfltk_images.@FL_API_VERSION@.dylib src/libfltk_images.@FL_API_VERSION@.dylib nostrip()
+f 0555 root sys $libdir/libntk_images.@FL_API_VERSION@.dylib src/libntk_images.@FL_API_VERSION@.dylib nostrip()
 %system !aix !darwin !hpux
-f 0555 root sys $libdir/libfltk_images.so.@FL_API_VERSION@ src/libfltk_images.so.@FL_API_VERSION@ nostrip()
+f 0555 root sys $libdir/libntk_images.so.@FL_API_VERSION@ src/libntk_images.so.@FL_API_VERSION@ nostrip()
 %system all
 %endif
 
 %if GLDSONAME
 %system aix
-f 0555 root sys $libdir/libfltk_gl_s.a src/libfltk_gl_s.a nostrip()
+f 0555 root sys $libdir/libntk_gl_s.a src/libntk_gl_s.a nostrip()
 %system hpux
-f 0555 root sys $libdir/libfltk_gl.sl.@FL_API_VERSION@ src/libfltk_gl.sl.@FL_API_VERSION@ nostrip()
+f 0555 root sys $libdir/libntk_gl.sl.@FL_API_VERSION@ src/libntk_gl.sl.@FL_API_VERSION@ nostrip()
 %system darwin
-f 0555 root sys $libdir/libfltk_gl.@FL_API_VERSION@.dylib src/libfltk_gl.@FL_API_VERSION@.dylib nostrip()
+f 0555 root sys $libdir/libntk_gl.@FL_API_VERSION@.dylib src/libntk_gl.@FL_API_VERSION@.dylib nostrip()
 %system !aix !darwin !hpux
-f 0555 root sys $libdir/libfltk_gl.so.@FL_API_VERSION@ src/libfltk_gl.so.@FL_API_VERSION@ nostrip()
+f 0555 root sys $libdir/libntk_gl.so.@FL_API_VERSION@ src/libntk_gl.so.@FL_API_VERSION@ nostrip()
 %system all
 %endif
 
 
 %subpackage devel
 %description FLTK Development Environment
-%description Install fltk-devel if you need to develop FLTK applications. 
-%description You'll need to install the fltk package if you plan to run
+%description Install ntk-devel if you need to develop FLTK applications. 
+%description You'll need to install the ntk package if you plan to run
 %description dynamically linked applications.
 
 %system darwin
@@ -123,7 +123,7 @@ d 0555 root sys /Applications/fluid.app/Contents/MacOS -
 l 0555 root sys /Applications/fluid.app/Contents/MacOS/fluid $bindir/fluid
 d 0555 root sys /Applications/fluid.app/Contents/Resources -
 f 0444 root sys /Applications/fluid.app/Contents/Resources/fluid.icns fluid/fluid.app/Contents/Resources/fluid.icns
-%postinstall $bindir/fltk-config --post $bindir/fluid
+%postinstall $bindir/ntk-config --post $bindir/fluid
 %postremove /bin/rm -rf /Applications/fluid.app
 
 %system !darwin
@@ -139,69 +139,69 @@ f 0444 root sys /usr/share/mimelnk/application/x-fluid.desktop fluid/x-fluid.des
 
 # FLUID
 f 0555 root sys $bindir/fluid fluid/$FLUID
-f 0555 root sys $bindir/fltk-config fltk-config
+f 0555 root sys $bindir/ntk-config ntk-config
 
 # Man pages
 f 0444 root sys $mandir/cat1/fluid.$CAT1EXT documentation/src/fluid.$CAT1EXT
-f 0444 root sys $mandir/cat1/fltk-config.$CAT1EXT documentation/src/fltk-config.$CAT1EXT
-f 0444 root sys $mandir/cat3/fltk.$CAT3EXT documentation/src/fltk.$CAT3EXT
+f 0444 root sys $mandir/cat1/ntk-config.$CAT1EXT documentation/src/ntk-config.$CAT1EXT
+f 0444 root sys $mandir/cat3/ntk.$CAT3EXT documentation/src/ntk.$CAT3EXT
 f 0444 root sys $mandir/man1/fluid.1 documentation/src/fluid.man
-f 0444 root sys $mandir/man1/fltk-config.1 documentation/src/fltk-config.man
-f 0444 root sys $mandir/man3/fltk.3 documentation/src/fltk.man
+f 0444 root sys $mandir/man1/ntk-config.1 documentation/src/ntk-config.man
+f 0444 root sys $mandir/man3/ntk.3 documentation/src/ntk.man
 
 # Library files
-f 0444 root sys $libdir/libfltk.a lib/libfltk.a
-f 0444 root sys $libdir/libfltk_forms.a lib/libfltk_forms.a
-f 0444 root sys $libdir/libfltk_images.a lib/libfltk_images.a
+f 0444 root sys $libdir/libntk.a lib/libntk.a
+f 0444 root sys $libdir/libntk_forms.a lib/libntk_forms.a
+f 0444 root sys $libdir/libntk_images.a lib/libntk_images.a
 %if GLLIBNAME
-f 0444 root sys $libdir/libfltk_gl.a lib/libfltk_gl.a
+f 0444 root sys $libdir/libntk_gl.a lib/libntk_gl.a
 %endif
 
 %if JPEG
-f 0444 root sys $libdir/libfltk_jpeg.a lib/libfltk_jpeg.a
+f 0444 root sys $libdir/libntk_jpeg.a lib/libntk_jpeg.a
 %endif
 
 %if PNG
-f 0444 root sys $libdir/libfltk_png.a lib/libfltk_png.a
+f 0444 root sys $libdir/libntk_png.a lib/libntk_png.a
 %endif
 
 %if ZLIB
-f 0444 root sys $libdir/libfltk_z.a lib/libfltk_z.a
+f 0444 root sys $libdir/libntk_z.a lib/libntk_z.a
 %endif
 
 %if DSONAME
 %system hpux
-l 0000 root sys $libdir/libfltk.sl libfltk.sl.@FL_API_VERSION@
+l 0000 root sys $libdir/libntk.sl libntk.sl.@FL_API_VERSION@
 %system darwin
-l 0000 root sys $libdir/libfltk.dylib libfltk.@FL_API_VERSION@.dylib
+l 0000 root sys $libdir/libntk.dylib libntk.@FL_API_VERSION@.dylib
 %system !aix !darwin !hpux
-l 0000 root sys $libdir/libfltk.so libfltk.so.@FL_API_VERSION@
+l 0000 root sys $libdir/libntk.so libntk.so.@FL_API_VERSION@
 %system all
 
 %system hpux
-l 0000 root sys $libdir/libfltk_forms.sl libfltk_forms.sl.@FL_API_VERSION@
+l 0000 root sys $libdir/libntk_forms.sl libntk_forms.sl.@FL_API_VERSION@
 %system darwin
-l 0000 root sys $libdir/libfltk_forms.dylib libfltk_forms.@FL_API_VERSION@.dylib
+l 0000 root sys $libdir/libntk_forms.dylib libntk_forms.@FL_API_VERSION@.dylib
 %system !aix !darwin !hpux
-l 0000 root sys $libdir/libfltk_forms.so libfltk_forms.so.@FL_API_VERSION@
+l 0000 root sys $libdir/libntk_forms.so libntk_forms.so.@FL_API_VERSION@
 %system all
 
 %system hpux
-l 0000 root sys $libdir/libfltk_images.sl libfltk_images.sl.@FL_API_VERSION@
+l 0000 root sys $libdir/libntk_images.sl libntk_images.sl.@FL_API_VERSION@
 %system darwin
-l 0000 root sys $libdir/libfltk_images.dylib libfltk_images.@FL_API_VERSION@.dylib
+l 0000 root sys $libdir/libntk_images.dylib libntk_images.@FL_API_VERSION@.dylib
 %system !aix !darwin !hpux
-l 0000 root sys $libdir/libfltk_images.so libfltk_images.so.@FL_API_VERSION@
+l 0000 root sys $libdir/libntk_images.so libntk_images.so.@FL_API_VERSION@
 %system all
 %endif
 
 %if GLDSONAME
 %system hpux
-l 0000 root sys $libdir/libfltk_gl.sl libfltk_gl.sl.@FL_API_VERSION@
+l 0000 root sys $libdir/libntk_gl.sl libntk_gl.sl.@FL_API_VERSION@
 %system darwin
-l 0000 root sys $libdir/libfltk_gl.dylib libfltk_gl.@FL_API_VERSION@.dylib
+l 0000 root sys $libdir/libntk_gl.dylib libntk_gl.@FL_API_VERSION@.dylib
 %system !aix !darwin !hpux
-l 0000 root sys $libdir/libfltk_gl.so libfltk_gl.so.@FL_API_VERSION@
+l 0000 root sys $libdir/libntk_gl.so libntk_gl.so.@FL_API_VERSION@
 %system all
 %endif
 
@@ -380,7 +380,7 @@ f 0444 root sys $docdir/examples/ test/*.h
 
 %subpackage games
 %description FLTK Games
-%description Install fltk-games to play Block Attack!, checkers, or Sudoku on your computer.
+%description Install ntk-games to play Block Attack!, checkers, or Sudoku on your computer.
 
 %system darwin
 d 0555 root sys /Applications/blocks.app -
@@ -438,5 +438,5 @@ f 0444 root sys $mandir/man6/checkers.6 documentation/src/checkers.man
 f 0444 root sys $mandir/man6/sudoku.6 documentation/src/sudoku.man
 
 #
-# End of "$Id: fltk.list.in 8661 2011-05-14 18:11:56Z AlbrechtS $".
+# End of "$Id: ntk.list.in 8661 2011-05-14 18:11:56Z AlbrechtS $".
 #

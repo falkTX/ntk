@@ -53,6 +53,8 @@
 #  include <X11/Xlib.h>
 #  include <X11/keysym.h>
 
+#include <FL/themes.H>
+
 #if FLTK_USE_CAIRO
 static Fl_Cairo_Graphics_Driver fl_cairo_driver;
 static Fl_Display_Device fl_cairo_display(&fl_cairo_driver);
@@ -713,6 +715,11 @@ void fl_open_display(Display* d) {
 #if !USE_COLORMAP
   Fl::visual(FL_RGB);
 #endif
+
+  Fl::get_system_colors();
+  
+  fl_register_themes();
+  Fl_Theme::set();
 }
 
 void fl_close_display() {
@@ -2000,6 +2007,9 @@ void Fl_Window::show() {
   } else {
     labeltype(FL_NO_LABEL);
   }
+
+
+
   Fl_Tooltip::exit(this);
   if (!shown()) {
     fl_open_display();
@@ -2007,6 +2017,7 @@ void Fl_Window::show() {
     if (type() == FL_WINDOW && can_boxcheat(box())) {
       fl_background_pixel = int(fl_xpixel(color()));
     }
+
     Fl_X::make_xid(this);
   } else {
     XMapRaised(fl_display, i->xid);
