@@ -32,6 +32,7 @@
 #include "FL/Fl_Theme.H"
 #include <math.h>
 
+float fl_box_saturation = 0.6f;
 bool fl_boxes_use_gradients = true;
 bool fl_debug_boxes = false;
 
@@ -43,7 +44,11 @@ static void cairo_color(Fl_Color c)
 
     uchar r,g,b;
     
+    c = fl_color_average( c, FL_GRAY, fl_box_saturation ); 
+
     Fl_Color bc = Fl::draw_box_active() ? c : fl_inactive( c );
+    
+    fl_color( bc );
     
     Fl::get_color( bc, r, g, b );
 
@@ -68,13 +73,13 @@ static void rect_path ( int x, int y, int w, int h, double radius )
     cairo_close_path (cr);
 }
 
-static void draw_rect(int x, int y, int w, int h, Fl_Color bc, double radius = 3 )
+static void draw_rect(int x, int y, int w, int h, Fl_Color bc, double radius = 2 )
 {
     cairo_t *cr = Fl::cairo_cc();
 
     rect_path( x, y, w, h, radius );
     
-    uchar r,g,b;
+//    uchar r,g,b;
        
     cairo_color( bc );
 
@@ -90,7 +95,7 @@ static void draw_rect(int x, int y, int w, int h, Fl_Color bc, double radius = 3
     /* cairo_stroke( cr ); */
 }
 
-static void draw_rectf(int x, int y, int w, int h, Fl_Color bc, double radius = 3 )
+static void draw_rectf(int x, int y, int w, int h, Fl_Color bc, double radius = 2 )
 {
     /* // Draw the outline around the perimeter of the box */
     /* fl_color(fl_color_average(FL_BLACK, FL_BACKGROUND_COLOR, .1)); */
@@ -101,7 +106,9 @@ static void draw_rectf(int x, int y, int w, int h, Fl_Color bc, double radius = 
            
     uchar r,g,b;
     
-    Fl::get_color( Fl::draw_box_active() ? bc : fl_inactive( bc ), r, g, b );
+    cairo_color( bc );
+
+    Fl::get_color( fl_color(), r, g, b );
 
     float rf = r / 255.0;
     float gf = g / 255.0;
@@ -126,8 +133,8 @@ static void draw_rectf(int x, int y, int w, int h, Fl_Color bc, double radius = 
     }
 
     cairo_fill_preserve (cr);
-    cairo_set_source_rgba (cr, 0, 0, 0, 0.5);
-    cairo_set_line_width (cr, 3);
+    cairo_set_source_rgba (cr, 0, 0, 0, 0.3 );
+    cairo_set_line_width (cr, DX + 0.5 );
     cairo_stroke (cr);
 
     if ( grad )
@@ -211,6 +218,8 @@ static void round_box(int x, int y, int w, int h, Fl_Color c)
 
     if ( w > 20 && h > 20 )
         draw_rectf( x, y, w, h, c, 20.0 );
+    if ( w > 10 && h > 10 )
+        draw_rectf( x, y, w, h, c, 10.0 );
     else
     {
         cairo_save( cr );
