@@ -63,9 +63,9 @@ static Fl_Display_Device fl_cairo_display(&fl_cairo_driver);
 static Fl_Xlib_Graphics_Driver fl_xlib_driver;
 static Fl_Display_Device fl_xlib_display(&fl_xlib_driver);
 
-FL_EXPORT Fl_Graphics_Driver *fl_graphics_driver = (Fl_Graphics_Driver*)&fl_xlib_driver; // the current target device of graphics operations
-Fl_Surface_Device* Fl_Surface_Device::_surface = (Fl_Surface_Device*)&fl_xlib_display; // the current target surface of graphics operations
-Fl_Display_Device *Fl_Display_Device::_display = &fl_xlib_display;// the platform display
+FL_EXPORT Fl_Graphics_Driver *fl_graphics_driver = (Fl_Graphics_Driver*)&fl_cairo_driver; // the current target device of graphics operations
+Fl_Surface_Device* Fl_Surface_Device::_surface = (Fl_Surface_Device*)&fl_cairo_display; // the current target surface of graphics operations
+Fl_Display_Device *Fl_Display_Device::_display = &fl_cairo_display;// the platform display
 
 ////////////////////////////////////////////////////////////////
 // interface to poll/select call:
