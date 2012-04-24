@@ -76,7 +76,6 @@ CPPFILES = \
 	Fl_Progress.cxx \
 	Fl_Repeat_Button.cxx \
 	Fl_Return_Button.cxx \
-	Fl_Roller.cxx \
 	Fl_Round_Button.cxx \
 	Fl_Scroll.cxx \
 	Fl_Scrollbar.cxx \
