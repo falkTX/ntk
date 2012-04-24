@@ -39,9 +39,9 @@
     Creates transparently a cairo_surface_t object.
     gc is an HDC context in  WIN32, a CGContext* in Quartz, a display on X11
  */
-cairo_surface_t * cairo_create_surface(void * gc, int W, int H) {
+cairo_surface_t * cairo_create_surface(void * gc, Window w, int W, int H) {
 # if defined(USE_X11)
-    return cairo_xlib_surface_create(fl_display, fl_window, fl_visual->visual, W, H);
+    return cairo_xlib_surface_create(fl_display, w, fl_visual->visual, W, H);
 # elif   defined(WIN32)
     return cairo_win32_surface_create((HDC) gc);
 # elif defined(__APPLE_QUARTZ__)
@@ -53,29 +53,47 @@ cairo_surface_t * cairo_create_surface(void * gc, int W, int H) {
 
 cairo_surface_t *fl_cairo_surface;
 cairo_t *fl_cairo_context;
+static Window real_xid;
+static int W, H;
 
 cairo_t * 
 Fl::cairo_make_current(Fl_Window* wi) {
     if (!wi) return NULL; // Precondition
 
+    Window w = wi->i->other_xid ? wi->i->other_xid : wi->i->xid;
+
+    if ( ( fl_cairo_context && fl_cairo_context == wi->i->cc ) &&
+         w && w == real_xid && 
+         wi->w() == W && wi->h() == H )
+        /* already current */
+        return wi->i->cc;
+
+    real_xid = w;
+    W = wi->w();
+    H = wi->h();
+
+    if ( wi->i->cs )
+    {
+        cairo_xlib_surface_set_drawable( wi->i->cs, w, wi->w(), wi->h() );
+        cairo_destroy( wi->i->cc );
+        wi->i->cc = 0;
+    }
+    else
+    {
+        wi->i->cs = cairo_create_surface(fl_gc, w, wi->w(), wi->h());
+    }
+
     if ( ! wi->i->cc )
     {
         /* set this window's context to be the current one */
-        wi->i->cs = cairo_create_surface(fl_gc, wi->w(), wi->h());
         wi->i->cc = cairo_create( wi->i->cs );
-//        cairo_surface_destroy( s );
     }
 
     fl_cairo_surface = wi->i->cs;
     fl_cairo_context = wi->i->cc;
 
+    printf( "NTK: cairo_make_current()\n" );
     return wi->i->cc;
-}
-
-void
-Fl::cairo_set_drawable ( Fl_Window *wi )
-{
-    cairo_xlib_surface_set_drawable( wi->i->cs, fl_window, wi->w(), wi->h() );
 }
 
 #endif // FLTK_HAVE_CAIRO

@@ -308,6 +308,7 @@ void Fl_Double_Window::flush(int eraseoverlay) {
     //make_current(); // make sure fl_gc is non-zero
   Fl_X *myi = Fl_X::i(this);
   if (!myi->other_xid) {
+
 #if defined(USE_X11) || defined(WIN32)
     myi->other_xid = fl_create_offscreen(w(), h());
     clear_damage(FL_DAMAGE_ALL);
@@ -316,8 +317,14 @@ void Fl_Double_Window::flush(int eraseoverlay) {
       myi->other_xid = fl_create_offscreen(w(), h());
       clear_damage(FL_DAMAGE_ALL);
     }
+
+
 #else
 # error unsupported platform
+#endif
+
+#if FLTK_HAVE_CAIRO
+    Fl::cairo_make_current( this );
 #endif
   }
 
@@ -346,9 +353,7 @@ void Fl_Double_Window::flush(int eraseoverlay) {
     }
 #else // X:
     fl_window = myi->other_xid;
-#if FLTK_HAVE_CAIRO
-    Fl::cairo_set_drawable( this );
-#endif
+    
     fl_clip_region(myi->region);
 
     draw();
@@ -358,10 +363,6 @@ void Fl_Double_Window::flush(int eraseoverlay) {
 #endif
 
     fl_window = myi->xid;
-
-#if FLTK_HAVE_CAIRO
-    Fl::cairo_set_drawable( this );
-#endif
 
     fl_clip_region(myi->region);
 
@@ -394,6 +395,7 @@ void Fl_Double_Window::hide() {
   Fl_X* myi = Fl_X::i(this);
   if (myi && myi->other_xid) {
       fl_delete_offscreen(myi->other_xid);
+      myi->other_xid = 0;
   }
   Fl_Window::hide();
 }
