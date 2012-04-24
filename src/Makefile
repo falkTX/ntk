@@ -221,11 +221,9 @@ MMFILES = $(shell if test $(USEMMFILES) = Yes; then echo $(OBJCPPFILES); fi)
 
 OBJECTS =  $(MMFILES:.mm=.o) $(CPPFILES:.cxx=.o) $(CFILES:.c=.o) $(UTF8CFILES:.c=.o)
 GLOBJECTS = $(GLCPPFILES:.cxx=.o)
-FLOBJECTS = $(FLCPPFILES:.cxx=.o)
 IMGOBJECTS = $(IMGCPPFILES:.cxx=.o)
 
 all:	$(LIBNAME) $(DSONAME) \
-	$(FLLIBNAME) $(FLDSONAME) \
 	$(GLLIBNAME) $(GLDSONAME) \
 	$(IMGLIBNAME) $(IMGDSONAME) 
 
@@ -264,12 +262,6 @@ libntk_s.a: $(OBJECTS)
 	$(RM) $@
 	$(LIBCOMMAND) libntk_s.a libntk_s.o
 	$(CHMOD) +x libntk_s.a
-
-$(FLLIBNAME): $(FLOBJECTS)
-	echo $(LIBCOMMAND) $@ ...
-	$(RM) $@
-	$(LIBCOMMAND) $@ $(FLOBJECTS)
-	$(RANLIB) $@
 
 $(GLLIBNAME): $(GLOBJECTS)
 	echo $(LIBCOMMAND) $@ ...
@@ -420,7 +412,7 @@ mgwntknox_images-1.3.dll: $(IMGLIBNAME) mgwntknox-1.3.dll
 clean:
 	-$(RM) *.o xutf8/*.o *.dll.a core.* *~ *.bak *.bck
 	-$(RM) $(DSONAME) $(FLDSONAME) $(GLDSONAME) $(IMGDSONAME) \
-		$(LIBNAME) $(FLLIBNAME) $(GLLIBNAME) \
+		$(LIBNAME) $(GLLIBNAME) \
 		$(IMGLIBNAME) \
 		libntk.so libntk_gl.so libntk_images.so \
 		libntk.sl libntk_gl.sl libntk_images.sl \
@@ -504,7 +496,6 @@ gl_start.o:	../FL/mac.H ../FL/win32.H
 ################################################################
 
 install: $(LIBNAME) $(DSONAME) \
-	$(FLLIBNAME) $(FLDSONAME) \
 	$(GLLIBNAME) $(GLDSONAME) \
 	$(IMGLIBNAME) $(IMGDSONAME) 
 	echo "Installing libraries in $(DESTDIR)$(libdir)..."
@@ -512,10 +503,8 @@ install: $(LIBNAME) $(DSONAME) \
 	-$(INSTALL_DIR) $(DESTDIR)$(bindir)
 	$(RM) $(DESTDIR)$(libdir)/$(LIBBASENAME)
 	$(INSTALL_LIB) $(LIBNAME) $(DESTDIR)$(libdir)
-	$(INSTALL_LIB) $(FLLIBNAME) $(DESTDIR)$(libdir)
 	$(INSTALL_LIB) $(IMGLIBNAME) $(DESTDIR)$(libdir)
 	$(RANLIB) $(DESTDIR)$(libdir)/$(LIBBASENAME)
-	$(RANLIB) $(DESTDIR)$(libdir)/$(FLLIBBASENAME)
 	if test x$(GLLIBNAME) != x; then \
 		$(INSTALL_LIB) $(GLLIBNAME) $(DESTDIR)$(libdir); \
 		$(RANLIB) $(DESTDIR)$(libdir)/$(GLLIBBASENAME); \
@@ -643,7 +632,6 @@ uninstall:
 		$(RM) $(DESTDIR)$(bindir)/$(DSONAME); \
 		$(RM) $(DESTDIR)$(libdir)/libntk.dll.a;\
 	fi
-	$(RM) $(DESTDIR)$(libdir)/$(FLLIBBASENAME);
 	if test x$(GLLIBNAME) != x; then\
 		$(RM) $(DESTDIR)$(libdir)/$(GLLIBBASENAME);\
 	fi
