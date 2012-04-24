@@ -41,7 +41,7 @@ prefix=@prefix@
 exec_prefix=@exec_prefix@
 exec_prefix_set=no
 bindir=@bindir@
-includedir=@includedir@
+includedir=@includedir@/ntk
 libdir=@libdir@
 srcdir=@srcdir@
 
@@ -80,9 +80,9 @@ if test -f "$selfdir/FL/Fl_Window.H"; then
 	fi
 fi
 
-if test -d $includedir/FL/images; then
-	CFLAGS="-I$includedir/FL/images $CFLAGS"
-	CXXFLAGS="-I$includedir/FL/images $CXXFLAGS"
+if test -d $includedir/ntk/FL/images; then
+	CFLAGS="-I$includedir/ntk/FL/images $CFLAGS"
+	CXXFLAGS="-I$includedir/ntk/FL/images $CXXFLAGS"
 fi
 
 # libraries to link with:
