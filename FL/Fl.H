@@ -1039,8 +1039,6 @@ public:
   */
 public:
 
-  static void cairo_set_drawable ( Fl_Window *w );
-
   // Cairo support API
   static cairo_t * cairo_make_current(Fl_Window* w);
    /** when FLTK_HAVE_CAIRO is defined and cairo_autolink_context() is true, 
