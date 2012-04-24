@@ -120,7 +120,6 @@ public:
   void write();
   virtual void write_properties();
   virtual void read_property(const char *);
-  virtual int read_fdesign(const char*, const char*);
 
   // write code, these are called in order:
   virtual void write_static(); // write static stuff to .c file
@@ -392,7 +391,6 @@ public:
 
   virtual void write_properties();
   virtual void read_property(const char *);
-  virtual int read_fdesign(const char*, const char*);
 
   virtual Fl_Widget *enter_live_mode(int top=0);
   virtual void leave_live_mode();
@@ -583,7 +581,6 @@ public:
 
   virtual void write_properties();
   virtual void read_property(const char *);
-  virtual int read_fdesign(const char*, const char*);
 
   void add_child(Fl_Type*, Fl_Type*);
   void move_child(Fl_Type*, Fl_Type*);

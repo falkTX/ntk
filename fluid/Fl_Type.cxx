@@ -904,8 +904,6 @@ void Fl_Type::read_property(const char *c) {
     read_error("Unknown property \"%s\"", c);
 }
 
-int Fl_Type::read_fdesign(const char*, const char*) {return 0;}
-
 /**
  * Return 1 if the list contains a function with the given signature at the top level
  */

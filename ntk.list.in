@@ -75,16 +75,6 @@ f 0555 root sys $libdir/libntk.so.@FL_API_VERSION@ src/libntk.so.@FL_API_VERSION
 %system all
 
 %system aix
-f 0555 root sys $libdir/libntk_forms_s.a src/libntk_forms_s.a nostrip()
-%system hpux
-f 0555 root sys $libdir/libntk_forms.sl.@FL_API_VERSION@ src/libntk_forms.sl.@FL_API_VERSION@ nostrip()
-%system darwin
-f 0555 root sys $libdir/libntk_forms.@FL_API_VERSION@.dylib src/libntk_forms.@FL_API_VERSION@.dylib nostrip()
-%system !aix !darwin !hpux
-f 0555 root sys $libdir/libntk_forms.so.@FL_API_VERSION@ src/libntk_forms.so.@FL_API_VERSION@ nostrip()
-%system all
-
-%system aix
 f 0555 root sys $libdir/libntk_images_s.a src/libntk_images_s.a nostrip()
 %system hpux
 f 0555 root sys $libdir/libntk_images.sl.@FL_API_VERSION@ src/libntk_images.sl.@FL_API_VERSION@ nostrip()
@@ -151,7 +141,6 @@ f 0444 root sys $mandir/man3/ntk.3 documentation/src/ntk.man
 
 # Library files
 f 0444 root sys $libdir/libntk.a lib/libntk.a
-f 0444 root sys $libdir/libntk_forms.a lib/libntk_forms.a
 f 0444 root sys $libdir/libntk_images.a lib/libntk_images.a
 %if GLLIBNAME
 f 0444 root sys $libdir/libntk_gl.a lib/libntk_gl.a
@@ -176,14 +165,6 @@ l 0000 root sys $libdir/libntk.sl libntk.sl.@FL_API_VERSION@
 l 0000 root sys $libdir/libntk.dylib libntk.@FL_API_VERSION@.dylib
 %system !aix !darwin !hpux
 l 0000 root sys $libdir/libntk.so libntk.so.@FL_API_VERSION@
-%system all
-
-%system hpux
-l 0000 root sys $libdir/libntk_forms.sl libntk_forms.sl.@FL_API_VERSION@
-%system darwin
-l 0000 root sys $libdir/libntk_forms.dylib libntk_forms.@FL_API_VERSION@.dylib
-%system !aix !darwin !hpux
-l 0000 root sys $libdir/libntk_forms.so libntk_forms.so.@FL_API_VERSION@
 %system all
 
 %system hpux
@@ -355,7 +336,6 @@ l 0000 root sys $includedir/FL/fl_draw.h fl_draw.H
 l 0000 root sys $includedir/FL/fl_message.h fl_message.H
 l 0000 root sys $includedir/FL/fl_show_colormap.h fl_show_colormap.H
 l 0000 root sys $includedir/FL/fl_show_input.h fl_show_input.H
-l 0000 root sys $includedir/FL/forms.h forms.H
 l 0000 root sys $includedir/FL/gl_draw.h gl_draw.H
 l 0000 root sys $includedir/FL/glut.h glut.H
 l 0000 root sys $includedir/FL/mac.h mac.H

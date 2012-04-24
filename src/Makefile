@@ -179,14 +179,6 @@ OBJCPPFILES = \
     Fl_Quartz_Printer.mm \
     Fl_Native_File_Chooser_MAC.mm
 	
-FLCPPFILES = \
-	forms_compatability.cxx \
-	forms_bitmap.cxx \
-	forms_free.cxx \
-	forms_fselect.cxx \
-	forms_pixmap.cxx \
-	forms_timer.cxx
-
 GLCPPFILES = \
 	Fl_Gl_Choice.cxx \
 	Fl_Gl_Overlay.cxx \
@@ -281,36 +273,6 @@ $(FLLIBNAME): $(FLOBJECTS)
 	$(LIBCOMMAND) $@ $(FLOBJECTS)
 	$(RANLIB) $@
 
-libntk_forms.so.1.3: $(FLOBJECTS) libntk.so.1.3
-	echo $(DSOCOMMAND) $@ ...
-	$(DSOCOMMAND) $@ $(FLOBJECTS) -L. -lntk
-	$(RM) libntk_forms.so
-	$(LN) libntk_forms.so.1.3 libntk_forms.so
-
-libntk_forms.sl.1.3: $(FLOBJECTS) libntk.sl.1.3
-	echo $(DSOCOMMAND) $@ ...
-	$(DSOCOMMAND) $@ $(FLOBJECTS) -L. -lntk
-	$(RM) libntk_forms.sl
-	$(LN) libntk_forms.sl.1.3 libntk_forms.sl
-
-libntk_forms.1.3.dylib: $(FLOBJECTS) libntk.1.3.dylib
-	echo $(DSOCOMMAND) $@ ...
-	$(DSOCOMMAND) $@ \
-		-install_name $(libdir)/$@ \
-		-current_version 1.3.0 \
-		-compatibility_version 1.3.0 \
-		$(FLOBJECTS) -L. $(LDLIBS) -lntk
-	$(RM) libntk_forms.dylib
-	$(LN) libntk_forms.1.3.dylib libntk_forms.dylib
-
-libntk_forms_s.a: $(FLOBJECTS)
-	echo $(DSOCOMMAND) libntk_forms_s.o ...
-	$(DSOCOMMAND) libntk_forms_s.o $(FLOBJECTS)
-	echo $(LIBCOMMAND) libntk_forms_s.a libntk_forms_s.o
-	$(RM) $@
-	$(LIBCOMMAND) libntk_forms_s.a libntk_forms_s.o
-	$(CHMOD) +x libntk_forms_s.a
-
 $(GLLIBNAME): $(GLOBJECTS)
 	echo $(LIBCOMMAND) $@ ...
 	$(RM) $@
@@ -400,12 +362,6 @@ cygntknox-1.3.dll: $(LIBNAME)
 	$(DSOCOMMAND) $(LIBNAME) -Wl,--no-whole-archive \
 		-Wl,--out-implib=libntk.dll.a $(LDLIBS)
 
-cygntknox_forms-1.3.dll: $(FLLIBNAME) cygntknox-1.3.dll
-	echo $(DSOCOMMAND) $(FLLIBNAME) ...
-	$(DSOCOMMAND) $(FLLIBNAME) -Wl,--no-whole-archive \
-		-Wl,--out-implib=libntk_forms.dll.a \
-		-L. -lntk $(LDLIBS)
-
 cygntknox_gl-1.3.dll: $(GLLIBNAME) cygntknox-1.3.dll
 	echo $(DSOCOMMAND) $(GLLIBNAME) ...
 	$(DSOCOMMAND) $(GLLIBNAME) -Wl,--no-whole-archive \
@@ -428,12 +384,6 @@ cygntk-1.3.dll: $(LIBNAME)
 	$(DSOCOMMAND) $(LIBNAME) -Wl,--no-whole-archive \
 		-Wl,--out-implib=libntk.dll.a $(LDLIBS)
 
-cygntk_forms-1.3.dll: $(FLLIBNAME) cygntk-1.3.dll
-	echo $(DSOCOMMAND) $(FLLIBNAME) ...
-	$(DSOCOMMAND) $(FLLIBNAME) -Wl,--no-whole-archive \
-		-Wl,--out-implib=libntk_forms.dll.a \
-		-L. -lntk $(LDLIBS)
-
 cygntk_gl-1.3.dll: $(GLLIBNAME) cygntk-1.3.dll
 	echo $(DSOCOMMAND) $(GLLIBNAME) ...
 	$(DSOCOMMAND) $(GLLIBNAME) -Wl,--no-whole-archive \
@@ -451,12 +401,6 @@ mgwntknox-1.3.dll: $(LIBNAME)
 	echo $(DSOCOMMAND) $(LIBNAME) ...
 	$(DSOCOMMAND) $(LIBNAME) -Wl,--no-whole-archive \
 		-Wl,--out-implib=libntk.dll.a $(LDLIBS)
-
-mgwntknox_forms-1.3.dll: $(FLLIBNAME) mgwntknox-1.3.dll
-	echo $(DSOCOMMAND) $(FLLIBNAME) ...
-	$(DSOCOMMAND) $(FLLIBNAME) -Wl,--no-whole-archive \
-		-Wl,--out-implib=libntk_forms.dll.a \
-		-L. -lntk $(LDLIBS)
 
 mgwntknox_gl-1.3.dll: $(GLLIBNAME) mgwntknox-1.3.dll
 	echo $(DSOCOMMAND) $(GLLIBNAME) ...
@@ -480,9 +424,9 @@ clean:
 	-$(RM) $(DSONAME) $(FLDSONAME) $(GLDSONAME) $(IMGDSONAME) \
 		$(LIBNAME) $(FLLIBNAME) $(GLLIBNAME) \
 		$(IMGLIBNAME) \
-		libntk.so libntk_forms.so libntk_gl.so libntk_images.so \
-		libntk.sl libntk_forms.sl libntk_gl.sl libntk_images.sl \
-		libntk.dylib libntk_forms.dylib \
+		libntk.so libntk_gl.so libntk_images.so \
+		libntk.sl libntk_gl.sl libntk_images.sl \
+		libntk.dylib \
 		libntk_gl.dylib libntk_images.dylib \
 		cmap core
 
@@ -610,37 +554,6 @@ install: $(LIBNAME) $(DSONAME) \
 		$(RM) $(DESTDIR)$(libdir)/libntk.dll.a;\
 		$(INSTALL_LIB) libntk.dll.a $(DESTDIR)$(libdir); \
 	fi
-	if test x$(FLDSONAME) = xlibntk_forms.so.1.3; then\
-		$(RM) $(DESTDIR)$(libdir)/libntk_forms.so*;\
-		$(INSTALL_LIB) libntk_forms.so.1.3 $(DESTDIR)$(libdir); \
-		$(LN) libntk_forms.so.1.3 $(DESTDIR)$(libdir)/libntk_forms.so;\
-	fi
-	if test x$(FLDSONAME) = xlibntk_forms.sl.1.3; then\
-		$(RM) $(DESTDIR)$(libdir)/libntk_forms.sl*;\
-		$(INSTALL_LIB) libntk_forms.sl.1.3 $(DESTDIR)$(libdir); \
-		$(LN) libntk_forms.sl.1.3 $(DESTDIR)$(libdir)/libntk_forms.sl;\
-	fi
-	if test x$(FLDSONAME) = xlibntk_forms.1.3.dylib; then\
-		$(RM) $(DESTDIR)$(libdir)/libntk_forms.*dylib;\
-		$(INSTALL_LIB) libntk_forms.1.3.dylib $(DESTDIR)$(libdir); \
-		$(LN) libntk_forms.1.3.dylib $(DESTDIR)$(libdir)/libntk_forms.dylib;\
-	fi
-	if test x$(FLDSONAME) = xlibntk_forms_s.a; then\
-		$(RM) $(DESTDIR)$(libdir)/libntk_forms_s.a;\
-		$(INSTALL_LIB) libntk_forms_s.a $(DESTDIR)$(libdir); \
-	fi
-	if test x$(FLDSONAME) = xcygntknox_forms-1.3.dll; then\
-		$(RM) $(DESTDIR)$(bindir)/$(FLDSONAME);\
-		$(INSTALL_LIB) $(FLDSONAME) $(DESTDIR)$(bindir); \
-		$(RM) $(DESTDIR)$(libdir)/libntk_forms.dll.a;\
-		$(INSTALL_LIB) libntk_forms.dll.a $(DESTDIR)$(libdir); \
-	fi
-	if test x$(FLDSONAME) = xmgwntknox_forms-1.3.dll; then\
-		$(RM) $(DESTDIR)$(bindir)/$(FLDSONAME);\
-		$(INSTALL_LIB) $(FLDSONAME) $(DESTDIR)$(bindir); \
-		$(RM) $(DESTDIR)$(libdir)/libntk_forms.dll.a;\
-		$(INSTALL_LIB) libntk_forms.dll.a $(DESTDIR)$(libdir); \
-	fi
 	if test x$(GLDSONAME) = xlibntk_gl.so.1.3; then\
 		$(RM) $(DESTDIR)$(libdir)/libntk_gl.so*;\
 		$(INSTALL_LIB) libntk_gl.so.1.3 $(DESTDIR)$(libdir); \
@@ -733,30 +646,6 @@ uninstall:
 		$(RM) $(DESTDIR)$(libdir)/libntk.dll.a;\
 	fi
 	$(RM) $(DESTDIR)$(libdir)/$(FLLIBBASENAME);
-	if test x$(FLDSONAME) = xlibntk_forms.so.1.3; then\
-		$(RM) $(DESTDIR)$(libdir)/libntk_forms.so*;\
-	fi
-	if test x$(FLDSONAME) = xlibntk_forms.sl.1.3; then\
-		$(RM) $(DESTDIR)$(libdir)/libntk_forms.sl*;\
-	fi
-	if test x$(FLDSONAME) = xlibntk_forms.1.3.dylib; then\
-		$(RM) $(DESTDIR)$(libdir)/libntk_forms.*dylib;\
-	fi
-	if test x$(FLDSONAME) = xlibntk_forms_s.a; then\
-		$(RM) $(DESTDIR)$(libdir)/libntk_forms_s.a;\
-	fi
-	if test x$(FLDSONAME) = xcygntknox_forms-1.3.dll; then\
-		$(RM) $(DESTDIR)$(bindir)/$(FLDSONAME); \
-		$(RM) $(DESTDIR)$(libdir)/libntk_forms.dll.a;\
-	fi
-	if test x$(FLDSONAME) = xcygntk_forms-1.3.dll; then\
-		$(RM) $(DESTDIR)$(bindir)/$(FLDSONAME); \
-		$(RM) $(DESTDIR)$(libdir)/libntk_forms.dll.a;\
-	fi
-	if test x$(FLDSONAME) = xmgwntknox_forms-1.3.dll; then\
-		$(RM) $(DESTDIR)$(bindir)/$(FLDSONAME); \
-		$(RM) $(DESTDIR)$(libdir)/libntk_forms.dll.a;\
-	fi
 	if test x$(GLLIBNAME) != x; then\
 		$(RM) $(DESTDIR)$(libdir)/$(GLLIBBASENAME);\
 	fi

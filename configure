@@ -2497,19 +2497,16 @@ fi
 esac
 
 LINKFLTK="../lib/libntk.a"
-LINKFLTKFORMS="../lib/libntk_forms.a"
 LINKFLTKGL="../lib/libntk_gl.a"
 LINKFLTKIMG="../lib/libntk_images.a"
 GLDEMOS="gldemos"
 
 LIBEXT=".a"
 LIBNAME="../lib/libntk.a"
-FLLIBNAME="../lib/libntk_forms.a"
 GLLIBNAME="../lib/libntk_gl.a"
 IMGLIBNAME="../lib/libntk_images.a"
 
 LIBBASENAME="libntk.a"
-FLLIBBASENAME="libntk_forms.a"
 GLLIBBASENAME="libntk_gl.a"
 IMGLIBBASENAME="libntk_images.a"
 
@@ -2617,7 +2614,6 @@ if test x$enable_shared = xyes; then
     case $uname in
 	Darwin*)
             DSONAME="libntk.$FL_API_VERSION.dylib"
-            FLDSONAME="libntk_forms.$FL_API_VERSION.dylib"
             GLDSONAME="libntk_gl.$FL_API_VERSION.dylib"
             IMGDSONAME="libntk_images.$FL_API_VERSION.dylib"
 	    DSOCOMMAND="\$(CXX) \$(ARCHFLAGS) \$(DSOFLAGS) -dynamiclib -lc -o"
@@ -2625,7 +2621,6 @@ if test x$enable_shared = xyes; then
 
 	SunOS* | UNIX_S*)
             DSONAME="libntk.so.$FL_API_VERSION"
-            FLDSONAME="libntk_forms.so.$FL_API_VERSION"
             GLDSONAME="libntk_gl.so.$FL_API_VERSION"
             IMGDSONAME="libntk_images.so.$FL_API_VERSION"
 	    DSOCOMMAND="\$(CXX) \$(DSOFLAGS) -h \$@ \$(LDLIBS) -G $DEBUGFLAG -o"
@@ -2635,7 +2630,6 @@ if test x$enable_shared = xyes; then
 	    ;;
 	HP-UX*)
             DSONAME="libntk.sl.$FL_API_VERSION"
-            FLDSONAME="libntk_forms.sl.$FL_API_VERSION"
             GLDSONAME="libntk_gl.sl.$FL_API_VERSION"
             IMGDSONAME="libntk_images.sl.$FL_API_VERSION"
 	    DSOCOMMAND="ld \$(DSOFLAGS) -b -z +h \$@ $DEBUGFLAG -o"
@@ -2645,7 +2639,6 @@ if test x$enable_shared = xyes; then
 	    ;;
 	IRIX*)
             DSONAME="libntk.so.$FL_API_VERSION"
-            FLDSONAME="libntk_forms.so.$FL_API_VERSION"
             GLDSONAME="libntk_gl.so.$FL_API_VERSION"
             IMGDSONAME="libntk_images.so.$FL_API_VERSION"
             DSOCOMMAND="\$(CXX) \$(DSOFLAGS) -Wl,-soname,\$@,-set_version,sgi1.1 \$(LDLIBS) -shared $DEBUGFLAG -o"
@@ -2655,7 +2648,6 @@ if test x$enable_shared = xyes; then
 	    ;;
 	OSF1*)
             DSONAME="libntk.so.$FL_API_VERSION"
-            FLDSONAME="libntk_forms.so.$FL_API_VERSION"
             GLDSONAME="libntk_gl.so.$FL_API_VERSION"
             IMGDSONAME="libntk_images.so.$FL_API_VERSION"
             DSOCOMMAND="\$(CXX) \$(DSOFLAGS) -Wl,-soname,\$@ \$(LDLIBS) -shared $DEBUGFLAG -o"
@@ -2665,7 +2657,6 @@ if test x$enable_shared = xyes; then
 	    ;;
 	Linux* | *BSD*)
             DSONAME="libntk.so.$FL_API_VERSION"
-            FLDSONAME="libntk_forms.so.$FL_API_VERSION"
             GLDSONAME="libntk_gl.so.$FL_API_VERSION"
             IMGDSONAME="libntk_images.so.$FL_API_VERSION"
             DSOCOMMAND="\$(CXX) \$(DSOFLAGS) -Wl,-soname,\$@ \$(LDLIBS) -shared -fPIC $DEBUGFLAG -o"
@@ -2675,7 +2666,6 @@ if test x$enable_shared = xyes; then
 	    ;;
 	AIX*)
             DSONAME="libntk_s.a"
-            FLDSONAME="libntk_forms_s.a"
             GLDSONAME="libntk_gl_s.a"
             IMGDSONAME="libntk_images_s.a"
             DSOCOMMAND="\$(CXX) \$(DSOFLAGS) -Wl,-bexpall,-bM:SRE,-bnoentry -o"
@@ -2685,19 +2675,16 @@ if test x$enable_shared = xyes; then
 	    PICFLAG=0
 	    if test x$enable_cygwin != xyes; then
 		DSONAME="mgwntknox-$FL_API_VERSION.dll"
-		FLDSONAME="mgwntknox_forms-$FL_API_VERSION.dll"
 		GLDSONAME="mgwntknox_gl-$FL_API_VERSION.dll"
 		IMGDSONAME="mgwntknox_images-$FL_API_VERSION.dll"
 		CAIRODSONAME="mgwntknox_cairo-$FL_API_VERSION.dll"
 	    else
 		if test x$enable_x11 = xyes; then
 		    DSONAME="cygntk-$FL_API_VERSION.dll"
-		    FLDSONAME="cygntk_forms-$FL_API_VERSION.dll"
 		    GLDSONAME="cygntk_gl-$FL_API_VERSION.dll"
 		    IMGDSONAME="cygntk_images-$FL_API_VERSION.dll"
 		else
 		    DSONAME="cygntknox-$FL_API_VERSION.dll"
-		    FLDSONAME="cygntknox_forms-$FL_API_VERSION.dll"
 		    GLDSONAME="cygntknox_gl-$FL_API_VERSION.dll"
 		    IMGDSONAME="cygntknox_images-$FL_API_VERSION.dll"
 		    CAIRODSONAME="cygntknox_cairo-$FL_API_VERSION.dll"
@@ -2717,14 +2704,13 @@ if test x$enable_shared = xyes; then
             { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Shared libraries may not be supported.  Trying -shared option with compiler." >&5
 $as_echo "$as_me: WARNING: Shared libraries may not be supported.  Trying -shared option with compiler." >&2;}
             DSONAME="libntk.so.$FL_API_VERSION"
-            FLDSONAME="libntk_forms.so.$FL_API_VERSION"
             GLDSONAME="libntk_gl.so.$FL_API_VERSION"
             IMGDSONAME="libntk_images.so.$FL_API_VERSION"
             DSOCOMMAND="\$(CXX) \$(DSOFLAGS) -Wl,-soname,\$@ \$(LDLIBS) -shared $DEBUGFLAG -o"
 	    ;;
     esac
 
-    LINKSHARED="-L../src $FLTKCAIROOPTION -lntk_images$SHAREDSUFFIX -lntk_forms$SHAREDSUFFIX -lntk$SHAREDSUFFIX"
+    LINKSHARED="-L../src $FLTKCAIROOPTION -lntk_images$SHAREDSUFFIX -lntk$SHAREDSUFFIX"
 else
     DSOCOMMAND="echo"
     DSOLINK=""
@@ -2736,7 +2722,7 @@ else
     PICFLAG=0
     SHAREDSUFFIX=""
     FLUID="fluid"
-    LINKSHARED="$LINKFLTKCAIRO ../lib/libntk_images.a ../lib/libntk_forms.a ../lib/libntk.a"
+    LINKSHARED="$LINKFLTKCAIRO ../lib/libntk_images.a ../lib/libntk.a"
 fi
 
 

@@ -358,8 +358,6 @@ int write_file(const char *filename, int selected_only) {
 ////////////////////////////////////////////////////////////////
 // read all the objects out of the input file:
 
-void read_fdesign();
-
 double read_version;
 
 extern Fl_Type *Fl_Type_make(const char *tn);
@@ -377,12 +375,6 @@ static void read_children(Fl_Type *p, int paste) {
     if (!strcmp(c,"}")) {
       if (!p) read_error("Unexpected '}'");
       break;
-    }
-
-    // this is the first word in a .fd file:
-    if (!strcmp(c,"Magic:")) {
-      read_fdesign();
-      return;
     }
 
     if (!strcmp(c,"version")) {
@@ -512,137 +504,6 @@ int read_file(const char *filename, int merge) {
     if (o->selected) {Fl_Type::current = o; break;}
   selection_changed(Fl_Type::current);
   return close_read();
-}
-
-////////////////////////////////////////////////////////////////
-// Read Forms and XForms fdesign files:
-
-int read_fdesign_line(const char*& name, const char*& value) {
-
-  int length = 0;
-  int x;
-  // find a colon:
-  for (;;) {
-    x = getc(fin);
-    if (x < 0 && feof(fin)) return 0;
-    if (x == '\n') {length = 0; continue;} // no colon this line...
-    if (!isspace(x & 255)) {
-      buffer[length++] = x;
-      expand_buffer(length);
-    }
-    if (x == ':') break;
-  }
-  int valueoffset = length;
-  buffer[length-1] = 0;
-
-  // skip to start of value:
-  for (;;) {
-    x = getc(fin);
-    if ((x < 0 && feof(fin)) || x == '\n' || !isspace(x & 255)) break;
-  }
-
-  // read the value:
-  for (;;) {
-    if (x == '\\') {x = read_quoted(); if (x<0) continue;}
-    else if (x == '\n') break;
-    buffer[length++] = x;
-    expand_buffer(length);
-    x = getc(fin);
-  }
-  buffer[length] = 0;
-  name = buffer;
-  value = buffer+valueoffset;
-  return 1;
-}
-
-int fdesign_flip;
-int fdesign_magic;
-#include <FL/Fl_Group.H>
-
-static const char *class_matcher[] = {
-"FL_CHECKBUTTON", "Fl_Check_Button",
-"FL_ROUNDBUTTON", "Fl_Round_Button",
-"FL_ROUND3DBUTTON", "Fl_Round_Button",
-"FL_LIGHTBUTTON", "Fl_Light_Button",
-"FL_FRAME", "Fl_Box",
-"FL_LABELFRAME", "Fl_Box",
-"FL_TEXT", "Fl_Box",
-"FL_VALSLIDER", "Fl_Value_Slider",
-"FL_MENU", "Fl_Menu_Button",
-"3", "FL_BITMAP",
-"1", "FL_BOX",
-"71","FL_BROWSER",
-"11","FL_BUTTON",
-"4", "FL_CHART",
-"42","FL_CHOICE",
-"61","FL_CLOCK",
-"25","FL_COUNTER",
-"22","FL_DIAL",
-"101","FL_FREE",
-"31","FL_INPUT",
-"12","Fl_Light_Button",
-"41","FL_MENU",
-"23","FL_POSITIONER",
-"13","Fl_Round_Button",
-"21","FL_SLIDER",
-"2", "FL_BOX", // was FL_TEXT
-"62","FL_TIMER",
-"24","Fl_Value_Slider",
-0};
-
-void read_fdesign() {
-  fdesign_magic = atoi(read_word());
-  fdesign_flip = (fdesign_magic < 13000);
-  Fl_Widget_Type *window = 0;
-  Fl_Widget_Type *group = 0;
-  Fl_Widget_Type *widget = 0;
-  if (!Fl_Type::current) {
-    Fl_Type *t = Fl_Type_make("Function");
-    t->name("create_the_forms()");
-    Fl_Type::current = t;
-  }
-  for (;;) {
-    const char *name;
-    const char *value;
-    if (!read_fdesign_line(name, value)) break;
-
-    if (!strcmp(name,"Name")) {
-
-      window = (Fl_Widget_Type*)Fl_Type_make("Fl_Window");
-      window->name(value);
-      window->label(value);
-      Fl_Type::current = widget = window;
-
-    } else if (!strcmp(name,"class")) {
-
-      if (!strcmp(value,"FL_BEGIN_GROUP")) {
-	group = widget = (Fl_Widget_Type*)Fl_Type_make("Fl_Group");
-	Fl_Type::current = group;
-      } else if (!strcmp(value,"FL_END_GROUP")) {
-	if (group) {
-	  Fl_Group* g = (Fl_Group*)(group->o);
-	  g->begin();
-	  g->forms_end();
-	  Fl_Group::current(0);
-	}
-	group = widget = 0;
-	Fl_Type::current = window;
-      } else {
-	for (int i = 0; class_matcher[i]; i += 2)
-	  if (!strcmp(value,class_matcher[i])) {
-	    value = class_matcher[i+1]; break;}
-	widget = (Fl_Widget_Type*)Fl_Type_make(value);
-	if (!widget) {
-	  printf("class %s not found, using Fl_Button\n", value);
-	  widget = (Fl_Widget_Type*)Fl_Type_make("Fl_Button");
-	}
-      }
-
-    } else if (widget) {
-      if (!widget->read_fdesign(name, value))
-	printf("Ignoring \"%s: %s\"\n", name, value);
-    }
-  }
 }
 
 //
