@@ -362,11 +362,6 @@ void Fl_Window::show(int argc, char **argv) {
   if (title) {label(title); title = 0;}
   else if (!label()) label(xclass());
 
-  if (!beenhere) {
-    beenhere = 1;
-    Fl::scheme(Fl::scheme()); // opens display!  May call Fl::fatal()
-  }
-
   // Show the window AFTER we have set the colors and scheme.
   show();
 
