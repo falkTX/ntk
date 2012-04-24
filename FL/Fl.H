@@ -1040,7 +1040,7 @@ public:
 public:
 
   // Cairo support API
-  static cairo_t * cairo_make_current(Fl_Window* w);
+  static cairo_t * cairo_make_current(Fl_Window* wi, Window w = 0);
    /** when FLTK_HAVE_CAIRO is defined and cairo_autolink_context() is true, 
       any current window dc is linked to a current context.
       This is not the default, because it may not be necessary

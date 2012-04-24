@@ -57,10 +57,11 @@ static Window real_xid;
 static int W, H;
 
 cairo_t * 
-Fl::cairo_make_current(Fl_Window* wi) {
+Fl::cairo_make_current(Fl_Window* wi, Window w ) {
     if (!wi) return NULL; // Precondition
 
-    Window w = wi->i->other_xid ? wi->i->other_xid : wi->i->xid;
+    if ( ! w )
+      w =  wi->i->other_xid ? wi->i->other_xid : wi->i->xid;
 
     if ( ( fl_cairo_context && fl_cairo_context == wi->i->cc ) &&
          w && w == real_xid && 

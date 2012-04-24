@@ -42,15 +42,6 @@
 #include <FL/fl_draw.H>
 #include <FL/x.H>
 
-void Fl_Overlay_Window::show() {
-  Fl_Double_Window::show();
-  if (overlay_ && overlay_ != this) overlay_->show();
-}
-
-void Fl_Overlay_Window::hide() {
-  Fl_Double_Window::hide();
-}
-
 void Fl_Overlay_Window::flush() {
 #ifdef BOXX_BUGS
   if (overlay_ && overlay_ != this && overlay_->shown()) {
@@ -61,15 +52,17 @@ void Fl_Overlay_Window::flush() {
     return;
   }
 #endif
-  int erase_overlay = (damage()&FL_DAMAGE_OVERLAY) | (overlay_ == this);
+  int erase_overlay = (damage()&FL_DAMAGE_OVERLAY);
   clear_damage((uchar)(damage()&~FL_DAMAGE_OVERLAY));
   Fl_Double_Window::flush(erase_overlay);
-  if (overlay_ == this) draw_overlay();
-}
-
-void Fl_Overlay_Window::resize(int X, int Y, int W, int H) {
-  Fl_Double_Window::resize(X,Y,W,H);
-  if (overlay_ && overlay_!=this) overlay_->resize(0,0,w(),h());
+  Fl_X* myi = Fl_X::i(this);
+#if FLTK_HAVE_CAIRO
+      Fl::cairo_make_current( this, myi->xid );
+#endif
+      draw_overlay();
+#if FLTK_HAVE_CAIRO
+      Fl::cairo_make_current( this, myi->other_xid );
+#endif
 }
 
 /**
@@ -89,7 +82,6 @@ int Fl_Overlay_Window::can_do_overlay() {return 0;}
   calling show().
 */
 void Fl_Overlay_Window::redraw_overlay() {
-  overlay_ = this;
   clear_damage((uchar)(damage()|FL_DAMAGE_OVERLAY));
   Fl::damage(FL_DAMAGE_CHILD);
 }

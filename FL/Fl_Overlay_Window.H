@@ -45,15 +45,10 @@
   overlay will blink if you change the image in the window.
 */
 class FL_EXPORT Fl_Overlay_Window : public Fl_Double_Window {
-  friend class _Fl_Overlay;
   virtual void draw_overlay() = 0;
-  Fl_Window *overlay_;
 public:
-  void show();
   void flush();
-  void hide();
-  void resize(int,int,int,int);
-  ~Fl_Overlay_Window();
+  virtual ~Fl_Overlay_Window();
   int can_do_overlay();
   void redraw_overlay();
   /**
@@ -63,13 +58,12 @@ public:
     will choose them.
   */
   Fl_Overlay_Window(int W, int H, const char *l=0)
-    : Fl_Double_Window(W,H,l) {overlay_ = 0; force_doublebuffering_=1; image(0); }
+    : Fl_Double_Window(W,H,l) { force_doublebuffering_=1; image(0); }
    /**
     See Fl_Overlay_Window::Fl_Overlay_Window(int W, int H, const char *l=0)
   */
  Fl_Overlay_Window(int X, int Y, int W, int H, const char *l=0)
-    : Fl_Double_Window(X,Y,W,H,l) {overlay_ = 0; force_doublebuffering_=1; image(0); }
-  void show(int a, char **b) {Fl_Double_Window::show(a,b);}
+    : Fl_Double_Window(X,Y,W,H,l) { force_doublebuffering_=1; image(0); }
 };
 
 #endif
