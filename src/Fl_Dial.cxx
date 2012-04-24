@@ -1,166 +1,343 @@
-//
-// "$Id: Fl_Dial.cxx 7903 2010-11-28 21:06:39Z matt $"
-//
-// Circular dial widget for the Fast Light Tool Kit (FLTK).
-//
-// Copyright 1998-2010 by Bill Spitzak and others.
-//
-// This library is free software; you can redistribute it and/or
-// modify it under the terms of the GNU Library General Public
-// License as published by the Free Software Foundation; either
-// version 2 of the License, or (at your option) any later version.
-//
-// This library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-// Library General Public License for more details.
-//
-// You should have received a copy of the GNU Library General Public
-// License along with this library; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
-// USA.
-//
-// Please report all bugs and problems on the following page:
-//
-//     http://www.fltk.org/str.php
-//
 
-#include <FL/Fl.H>
+/*******************************************************************************/
+/* Copyright (C) 2008 Jonathan Moore Liles                                     */
+/*                                                                             */
+/* This program is free software; you can redistribute it and/or modify it     */
+/* under the terms of the GNU General Public License as published by the       */
+/* Free Software Foundation; either version 2 of the License, or (at your      */
+/* option) any later version.                                                  */
+/*                                                                             */
+/* This program is distributed in the hope that it will be useful, but WITHOUT */
+/* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or       */
+/* FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for   */
+/* more details.                                                               */
+/*                                                                             */
+/* You should have received a copy of the GNU General Public License along     */
+/* with This program; see the file COPYING.  If not,write to the Free Software */
+/* Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
+/*******************************************************************************/
+
 #include <FL/Fl_Dial.H>
+
 #include <FL/fl_draw.H>
-#include <stdlib.h>
-#include <FL/math.h>
+#include <FL/Fl.H>
+#include <string.h>
+#include <stdio.h>
+#include <math.h>
+#include <algorithm>
 
-// All angles are measured with 0 to the right and counter-clockwise
-/**
-  Draws dial at given position and size.
-  \param[in] X, Y, W, H position and size
-*/
-void Fl_Dial::draw(int X, int Y, int W, int H) {
-  if (damage()&FL_DAMAGE_ALL) draw_box(box(), X, Y, W, H, color());
-  X += Fl::box_dx(box());
-  Y += Fl::box_dy(box());
-  W -= Fl::box_dw(box());
-  H -= Fl::box_dh(box());
-  double angle = (a2-a1)*(value()-minimum())/(maximum()-minimum()) + a1;
-  if (type() == FL_FILL_DIAL) {
-    // foo: draw this nicely in certain round box types
-    int foo = (box() > _FL_ROUND_UP_BOX && Fl::box_dx(box()));
-    if (foo) {X--; Y--; W+=2; H+=2;}
-    if (active_r()) fl_color(color());
-    else fl_color(fl_inactive(color()));
-    fl_pie(X, Y, W, H, 270-a1, angle > a1 ? 360+270-angle : 270-360-angle);
-    if (active_r()) fl_color(selection_color());
-    else fl_color(fl_inactive(selection_color()));
-    fl_pie(X, Y, W, H, 270-angle, 270-a1);
-    if (foo) {
-      if (active_r()) fl_color(FL_FOREGROUND_COLOR);
-      else fl_color(fl_inactive(FL_FOREGROUND_COLOR));
-      fl_arc(X, Y, W, H, 0, 360);
+int Fl_Dial::_default_style = Fl_Dial::PLASTIC_DIAL;
+
+/** This simple box is suitable for use with knob-type widgets. It
+ * comprises a border with shadow, and a cap with glare-lines akin
+ * to those seen on burnished aluminum knobs. */
+static void
+burnished_oval_box ( int x, int y, int w, int h, Fl_Color c )
+{
+    /* draw background */
+    fl_color( fl_darker( c ) );
+    fl_pie( x, y, w, h, 0, 360 );
+    fl_color( fl_darker( fl_darker( c ) ) );
+    fl_pie( x, y, w, h, 180 + 215, 180 + 45 );
+
+    /* shrink */
+    x += 4;
+    y += 4;
+    w -= 7;
+    h -= 7;
+
+    /* draw cap */
+    fl_color( c );
+    fl_pie( x, y, w, h, 0, 360 );
+
+    /* draw glare */
+
+    const int a1 = 10;
+    const int a2 = 90;
+
+    fl_color( fl_color_average( FL_WHITE, c, 0.15f ) );
+    fl_pie( x, y, w, h, a1, a2 );
+    fl_pie( x, y, w, h, 180 + a1, 180 + a2 );
+    fl_color( fl_color_average( FL_WHITE, c, 0.25f ) );
+
+    const int d = (a2 - a1) / 2;
+    fl_pie( x, y, w, h, a1 + (d / 2), a2 - (d / 2) );
+    fl_pie( x, y, w, h, 180 + a1 + (d / 2), 180 + a2 - (d / 2) );
+}
+
+
+
+
+void
+Fl_Dial::draw_box ( void )
+{
+}
+
+int
+Fl_Dial::handle ( int m )
+{
+    /* Fl_Dial and friends should really handle mousewheel, but they don't in FTLK1 */
+
+    switch ( m )
+    {
+        case FL_MOUSEWHEEL:
+        {
+            if ( this != Fl::belowmouse() )
+                return 0;
+
+            int steps = 16;
+
+            if ( Fl::event_ctrl() )
+                steps = 128;
+
+            float step = fabs( maximum() - minimum() ) / (float)steps;
+
+            float d = ((float)Fl::event_dy()) * step;
+
+            double v = value() + d;
+
+            if ( maximum() > minimum() )
+            {
+                if ( v < minimum() )
+                    v = minimum();
+                else if ( v > maximum() )
+                    v = maximum();
+            }
+            else
+            {
+                if ( v > minimum() )
+                    v = minimum();
+                else if ( v < maximum() )
+                    v = maximum();
+            }
+
+            value( v );
+            do_callback();
+
+            return 1;
+        }
     }
-    return;
-  }
-  if (!(damage()&FL_DAMAGE_ALL)) {
-    if (active_r()) fl_color(color());
-    else fl_color(fl_inactive(color()));
-    fl_pie(X+1, Y+1, W-2, H-2, 0, 360);
-  }
-  fl_push_matrix();
-  fl_translate(X+W/2-.5, Y+H/2-.5);
-  fl_scale(W-1, H-1);
-  fl_rotate(45-angle);
-  if (active_r()) fl_color(selection_color());
-  else fl_color(fl_inactive(selection_color()));
-  if (type()) { // FL_LINE_DIAL
-    fl_begin_polygon();
-    fl_vertex(0.0,   0.0);
-    fl_vertex(-0.04, 0.0);
-    fl_vertex(-0.25, 0.25);
-    fl_vertex(0.0,   0.04);
-    fl_end_polygon();
-    if (active_r()) fl_color(FL_FOREGROUND_COLOR);
-    else fl_color(fl_inactive(FL_FOREGROUND_COLOR));
-    fl_begin_loop();
-    fl_vertex(0.0,   0.0);
-    fl_vertex(-0.04, 0.0);
-    fl_vertex(-0.25, 0.25);
-    fl_vertex(0.0,   0.04);
-    fl_end_loop();
-  } else {
-    fl_begin_polygon(); fl_circle(-0.20, 0.20, 0.07); fl_end_polygon();
-    if (active_r()) fl_color(FL_FOREGROUND_COLOR);
-    else fl_color(fl_inactive(FL_FOREGROUND_COLOR));
-    fl_begin_loop(); fl_circle(-0.20, 0.20, 0.07); fl_end_loop();
-  }
-  fl_pop_matrix();
+
+    int X, Y, S;
+
+    get_knob_dimensions ( &X, &Y, &S );
+
+    return Fl_Dial_Base::handle( m, X, Y, S, S );
 }
 
-/**
-  Draws dial at current position and size.
-*/
-void Fl_Dial::draw() {
-  draw(x(), y(), w(), h());
-  draw_label();
-}
+void
+Fl_Dial::draw ( void )
+{
+    int X, Y, S;
 
-/**
-  Allows subclasses to handle event based on given position and size.
-  \param[in] event, X, Y, W, H event to handle, related position and size.
-*/
-int Fl_Dial::handle(int event, int X, int Y, int W, int H) {
-  switch (event) {
-  case FL_PUSH: {
-    Fl_Widget_Tracker wp(this);  
-    handle_push();
-    if (wp.deleted()) return 1; }
-  case FL_DRAG: {
-    int mx = (Fl::event_x()-X-W/2)*H;
-    int my = (Fl::event_y()-Y-H/2)*W;
-    if (!mx && !my) return 1;
-    double angle = 270-atan2((float)-my, (float)mx)*180/M_PI;
-    double oldangle = (a2-a1)*(value()-minimum())/(maximum()-minimum()) + a1;
-    while (angle < oldangle-180) angle += 360;
-    while (angle > oldangle+180) angle -= 360;
-    double val;
-    if ((a1<a2) ? (angle <= a1) : (angle >= a1)) {
-      val = minimum();
-    } else if ((a1<a2) ? (angle >= a2) : (angle <= a2)) {
-      val = maximum();
-    } else {
-      val = minimum() + (maximum()-minimum())*(angle-a1)/(a2-a1);
+    fl_push_use_cairo( true );
+
+    get_knob_dimensions ( &X, &Y, &S);
+
+    draw_box();
+    draw_label();
+
+    double angle = ( angle2() - angle1() ) * ( value() - minimum()) / ( maximum() - minimum() ) + angle1();
+
+    if ( type() == ARC_DIAL )
+    {
+        /* fl_line_style( FL_SOLID, 0 ); */
+        if ( type() == ARC_DIAL )
+            fl_draw_box( box(), X, Y, S, S, color() );
+
+        /* shrink a bit */
+        X += S / 16.0;
+        Y += S / 16.0;
+        S -= S / 8;
+
+        fl_line_style( FL_SOLID, S / 6 );
+
+        /* background arc */
+        fl_color( fl_darker( color() ) );
+        fl_arc( X, Y, S, S, 270 - angle1(), 270 - angle2() );
+
+        /* foreground arc */
+        fl_color( selection_color() );
+        fl_arc( X, Y, S, S, 270 - angle1(), 270 - angle  );
+
+        fl_line_style( FL_SOLID, 0 );
+
+        fl_color( fl_contrast( labelcolor(), color() ) );
     }
-    handle_drag(clamp(round(val)));
-  } return 1;
-  case FL_RELEASE:
-    handle_release();
-    return 1;
-  case FL_ENTER : /* FALLTHROUGH */
-  case FL_LEAVE :
-    return 1;
-  default:
-    return 0;
-  }
+    else if ( type() == PLASTIC_DIAL || type() == BURNISHED_DIAL )
+    {
+        draw_knob();
+        
+        draw_cursor( X, Y, S);
+    }
+
+    /* Some strange bug in FLTK prevents us from always been able to draw text
+     * here, so don't even try for now. */
+    /* char s[10]; */
+    
+    /* fl_font( FL_HELVETICA, 8 ); */
+    
+    /* snprintf( s, sizeof( s ), "%.1f", value() ); */
+
+    /* /\* fl_rectf( X, Y + S, S, 14, FL_BACKGROUND2_COLOR ); *\/ */
+    /* fl_color( FL_WHITE );  */
+    /* fl_draw( s, X, Y + S, S, 14, FL_ALIGN_CENTER ); */
+
+    fl_pop_use_cairo();
 }
 
-/**
-  Allow subclasses to handle event based on current position and size.
-*/
-int Fl_Dial::handle(int e) {
-  return handle(e, x(), y(), w(), h());
+void
+Fl_Dial::get_knob_dimensions ( int *X, int *Y, int *S )
+{
+    int ox, oy, ww, hh, side;
+    ox = x();
+    oy = y();
+    ww = w();
+    hh = h();
+    
+    if (ww > hh)
+    {
+        side = hh;
+        ox = ox + (ww - side) / 2;
+    }
+    else
+    {
+        side = ww;
+        oy = oy + (hh - side) / 2;
+    }
+    side = w() > h() ? hh : ww;
+
+    *X = ox;
+    *Y = oy;
+    *S = side;
 }
 
-Fl_Dial::Fl_Dial(int X, int Y, int W, int H, const char* l)
-/**
-  Creates a new Fl_Dial widget using the given position, size,
-  and label string. The default type is FL_NORMAL_DIAL.
-*/
-: Fl_Valuator(X, Y, W, H, l) {
-  box(FL_OVAL_BOX);
-  selection_color(FL_INACTIVE_COLOR); // was 37
-  a1 = 45;
-  a2 = 315;
+void 
+Fl_Dial::draw_cursor ( int ox, int oy, int side )
+{
+    double angle;
+
+//    fl_color(fl_color_average(FL_BACKGROUND_COLOR, FL_BLACK, .7f));
+
+    angle = ( angle2() - angle1() ) * ( value() - minimum()) / ( maximum() - minimum() ) + angle1();
+
+    fl_color( fl_contrast( selection_color(), FL_BACKGROUND_COLOR ) );
+    
+    fl_line_style( FL_SOLID, side / 8 );
+    
+    const int d = 6;
+    
+    /* account for edge conditions */
+    angle = angle < angle1() + d ? angle1() + d : angle;
+    angle = angle > angle2() - d ? angle2() - d : angle;
+    
+    ox += side * 0.15;
+    oy += side * 0.15;
+    side -= side * 0.15 * 2;
+    
+    fl_arc( ox, oy, side, side, 270 - (angle - d), 270 - (angle + d) );
+//    fl_arc( ox, oy, side, side, 270 - (angle + d), 270 - (angle - d) );
+    
+    fl_line_style( FL_SOLID, 0 );
 }
 
-//
-// End of "$Id: Fl_Dial.cxx 7903 2010-11-28 21:06:39Z matt $".
-//
+void
+Fl_Dial::draw_knob ( void )
+{
+    int ox, oy, ww, hh, side;
+
+    get_knob_dimensions ( &ox, &oy, &side );
+
+    ww = w();
+    hh = h();
+    draw_label();
+    fl_clip(ox, oy, ww, hh);
+
+    int o = side * 0.15;
+
+    // background
+    /* fl_color(FL_BACKGROUND_COLOR); */
+    /* fl_rectf(ox, oy, side, side); */
+        
+    /* scale color */
+    if ( damage() & FL_DAMAGE_ALL )
+    {
+        fl_color(fl_color_average(color(), FL_BACKGROUND2_COLOR, .6));
+        
+        fl_pie(ox + 1, oy + 3, side - 2, side - 12, 0, 360);
+
+        // scale
+        
+        draw_scale(ox, oy, side);
+    }
+
+    Fl_Color c = active_r() ? fl_color_average(FL_BACKGROUND_COLOR, FL_WHITE, .7) : FL_INACTIVE_COLOR;
+
+    if ( type() == BURNISHED_DIAL )
+    {
+        burnished_oval_box( ox + o, oy + o, side - (o*2), side - (o*2), c );
+    }
+    else
+    {
+            
+       fl_color(FL_BACKGROUND_COLOR);
+
+        fl_pie(ox + o, oy + o, side - (o*2), side - (o*2), 0, 360);
+
+        // shadow
+
+        fl_color(fl_color_average(FL_BACKGROUND_COLOR, FL_BLACK, .8f));
+        fl_pie(ox + o + 2, oy + o + 3, side - o*2, side - o*2, 0, 360);
+        /* fl_color(fl_color_average(FL_BACKGROUND_COLOR, FL_BLACK, .2f)); */
+        /* fl_pie(ox + o + 4, oy + o + 5, side - o*2, side - o*2, 0, 360); */
+
+        // knob edge
+        fl_color( c);
+
+        fl_arc(ox + o, oy + o, side - o*2, side - o*2, 0, 360);
+
+        fl_color(fl_color_average(FL_BACKGROUND_COLOR, FL_WHITE, .6));
+
+        fl_pie(ox + o, oy + o, side - o*2, side - o*2, 0, 360);
+        
+    }
+    fl_pop_clip();
+}
+
+
+void
+Fl_Dial::draw_scale ( int ox, int oy, int side )
+{
+    float x1, y1, x2, y2, rds, cx, cy, ca, sa;
+    rds = side / 2;
+    cx = ox + side / 2;
+    cy = oy + side / 2;
+    if (_scaleticks == 0)
+        return;
+    double a_step = (10.0 * 3.14159 / 6.0) / _scaleticks;
+    double a_orig = -(3.14159 / 3.0);
+    for (int a = 0; a <= _scaleticks; a++)
+    {
+        double na = a_orig + a * a_step;
+        ca = cos(na);
+        sa = sin(na);
+        x1 = cx + (rds) * ca;
+        y1 = cy - (rds) * sa;
+        x2 = cx + (rds - 6) * ca;
+        y2 = cy - (rds - 6) * sa;
+        fl_color(FL_BACKGROUND_COLOR);
+        fl_line(x1, y1, x2, y2);
+    }
+}
+
+void 
+Fl_Dial::scaleticks ( int tck )
+{
+    _scaleticks = tck;
+    if (_scaleticks < 0)
+        _scaleticks = 0;
+    if (_scaleticks > 31)
+        _scaleticks = 31;
+    if (visible())
+        damage(FL_DAMAGE_ALL);
+}
