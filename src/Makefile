@@ -39,7 +39,6 @@ CPPFILES = \
 	Fl_Check_Browser.cxx \
 	Fl_Check_Button.cxx \
 	Fl_Choice.cxx \
-	Fl_Clock.cxx \
 	Fl_Color_Chooser.cxx \
 	Fl_Counter.cxx \
 	Fl_Dial.cxx \

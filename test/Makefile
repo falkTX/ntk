@@ -40,7 +40,6 @@ CPPFILES =\
 	buttons.cxx \
 	cairo_test.cxx \
 	checkers.cxx \
-	clock.cxx \
 	colbrowser.cxx \
 	color_chooser.cxx \
 	cube.cxx \
@@ -114,7 +113,6 @@ ALL =	\
 	buttons$(EXEEXT) \
 	cairo_test$(EXEEXT) \
 	checkers$(EXEEXT) \
-	clock$(EXEEXT) \
 	colbrowser$(EXEEXT) \
 	color_chooser$(EXEEXT) \
 	cursor$(EXEEXT) \
@@ -303,8 +301,6 @@ checkers$(EXEEXT): checkers.o
 	echo Linking $@...
 	$(CXX) $(ARCHFLAGS) $(LDFLAGS) checkers.o -o $@ $(LINKFLTK) $(LDLIBS)
 	$(OSX_ONLY) $(INSTALL_BIN) checkers$(EXEEXT) checkers.app/Contents/MacOS
-
-clock$(EXEEXT): clock.o
 
 colbrowser$(EXEEXT): colbrowser.o
 	echo Linking $@...

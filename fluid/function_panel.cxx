@@ -1030,12 +1030,6 @@ Fl_Window* make_widgetbin() {
         o->callback((Fl_Callback*)type_make_cb, (void*)("Fl_Box"));
         o->image(pixmap[5]);
       } // Fl_Button* o
-      { Fl_Button* o = new Fl_Button(542, 5, 24, 24);
-        o->tooltip("Clock");
-        o->box(FL_THIN_UP_BOX);
-        o->callback((Fl_Callback*)type_make_cb, (void*)("Fl_Clock"));
-        o->image(pixmap[34]);
-      } // Fl_Button* o
       { Fl_Button* o = new Fl_Button(517, 30, 24, 24);
         o->tooltip("Help Browser");
         o->box(FL_THIN_UP_BOX);

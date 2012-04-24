@@ -861,12 +861,6 @@ else
         code0 {o->image(pixmap[5]);}
       }
       Fl_Button {} {
-        user_data {"Fl_Clock"}
-        callback type_make_cb
-        tooltip Clock xywh {542 5 24 24} box THIN_UP_BOX
-        code0 {o->image(pixmap[34]);}
-      }
-      Fl_Button {} {
         user_data {"Fl_Help_View"}
         callback type_make_cb
         tooltip {Help Browser} xywh {517 30 24 24} box THIN_UP_BOX

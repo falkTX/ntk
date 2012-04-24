@@ -91,7 +91,6 @@ static Fl_Pixmap	protected_pixmap(protected_xpm);
 #include "pixmaps/flBrowser.xpm"
 #include "pixmaps/flCheckBrowser.xpm"
 #include "pixmaps/flFileBrowser.xpm"
-#include "pixmaps/flClock.xpm"
 #include "pixmaps/flHelp.xpm"
 #include "pixmaps/flProgress.xpm"
 #include "pixmaps/flSlider.xpm"
@@ -142,7 +141,6 @@ static Fl_Pixmap	fileinput_pixmap(flFileInput_xpm);
 static Fl_Pixmap	browser_pixmap(flBrowser_xpm);
 static Fl_Pixmap	checkbrowser_pixmap(flCheckBrowser_xpm);
 static Fl_Pixmap	filebrowser_pixmap(flFileBrowser_xpm);
-static Fl_Pixmap	clock_pixmap(flClock_xpm);
 static Fl_Pixmap	help_pixmap(flHelp_xpm);
 static Fl_Pixmap	progress_pixmap(flProgress_xpm);
 static Fl_Pixmap	slider_pixmap(flSlider_xpm);
@@ -166,7 +164,7 @@ Fl_Pixmap *pixmap[] = { 0, &window_pixmap, &button_pixmap, &checkbutton_pixmap, 
  &menuitem_pixmap, &menubar_pixmap, &submenu_pixmap, &scroll_pixmap, &tile_pixmap, &wizard_pixmap,   /* 16..21 */
  &pack_pixmap, &returnbutton_pixmap, &lightbutton_pixmap, &repeatbutton_pixmap, &menubutton_pixmap,  /* 22..26 */
  &output_pixmap, &textdisplay_pixmap, &textedit_pixmap, &fileinput_pixmap, &browser_pixmap,          /* 27..32 */
- &checkbrowser_pixmap, &filebrowser_pixmap, &clock_pixmap, &help_pixmap, &progress_pixmap,	     /* 33..36 */
+ &checkbrowser_pixmap, &filebrowser_pixmap, NULL, &help_pixmap, &progress_pixmap,	     /* 33..36 */
  &slider_pixmap, &scrollbar_pixmap, &valueslider_pixmap, &adjuster_pixmap, &counter_pixmap,          /* 37..41 */
  &dial_pixmap, &roller_pixmap, &valueinput_pixmap, &valueoutput_pixmap, &comment_pixmap,             /* 42..46 */
  &spinner_pixmap, &widgetclass_pixmap, &data_pixmap, &tree_pixmap, &table_pixmap };                  /* 47..51 */

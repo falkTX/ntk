@@ -110,7 +110,7 @@ Fl_Type.o: pixmaps/flMenuButton.xpm pixmaps/flOutput.xpm
 Fl_Type.o: pixmaps/flTextDisplay.xpm pixmaps/flTextEdit.xpm
 Fl_Type.o: pixmaps/flFileInput.xpm pixmaps/flBrowser.xpm
 Fl_Type.o: pixmaps/flCheckBrowser.xpm pixmaps/flFileBrowser.xpm
-Fl_Type.o: pixmaps/flClock.xpm pixmaps/flHelp.xpm pixmaps/flProgress.xpm
+Fl_Type.o: pixmaps/flHelp.xpm pixmaps/flProgress.xpm
 Fl_Type.o: pixmaps/flSlider.xpm pixmaps/flScrollBar.xpm
 Fl_Type.o: pixmaps/flValueSlider.xpm pixmaps/flAdjuster.xpm
 Fl_Type.o: pixmaps/flCounter.xpm pixmaps/flDial.xpm pixmaps/flRoller.xpm
@@ -287,7 +287,7 @@ factory.o: ../FL/Fl_Check_Browser.H ../FL/Fl_File_Browser.H
 factory.o: ../FL/Fl_Browser.H ../FL/Fl_File_Icon.H ../FL/filename.H
 factory.o: ../FL/Fl_Counter.H ../FL/Fl_Spinner.H ../FL/Fl_File_Input.H
 factory.o: ../FL/Fl_Text_Display.H ../FL/fl_draw.H ../FL/Fl_Text_Buffer.H
-factory.o: ../FL/Fl_Text_Editor.H ../FL/Fl_Text_Display.H ../FL/Fl_Clock.H
+factory.o: ../FL/Fl_Text_Editor.H ../FL/Fl_Text_Display.H 
 factory.o: ../FL/Fl_Help_View.H ../FL/Fl_Shared_Image.H ../FL/Fl_Progress.H
 factory.o: ../FL/Fl_Adjuster.H ../FL/Fl_Dial.H ../FL/Fl_Roller.H
 factory.o: ../FL/Fl_Output.H ../FL/Fl_Input.H ../FL/Fl_Value_Input.H

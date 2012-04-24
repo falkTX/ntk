@@ -642,20 +642,6 @@ int Fl_Text_Editor_Type::textstuff(int w, Fl_Font& f, int& s, Fl_Color& c) {
 
 ////////////////////////////////////////////////////////////////
 
-#include <FL/Fl_Clock.H>
-class Fl_Clock_Type : public Fl_Widget_Type {
-public:
-  virtual const char *type_name() {return "Fl_Clock";}
-  virtual const char *alt_type_name() {return "fltk::Clock";}
-  Fl_Widget *widget(int x,int y,int w,int h) {
-    return new Fl_Clock(x,y,w,h);}
-  Fl_Widget_Type *_make() {return new Fl_Clock_Type();}
-  int pixmapID() { return 34; }
-};
-static Fl_Clock_Type Fl_Clock_type;
-
-////////////////////////////////////////////////////////////////
-
 #include <FL/Fl_Help_View.H>
 class Fl_Help_View_Type : public Fl_Widget_Type {
 public:
@@ -1073,7 +1059,6 @@ Fl_Menu_Item New_Menu[] = {
 {0},
 {"Other",0,0,0,FL_SUBMENU},
   {0,0,cb,(void*)&Fl_Box_type},
-  {0,0,cb,(void*)&Fl_Clock_type},
   {0,0,cb,(void*)&Fl_Help_View_type},
   {0,0,cb,(void*)&Fl_Progress_type},
 {0},

@@ -31,7 +31,6 @@
 #include <FL/Fl_Overlay_Window.H>
 #include <FL/Fl_Light_Button.H>
 #include <FL/fl_draw.H>
-#include <FL/Fl_Clock.H>
 #include "pixmaps/porsche.xpm"
 #include <FL/Fl_Pixmap.H>
 #include <FL/Fl_Bitmap.H>
@@ -637,7 +636,6 @@ int main(int argc, char ** argv) {
   b_bitmap.labelcolor(FL_GREEN);
   b_bitmap.image(new Fl_Bitmap(sorceress_bits,sorceress_width,sorceress_height));
   
-  new Fl_Clock(360,230,120,120);
   Fl_Return_Button * ret = new Fl_Return_Button (360, 360, 120,30, "Return");
   ret->deactivate();
   Fl_Button but1(360, 390, 30, 30, "@->|");

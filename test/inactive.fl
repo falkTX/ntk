@@ -101,10 +101,6 @@ Function {} {open
         label dial
         xywh {275 235 50 50}
       }
-      Fl_Clock {} {
-        label clock
-        xywh {335 235 50 50}
-      }
     }
     Fl_Button {} {
       label active
