@@ -43,6 +43,7 @@ CPPFILES = \
 	Fl_Color_Chooser.cxx \
 	Fl_Counter.cxx \
 	Fl_Dial.cxx \
+	Fl_Dial_Base.cxx \
 	Fl_Device.cxx \
 	Fl_Double_Window.cxx \
 	Fl_File_Browser.cxx \
