@@ -48,6 +48,10 @@
 # endif
 #endif
 
+#if FLTK_HAVE_CAIRO
+#include <FL/Fl_Cairo.H>
+#endif
+
 // recent versions of MinGW warn: "Please include winsock2.h before windows.h",
 // hence we must include winsock2.h before FL/Fl.H (A.S. Dec. 2010, IMM May 2011)
 #if defined(WIN32) && !defined(__CYGWIN__)
@@ -1440,6 +1444,10 @@ void Fl_Window::hide() {
 # endif
   // this test makes sure ip->xid has not been destroyed already
   if (ip->xid) XDestroyWindow(fl_display, ip->xid);
+#if FLTK_HAVE_CAIRO
+  cairo_destroy( ip->cc ); ip->cc = NULL;
+  cairo_surface_destroy( ip->cs ); ip->cs = NULL;
+#endif
 #elif defined(WIN32)
   // this little trickery seems to avoid the popup window stacking problem
   HWND p = GetForegroundWindow();
