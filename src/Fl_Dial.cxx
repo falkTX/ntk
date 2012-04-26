@@ -130,8 +130,6 @@ Fl_Dial::draw ( void )
 {
     int X, Y, S;
 
-    fl_push_use_cairo( true );
-
     get_knob_dimensions ( &X, &Y, &S);
 
     draw_box();
@@ -182,8 +180,6 @@ Fl_Dial::draw ( void )
     /* /\* fl_rectf( X, Y + S, S, 14, FL_BACKGROUND2_COLOR ); *\/ */
     /* fl_color( FL_WHITE );  */
     /* fl_draw( s, X, Y + S, S, 14, FL_ALIGN_CENTER ); */
-
-    fl_pop_use_cairo();
 }
 
 void
