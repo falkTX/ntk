@@ -334,18 +334,17 @@ void Fl_Cairo_Graphics_Driver::circle( double x, double y, double r )
 
 static void add_arc( int x, int y, int w, int h, double a1, double a2, bool pie )
 {
-
     cairo_t *cr = Fl::cairo_cc();
 
     double a1R = a1 * ( M_PI / 180.0 );
     double a2R = a2 * ( M_PI / 180.0 );
 
-    float cx = x + 0.5 * w - 0.5f, cy = y + 0.5 * h - 0.5f;
-    
+    double cx = x + 0.5 * w, cy = y + 0.5 * h;
+
     cairo_save( cr );
     cairo_translate( cr, cx, cy );
-//    cairo_scale( cr, w, 0 - h );
-    cairo_scale( cr, (w - lw * 2) - 1.0f, 0 - ((h - lw * 2) - 1.0f ));
+//    cairo_scale( cr, (w - lw), 0 - ((h - lw) ));
+    cairo_scale( cr, w, 0 - h );
 
     if ( a1 > a2 )
         cairo_arc_negative( cr, 0.0, 0.0, 0.5, a1R, a2R );
@@ -357,6 +356,7 @@ static void add_arc( int x, int y, int w, int h, double a1, double a2, bool pie 
         cairo_line_to( cr, 0, 0 );
         cairo_close_path( cr );
     }
+
     cairo_restore( cr );
 }
 
@@ -485,11 +485,11 @@ void Fl_Cairo_Graphics_Driver::end_line ( void )
 {
    cairo_t *cr = Fl::cairo_cc();
 
-   if ( n < 3 )
-   {
-       end_points();
-       return;
-   }
+   /* if ( n < 3 ) */
+   /* { */
+   /*     end_points(); */
+   /*     return; */
+   /* } */
 
    if ( lw <= 1 )
    {
