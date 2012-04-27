@@ -46,6 +46,7 @@
 
 #  include "Enumerations.H"
 #include <FL/Fl_Cairo.H>
+#include <FL/Fl_Rectangle.H>
 
 #  ifdef WIN32
 #    include "win32.H"
@@ -64,7 +65,7 @@
 #    include "Fl_Window.H"
 #    include "Xutf8.h"
 // Mirror X definition of Region to Fl_Region, for portability...
-typedef Region Fl_Region;
+typedef Fl_Rectangle * Fl_Region;
 
 FL_EXPORT void fl_open_display();
 FL_EXPORT void fl_open_display(Display*);
@@ -158,16 +159,18 @@ extern FL_EXPORT Fl_XFont_On_Demand fl_xfont;
 class FL_EXPORT Fl_X {
 public:
   Window xid;
-  Window other_xid;
+  Window other_xid;                                             /* for double buffering */
 #if FLTK_HAVE_CAIRO
   cairo_t *cc;
   cairo_surface_t *cs;
+  cairo_t *other_cc;                                            /* for double buffering */
+  cairo_surface_t *other_cs;                                    /* for double buffering  */
 #endif
   Fl_Window *w;
   Fl_Region region;
   Fl_X *next;
   char wait_for_expose;
-  char backbuffer_bad; // used for XDBE
+  char cairo_surface_invalid;
   static Fl_X* first;
   static Fl_X* i(const Fl_Window* wi) {return wi->i;}
   void setwindow(Fl_Window* wi) {w=wi; wi->i=this;}

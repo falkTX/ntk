@@ -113,6 +113,8 @@ void *fl_xftfont = 0;
 //const char* fl_encoding_ = "iso8859-1";
 const char* fl_encoding_ = "iso10646-1";
 
+extern Region XRegionFromRectangle ( Fl_Rectangle *rg );
+
 static void fl_xft_font(Fl_Xlib_Graphics_Driver *driver, Fl_Font fnum, Fl_Fontsize size, int angle) {
   if (fnum==-1) { // special case to stop font caching
     driver->Fl_Graphics_Driver::font(0, 0);
@@ -599,8 +601,14 @@ void Fl_Xlib_Graphics_Driver::draw(const char *str, int n, int x, int y) {
   else //if (draw_window != fl_window)
     XftDrawChange(draw_, draw_window = fl_window);
 
-  Region region = fl_clip_region();
-  if (region && XEmptyRegion(region)) return;
+  Region region = XRegionFromRectangle( fl_clip_region() );
+
+  if (region && XEmptyRegion(region))
+  {
+      XDestroyRegion( region );
+      return;
+  }
+ 
   XftDrawSetClip(draw_, region);
 
   // Use fltk's color allocator, copy the results to match what
@@ -619,6 +627,8 @@ void Fl_Xlib_Graphics_Driver::draw(const char *str, int n, int x, int y) {
 #else
   XftDrawString32(draw_, &color, font_descriptor()->font, x, y, (XftChar32 *)buffer, n);
 #endif
+
+  if ( region ) XDestroyRegion( region );
 }
 
 void Fl_Xlib_Graphics_Driver::draw(int angle, const char *str, int n, int x, int y) {
@@ -644,8 +654,15 @@ static void fl_drawUCS4(Fl_Graphics_Driver *driver, const FcChar32 *str, int n, 
   else //if (draw_window != fl_window)
     XftDrawChange(draw_, draw_window = fl_window);
 
-  Region region = fl_clip_region();
-  if (region && XEmptyRegion(region)) return;
+
+  Region region = XRegionFromRectangle( fl_clip_region() );
+
+  if (region && XEmptyRegion(region))
+  {
+      XDestroyRegion( region );
+      return;
+  }
+ 
   XftDrawSetClip(draw_, region);
 
   // Use fltk's color allocator, copy the results to match what
@@ -659,6 +676,8 @@ static void fl_drawUCS4(Fl_Graphics_Driver *driver, const FcChar32 *str, int n, 
   color.color.alpha = 0xffff;
 
   XftDrawString32(draw_, &color, driver->font_descriptor()->font, x, y, (FcChar32 *)str, n);
+
+  if ( region ) XDestroyRegion( region );
 }
 
 

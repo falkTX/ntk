@@ -56,13 +56,7 @@ void Fl_Overlay_Window::flush() {
   clear_damage((uchar)(damage()&~FL_DAMAGE_OVERLAY));
   Fl_Double_Window::flush(erase_overlay);
   Fl_X* myi = Fl_X::i(this);
-#if FLTK_HAVE_CAIRO
-      Fl::cairo_make_current( this, myi->xid );
-#endif
-      draw_overlay();
-#if FLTK_HAVE_CAIRO
-      Fl::cairo_make_current( this, myi->other_xid );
-#endif
+  draw_overlay();
 }
 
 /**

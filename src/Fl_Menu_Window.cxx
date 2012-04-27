@@ -41,18 +41,18 @@
 #include <stdio.h>
 
 void Fl_Menu_Window::show() {
-    Fl_Double_Window::show();
+    Fl_Single_Window::show();
 }
 
 void Fl_Menu_Window::flush() {
-  Fl_Double_Window::flush();
+  Fl_Single_Window::flush();
 }
 
 // Fix the colormap flashing on Maximum Impact Graphics by erasing the
 // menu before unmapping it:
 void Fl_Menu_Window::hide() {
 //  erase();
-  Fl_Double_Window::hide();
+  Fl_Single_Window::hide();
 }
 
 /**  Destroys the window and all of its children.*/

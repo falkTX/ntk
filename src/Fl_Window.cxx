@@ -38,9 +38,7 @@
 
 #include <FL/Fl_Cairo.H>
 
-#ifdef __APPLE_QUARTZ__
 #include <FL/fl_draw.H>
-#endif
 
 char *Fl_Window::default_xclass_ = 0L;
 
@@ -113,14 +111,6 @@ void Fl_Window::draw() {
   }
   draw_children();
 
-#if FLTK_HAVE_CAIRO
-  cairo_surface_flush( i->cs );
-#endif
-
-#ifdef __APPLE_QUARTZ__
-  // on OS X, windows have no frame. To resize a window, we drag the lower right
-  // corner. This code draws a little ribbed triangle for dragging.
-  extern CGContextRef fl_gc;
   if (fl_gc && !parent() && resizable() && (!size_range_set || minh!=maxh || minw!=maxw)) {
     int dx = Fl::box_dw(box())-Fl::box_dx(box());
     int dy = Fl::box_dh(box())-Fl::box_dy(box());
@@ -139,7 +129,6 @@ void Fl_Window::draw() {
       fl_line(x1--, y1, x2, y2--);
     }
   }
-#endif
 }
 
 void Fl_Window::label(const char *name) {

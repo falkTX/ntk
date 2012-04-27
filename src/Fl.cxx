@@ -750,12 +750,10 @@ void Fl::flush() {
     for (Fl_X* i = Fl_X::first; i; i = i->next) {
       if (i->wait_for_expose) {damage_ = 1; continue;}
       Fl_Window* wi = i->w;
-//      Fl::cairo_make_current(wi);
       if (!wi->visible_r()) continue;
-      wi->make_current();
-      if (wi->damage()) {i->flush(); wi->clear_damage();}
+      if (wi->damage()) {wi->make_current(); i->flush(); wi->clear_damage();}
       // destroy damage regions for windows that don't use them:
-      if (i->region) {XDestroyRegion(i->region); i->region = 0;}
+      if (i->region) {delete i->region; i->region = 0;}
     }
   }
 #if defined(USE_X11)
@@ -1436,18 +1434,18 @@ void Fl_Window::hide() {
     fl_window = 0;
 #endif
 
-  if (ip->region) XDestroyRegion(ip->region);
+  if (ip->region) delete ip->region; ip->region = 0;
 
 #if defined(USE_X11)
+#if FLTK_HAVE_CAIRO
+  cairo_destroy( ip->cc ); ip->cc = 0;
+  cairo_surface_destroy( ip->cs ); ip->cs = 0;
+#endif
 # if USE_XFT
   fl_destroy_xft_draw(ip->xid);
 # endif
   // this test makes sure ip->xid has not been destroyed already
   if (ip->xid) XDestroyWindow(fl_display, ip->xid);
-#if FLTK_HAVE_CAIRO
-  cairo_destroy( ip->cc ); ip->cc = NULL;
-  cairo_surface_destroy( ip->cs ); ip->cs = NULL;
-#endif
 #elif defined(WIN32)
   // this little trickery seems to avoid the popup window stacking problem
   HWND p = GetForegroundWindow();
@@ -1641,7 +1639,7 @@ void Fl_Widget::damage(uchar fl) {
     // damage entire window by deleting the region:
     Fl_X* i = Fl_X::i((Fl_Window*)this);
     if (!i) return; // window not mapped, so ignore it
-    if (i->region) {XDestroyRegion(i->region); i->region = 0;}
+    if (i->region) {delete i->region; i->region = 0;}
     damage_ |= fl;
     Fl::damage(FL_DAMAGE_CHILD);
   }
@@ -1676,9 +1674,7 @@ void Fl_Widget::damage(uchar fl, int X, int Y, int W, int H) {
     // if we already have damage we must merge with existing region:
     if (i->region) {
 #if defined(USE_X11)
-      XRectangle R;
-      R.x = X; R.y = Y; R.width = W; R.height = H;
-      XUnionRectWithRegion(&R, i->region, i->region);
+      i->region->merge( Fl_Rectangle( X, Y, W, H ) );
 #elif defined(WIN32)
       Fl_Region R = XRectangleRegion(X, Y, W, H);
       CombineRgn(i->region, i->region, R, RGN_OR);
@@ -1700,25 +1696,26 @@ void Fl_Widget::damage(uchar fl, int X, int Y, int W, int H) {
     wi->damage_ |= fl;
   } else {
     // create a new region:
-    if (i->region) XDestroyRegion(i->region);
-    i->region = XRectangleRegion(X,Y,W,H);
+    if (i->region) delete i->region;
+    i->region = new Fl_Rectangle(X,Y,W,H);
     wi->damage_ = fl;
   }
   Fl::damage(FL_DAMAGE_CHILD);
 }
 void Fl_Window::flush() {
 
-  make_current();
-
-//if (damage() == FL_DAMAGE_EXPOSE && can_boxcheat(box())) fl_boxcheat = this;
-  /* FIXME: shouldn't this destroy the region? */
-  fl_clip_region(i->region); i->region = 0;
-
-
-  cairo_surface_flush( i->cs );
+    if ( ! i->cc )
+    {
+        i->cs = Fl::cairo_create_surface( i->xid, w(), h() );
+        i->cc = cairo_create( i->cs );
+        Fl::cairo_make_current( i->cs, i->cc );
+    }
 
   draw();
 
+#if FLTK_HAVE_CAIRO
+  cairo_surface_flush( i->cs );
+#endif
 }
 
 #ifdef WIN32

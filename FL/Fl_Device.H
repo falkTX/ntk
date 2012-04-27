@@ -522,9 +522,6 @@ public:
 
     void line_style(int style, int width=0, char* dashes=0);
 
-    
-    void restore_clip ( void );
-
     void arc( int x, int y, int w, int h, double a1, double a2 );
     void pie( int x, int y, int w, int h, double a1, double a2 );
     void arc( double x, double y, double r, double a1, double a2 );

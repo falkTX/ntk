@@ -1039,8 +1039,10 @@ public:
   */
 public:
 
+  static cairo_surface_t * cairo_create_surface ( Window xid, int W, int H );
+
   // Cairo support API
-  static cairo_t * cairo_make_current(Fl_Window* wi, Window w = 0);
+  static cairo_t * cairo_make_current( cairo_surface_t *cs, cairo_t *cc );
    /** when FLTK_HAVE_CAIRO is defined and cairo_autolink_context() is true, 
       any current window dc is linked to a current context.
       This is not the default, because it may not be necessary

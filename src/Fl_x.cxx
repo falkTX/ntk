@@ -1665,6 +1665,9 @@ void Fl_Window::resize(int X,int Y,int W,int H) {
     } else
       XMoveWindow(fl_display, i->xid, X, Y);
   }
+
+  if ( is_a_resize && i )
+       i->cairo_surface_invalid = 1;
 }
 
 ////////////////////////////////////////////////////////////////
@@ -1679,14 +1682,16 @@ Fl_X* Fl_X::set_xid(Fl_Window* win, Window winxid) {
   xp->xid = winxid;
   xp->other_xid = 0;
 #if FLTK_HAVE_CAIRO
-  xp->cc = 0;
-  xp->cs = 0;
+  xp->cs = Fl::cairo_create_surface( winxid, win->w(), win->h() );
+  xp->cc = cairo_create( xp->cs );
+  xp->cairo_surface_invalid = 0;
+  xp->other_cc = 0;
+  xp->other_cs = 0;
 #endif
   xp->setwindow(win);
   xp->next = Fl_X::first;
   xp->region = 0;
-  xp->wait_for_expose = 1;
-  xp->backbuffer_bad = 1;
+//  xp->backbuffer_bad = 1;
   Fl_X::first = xp;
   if (win->modal()) {Fl::modal_ = win; fl_fix_focus();}
   return xp;
@@ -2038,12 +2043,23 @@ void Fl_Window::make_current() {
   if (!gc) gc = XCreateGC(fl_display, i->xid, 0, 0);
   fl_window = i->xid;
   fl_gc = gc;
-  current_ = this;
-  fl_clip_region(0);
-
 #ifdef FLTK_HAVE_CAIRO
-  Fl::cairo_make_current(this);
+  if ( i->cairo_surface_invalid && i->cc )
+  {
+      cairo_destroy( i->cc ); i->cc = 0;
+      cairo_surface_destroy( i->cs ); i->cs = 0;
+  }
+
+  if ( ! i->cc )
+  {
+      i->cs = Fl::cairo_create_surface( i->xid, w(), h() );
+      i->cc = cairo_create( i->cs );
+  }
+  Fl::cairo_make_current( i->cs, i->cc );
 #endif
+  current_ = this;
+
+  fl_clip_region(i->region);
 }
 
 Window fl_xid_(const Fl_Window *w) {

@@ -32,6 +32,10 @@
 #include <FL/x.H>
 #include <FL/fl_draw.H>
 
+#include <FL/Fl_Cairo.H>
+
+//#define DEBUG_EXPOSE
+
 // On systems that support double buffering "naturally" the base
 // Fl_Window class will probably do double-buffer and this subclass
 // does nothing.
@@ -305,8 +309,8 @@ void Fl_Double_Window::flush() {flush(0);}
   and leaving the clip region set to the entire window.
 */
 void Fl_Double_Window::flush(int eraseoverlay) {
-    //make_current(); // make sure fl_gc is non-zero
   Fl_X *myi = Fl_X::i(this);
+
   if (!myi->other_xid) {
 
 #if defined(USE_X11) || defined(WIN32)
@@ -318,20 +322,20 @@ void Fl_Double_Window::flush(int eraseoverlay) {
       clear_damage(FL_DAMAGE_ALL);
     }
 
-
 #else
 # error unsupported platform
 #endif
+    myi->other_cs = Fl::cairo_create_surface( myi->other_xid, w(), h() );
+    myi->other_cc = cairo_create( myi->other_cs );
 
-#if FLTK_HAVE_CAIRO
-    Fl::cairo_make_current( this );
-#endif
   }
-
+  
   fl_clip_region(myi->region);
 
   if (damage() & ~FL_DAMAGE_EXPOSE) {
-       
+
+  Fl::cairo_make_current( myi->other_cs, myi->other_cc );
+  
 #ifdef WIN32
     HDC _sgc = fl_gc;
     fl_gc = fl_makeDC(myi->other_xid);
@@ -354,30 +358,46 @@ void Fl_Double_Window::flush(int eraseoverlay) {
 #else // X:
     fl_window = myi->other_xid;
     
+//    fl_restore_clip();
     fl_clip_region(myi->region);
 
     draw();
 
 #if FLTK_HAVE_CAIRO
-  cairo_surface_flush( myi->cs );
+    cairo_surface_flush( myi->other_cs );
 #endif
 
     fl_window = myi->xid;
 
+#if FLTK_HAVE_CAIRO
+    Fl::cairo_make_current( myi->cs, myi->cc );
+#endif
+
+//    fl_restore_clip();
     fl_clip_region(myi->region);
 
 #endif
   }
-  if (eraseoverlay) fl_clip_region(0);
-  // on Irix (at least) it is faster to reduce the area copied to
-  // the current clip region:
+
+  if (eraseoverlay)
   {
-      int X,Y,W,H; fl_clip_box(0,0,w(),h(),X,Y,W,H);
-      if (myi->other_xid) fl_copy_offscreen(X, Y, W, H, myi->other_xid, X, Y);
+      fl_clip_region(0);
   }
 
-  myi->region = 0;
+  // on Irix (at least) it is faster to reduce the area copied to
+  // the current clip region:
+  
+  int X,Y,W,H; fl_clip_box(0,0,w(),h(),X,Y,W,H);
+  if (myi->other_xid) fl_copy_offscreen(X, Y, W, H, myi->other_xid, X, Y);
 
+  #ifdef DEBUG_EXPOSE 
+  if ( damage() & FL_DAMAGE_EXPOSE )
+  {
+      #if FLTK_HAVE_CAIRO
+      fl_rectf( 0,0, w(), h(), fl_color_add_alpha( FL_RED, 50 ));
+      #endif
+  }
+  #endif 
 }
 
 void Fl_Double_Window::resize(int X,int Y,int W,int H) {
@@ -386,6 +406,13 @@ void Fl_Double_Window::resize(int X,int Y,int W,int H) {
   Fl_Window::resize(X,Y,W,H);
   Fl_X* myi = Fl_X::i(this);
   if (myi && myi->other_xid && (ow != w() || oh != h())) {
+#if FLTK_HAVE_CAIRO
+      if ( myi->other_cs )
+      {
+          cairo_destroy( myi->other_cc ); myi->other_cc = 0;
+          cairo_surface_destroy( myi->other_cs ); myi->other_cs = 0;
+      }
+#endif
     fl_delete_offscreen(myi->other_xid);
     myi->other_xid = 0;
   }
@@ -394,6 +421,13 @@ void Fl_Double_Window::resize(int X,int Y,int W,int H) {
 void Fl_Double_Window::hide() {
   Fl_X* myi = Fl_X::i(this);
   if (myi && myi->other_xid) {
+#if FLTK_HAVE_CAIRO
+      if ( myi->other_cs )
+      {
+          cairo_destroy( myi->other_cc ); myi->other_cc = 0;
+          cairo_surface_destroy( myi->other_cs ); myi->other_cs = 0;
+      }
+#endif
       fl_delete_offscreen(myi->other_xid);
       myi->other_xid = 0;
   }

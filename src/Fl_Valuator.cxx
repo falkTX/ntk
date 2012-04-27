@@ -66,7 +66,7 @@ void Fl_Valuator::precision(int p) {
   for (B = 1; p--;) B *= 10;
 }
 /** Asks for partial redraw */
-void Fl_Valuator::value_damage() {damage(FL_DAMAGE_EXPOSE);} // by default do partial-redraw
+void Fl_Valuator::value_damage() {damage(FL_DAMAGE_USER1);} // by default do partial-redraw
 
 /**
     Sets the current value. The new value is <I>not</I>

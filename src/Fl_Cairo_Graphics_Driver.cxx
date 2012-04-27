@@ -132,28 +132,6 @@ Fl_Cairo_Graphics_Driver::Fl_Cairo_Graphics_Driver ( )   : Fl_Xlib_Graphics_Driv
 /*     fl_cairo_surface = 0; */
 /* } */
 
-void Fl_Cairo_Graphics_Driver::restore_clip ( void )
-{
-    cairo_t *cr = Fl::cairo_cc();
-
-    if ( ! cr )
-        return;
-
-    Fl_Xlib_Graphics_Driver::restore_clip();
-
-    cairo_reset_clip( cr );
-
-    Fl_Region r = clip_region();
-
-    if ( r )
-    {
-        XRectangle rect;
-        XClipBox(r, &rect);
-        
-        cairo_rectangle( cr, rect.x, rect.y, rect.width, rect.height );
-        cairo_clip( cr );
-    }
-}
 
 void Fl_Cairo_Graphics_Driver::line_style ( int style, int t, char* )
 {

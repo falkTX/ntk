@@ -53,48 +53,20 @@ cairo_surface_t * cairo_create_surface(void * gc, Window w, int W, int H) {
 
 cairo_surface_t *fl_cairo_surface;
 cairo_t *fl_cairo_context;
-static Window real_xid;
-static int W, H;
+
+cairo_surface_t *
+Fl::cairo_create_surface ( Window xid, int W, int H )
+{
+    return ::cairo_create_surface( fl_gc, xid, W, H );
+}
 
 cairo_t * 
-Fl::cairo_make_current(Fl_Window* wi, Window w ) {
-    if (!wi) return NULL; // Precondition
+Fl::cairo_make_current( cairo_surface_t *cs, cairo_t *cc ) {
 
-    if ( ! w )
-      w =  wi->i->other_xid ? wi->i->other_xid : wi->i->xid;
+    fl_cairo_surface = cs;
+    fl_cairo_context = cc;
 
-    if ( ( fl_cairo_context && fl_cairo_context == wi->i->cc ) &&
-         w && w == real_xid && 
-         wi->w() == W && wi->h() == H )
-        /* already current */
-        return wi->i->cc;
-
-    real_xid = w;
-    W = wi->w();
-    H = wi->h();
-
-    if ( wi->i->cs )
-    {
-        cairo_xlib_surface_set_drawable( wi->i->cs, w, wi->w(), wi->h() );
-        cairo_destroy( wi->i->cc );
-        wi->i->cc = 0;
-    }
-    else
-    {
-        wi->i->cs = cairo_create_surface(fl_gc, w, wi->w(), wi->h());
-    }
-
-    if ( ! wi->i->cc )
-    {
-        /* set this window's context to be the current one */
-        wi->i->cc = cairo_create( wi->i->cs );
-    }
-
-    fl_cairo_surface = wi->i->cs;
-    fl_cairo_context = wi->i->cc;
-
-    printf( "NTK: cairo_make_current()\n" );
-    return wi->i->cc;
+    return cc;
 }
 
 #endif // FLTK_HAVE_CAIRO
