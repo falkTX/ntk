@@ -22,12 +22,19 @@
 #pragma once
 
 #include <FL/Fl_Dial_Base.H>
+#include <FL/Fl_Image.H>
+#include <FL/Fl_Group.H>
+#include <FL/Fl_Window.H>
 
 class Fl_Dial : public Fl_Dial_Base
 {
     static int _default_style;
+    static Fl_Image *_default_image;
 
     int _scaleticks;
+
+    Fl_Image *_pixmap;
+    int _last_pixmap_index;
 
     void draw_knob ( void );
     void draw_scale ( int ox,  int oy,  int side );
@@ -58,15 +65,27 @@ public:
         { 
             Fl_Dial_Base::type( n );
         }
-    
+
+    virtual void value_damage ( void )
+        {
+        if ( window() )
+            window()->damage( FL_DAMAGE_ALL, x(), y(), w(), h() );
+        }
+
     static void default_style ( int n ) { Fl_Dial::_default_style = n; }
+    static void default_image ( Fl_Image *i ) { Fl_Dial::_default_image = i; }
+
+    void pixmap ( Fl_Image *i ) { _pixmap = i; }
+
+    Fl_Image* pixmap ( void ) { return _pixmap; }
 
     enum 
     {
         DEFAULT,
         BURNISHED_DIAL,
         ARC_DIAL,
-        PLASTIC_DIAL
+        PLASTIC_DIAL,
+        PIXMAP_DIAL
     };
 
 
@@ -75,6 +94,9 @@ public:
         {
             _scaleticks = 12;
             
+            _pixmap = 0;
+            _last_pixmap_index = -1;
+
             box( FL_NO_BOX );
             type( DEFAULT );
         }

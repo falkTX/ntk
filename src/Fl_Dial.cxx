@@ -26,7 +26,10 @@
 #include <math.h>
 #include <algorithm>
 
+#include <FL/Fl_Shared_Image.H>
+
 int Fl_Dial::_default_style = Fl_Dial::PLASTIC_DIAL;
+Fl_Image *Fl_Dial::_default_image = 0;
 
 /** This simple box is suitable for use with knob-type widgets. It
  * comprises a border with shadow, and a cap with glare-lines akin
@@ -136,6 +139,56 @@ Fl_Dial::draw ( void )
     draw_label();
 
     double angle = ( angle2() - angle1() ) * ( value() - minimum()) / ( maximum() - minimum() ) + angle1();
+
+  if ( type() == PIXMAP_DIAL )
+    {
+        Fl_Image *im = pixmap();
+
+        if ( !im )
+            im = Fl_Dial::_default_image;
+  
+        if ( im )
+        {
+
+            fl_push_clip( x(), y(), w(), h() );
+
+            const int knob_width = im->h();
+            const int frames = im->w() / im->h();
+
+            const int index = knob_width * (int)( ( frames - 1 ) * ( value() - minimum()) / ( maximum() - minimum() ));
+
+            /* if ( ( damage() == FL_DAMAGE_ALL ) || */
+            /*      ( ( damage() & FL_DAMAGE_EXPOSE ) && */
+            /*        index != _last_pixmap_index ) ) */
+            {
+
+                /* FIXME: Why doesn't this work? */
+                /* if ( ! active_r() ) */
+                /* { */
+                /*     im->inactive(); */
+                /* } */
+
+                im->draw( x() + ( w() / 2 ) - ( knob_width / 2 ),
+                          y() + ( h() / 2 ) - ( knob_width / 2 ),
+                          knob_width,
+                          knob_width,
+                          index,
+                          0 );
+
+                
+                _last_pixmap_index = index;
+            }
+
+            fl_pop_clip();
+        }
+        else
+        {
+            /* missing image... */
+        }
+
+        return;
+
+    }
 
     if ( type() == ARC_DIAL )
     {
