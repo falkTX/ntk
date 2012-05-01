@@ -246,6 +246,37 @@ void fl_border_frame(int x, int y, int w, int h, Fl_Color c) {
   fl_rect(x, y, w, h);
 }
 
+
+void fl_focus_color();
+
+void fl_focus_frame (int X, int Y, int W, int H, Fl_Color c )
+{
+  fl_color(c);
+
+#if defined(USE_X11) || defined(__APPLE_QUARTZ__)
+  fl_line_style(FL_DOT);
+  fl_rect(X, Y, W, H );
+  fl_line_style(FL_SOLID);
+#elif defined(WIN32) 
+  // Windows 95/98/ME do not implement the dotted line style, so draw
+  // every other pixel around the focus area...
+  //
+  // Also, QuickDraw (MacOS) does not support line styles specifically,
+  // and the hack we use in fl_line_style() will not draw horizontal lines
+  // on odd-numbered rows...
+  int i, xx, yy;
+
+  for (xx = 0, i = 1; xx < W; xx ++, i ++) if (i & 1) fl_point(X + xx, Y);
+  for (yy = 0; yy < H; yy ++, i ++) if (i & 1) fl_point(X + W, Y + yy);
+  for (xx = W; xx > 0; xx --, i ++) if (i & 1) fl_point(X + xx, Y + H);
+  for (yy = H; yy > 0; yy --, i ++) if (i & 1) fl_point(X, Y + yy);
+#else
+# error unsupported platform
+#endif // WIN32
+}
+
+
+
 ////////////////////////////////////////////////////////////////
 
 static struct {
@@ -284,6 +315,7 @@ static struct {
   {fl_border_box,	1,1,2,2,0}, // _FL_OVAL_SHADOW_BOX,
   {fl_border_frame,	1,1,2,2,0}, // _FL_OVAL_FRAME
   {fl_rectf,		0,0,0,0,0}, // _FL_OVAL_FLAT_BOX,
+  {fl_focus_frame,      1,1,1,1,1}, // FL_FOCUS_FRAME
   {fl_up_box,		3,3,6,6,0}, // FL_FREE_BOX+0
   {fl_down_box,		3,3,6,6,0}, // FL_FREE_BOX+1
   {fl_up_box,		3,3,6,6,0}, // FL_FREE_BOX+2

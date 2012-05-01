@@ -493,6 +493,7 @@ enum Fl_Boxtype { // boxtypes (if you change these you must fix fl_boxtype.C):
   _FL_OSHADOW_BOX,		///< see figure 1
   _FL_OVAL_FRAME,		///< see figure 1
   _FL_OFLAT_BOX,		///< see figure 1
+  FL_FOCUS_FRAME,
   FL_FREE_BOXTYPE		///< the first free box type for creation of new box types
 };
 extern FL_EXPORT Fl_Boxtype fl_define_FL_ROUND_UP_BOX();
