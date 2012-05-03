@@ -1,4 +1,3 @@
-//
 // "$Id: fl_boxtype.cxx 7903 2010-11-28 21:06:39Z matt $"
 //
 // Box drawing code for the Fast Light Tool Kit (FLTK).
@@ -316,6 +315,8 @@ static struct {
   {fl_border_frame,	1,1,2,2,0}, // _FL_OVAL_FRAME
   {fl_rectf,		0,0,0,0,0}, // _FL_OVAL_FLAT_BOX,
   {fl_focus_frame,      1,1,1,1,1}, // FL_FOCUS_FRAME
+  {fl_up_box,         1,1,1,1,0},
+  {fl_border_box,     1,1,1,1,0},
   {fl_up_box,		3,3,6,6,0}, // FL_FREE_BOX+0
   {fl_down_box,		3,3,6,6,0}, // FL_FREE_BOX+1
   {fl_up_box,		3,3,6,6,0}, // FL_FREE_BOX+2
@@ -414,18 +415,22 @@ void fl_draw_box(Fl_Boxtype t, int x, int y, int w, int h, Fl_Color c) {
 /** Draws the widget box according its box style */
 void Fl_Widget::draw_box() const {
   if (box_) draw_box((Fl_Boxtype)box_, x_, y_, w_, h_, color_);
-  draw_backdrop();
 }
+
 /** If FL_ALIGN_IMAGE_BACKDROP is set, the image or deimage will be drawn */
 void Fl_Widget::draw_backdrop() const {
-  if (align() & FL_ALIGN_IMAGE_BACKDROP) {
+
+    if (align() & FL_ALIGN_IMAGE_BACKDROP ||
+        type() >= FL_WINDOW ) {
     const Fl_Image *img = image();
     // if there is no image, we will not draw the deimage either
     if (img && deimage() && !active_r())
       img = deimage();
     if (img) 
-      ((Fl_Image*)img)->draw(x_+(w_-img->w())/2, y_+(h_-img->h())/2);
-  }
+    {
+     ((Fl_Image*)img)->draw(x_+(w_-img->w())/2, y_+(h_-img->h())/2);
+    }
+    }
 }
 /** Draws a box of type t, of color c at the widget's position and size. */
 void Fl_Widget::draw_box(Fl_Boxtype t, Fl_Color c) const {
@@ -433,8 +438,12 @@ void Fl_Widget::draw_box(Fl_Boxtype t, Fl_Color c) const {
 }
 /** Draws a box of type t, of color c at the position X,Y and size W,H. */
 void Fl_Widget::draw_box(Fl_Boxtype t, int X, int Y, int W, int H, Fl_Color c) const {
+
+    if ( type() >= FL_WINDOW )
+        printf( "NTK: drawing window box\n" );
   draw_it_active = active_r();
   fl_box_table[t].f(X, Y, W, H, c);
+  draw_backdrop();
   draw_it_active = 1;
 }
 

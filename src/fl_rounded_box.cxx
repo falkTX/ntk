@@ -34,7 +34,7 @@
 
 static double offset[RN] = { 0.0, 0.07612, 0.29289, 0.61732, 1.0};
 
-static void rbox(int fill, int x, int y, int w, int h) {
+static void rbox(int fill, int x, int y, int w, int h, int asym = 0 ) {
   int i;
   int rsx ,rsy, rs;
   rsx = w*2/5; rsy = h*2/5;
@@ -43,14 +43,25 @@ static void rbox(int fill, int x, int y, int w, int h) {
   rsx = rs; rsy = rs;
 
   if (fill) fl_begin_polygon(); else fl_begin_loop();
+
   for (i=0; i<RN; i++)
-    fl_vertex(x + offset[RN-i-1]*rsx, y + offset[i] * rsy);
+      fl_vertex(x + offset[RN-i-1]*rsx, y + offset[i] * rsy);
+
+  if ( ! asym )
+      for (i=0; i<RN; i++)
+          fl_vertex(x + offset[i]*rsx, y + h-1 - offset[RN-i-1] * rsy);
+  else
+      fl_vertex( x, y + h - 1 );
+
   for (i=0; i<RN; i++)
-    fl_vertex(x + offset[i]*rsx, y + h-1 - offset[RN-i-1] * rsy);
-  for (i=0; i<RN; i++)
-    fl_vertex(x + w-1 - offset[RN-i-1]*rsx, y + h-1 - offset[i] * rsy);
-  for (i=0; i<RN; i++)
-    fl_vertex(x + w-1 - offset[i]*rsx, y + offset[RN-i-1] * rsy);
+      fl_vertex(x + w-1 - offset[RN-i-1]*rsx, y + h-1 - offset[i] * rsy);
+  
+  if ( ! asym )
+      for (i=0; i<RN; i++)
+          fl_vertex(x + w-1 - offset[i]*rsx, y + offset[RN-i-1] * rsy);
+  else
+      fl_vertex( x + w - 1, y );
+
   if (fill) fl_end_polygon(); else fl_end_loop();
 }
 
@@ -65,6 +76,15 @@ static void fl_rounded_frame(int x, int y, int w, int h, Fl_Color c) {
 static void fl_rounded_box(int x, int y, int w, int h, Fl_Color c) {
   fl_color(c); rbox(1, x, y, w, h);
   fl_color(FL_BLACK); rbox(0, x, y, w, h);
+}
+
+static void fl_asym_box(int x, int y, int w, int h, Fl_Color c) {
+    fl_color(c); rbox(1, x, y, w, h, 1);
+    fl_color(FL_BLACK); rbox(0, x, y, w, h, 1 );
+}
+
+static void fl_asym_flat_box(int x, int y, int w, int h, Fl_Color c) {
+    fl_color(c); rbox(1, x, y, w, h, 1);
 }
 
 static void fl_rshadow_box(int x, int y, int w, int h, Fl_Color c) {
@@ -92,6 +112,12 @@ Fl_Boxtype fl_define_FL_RFLAT_BOX() {
 Fl_Boxtype fl_define_FL_RSHADOW_BOX() {
   fl_internal_boxtype(_FL_RSHADOW_BOX, fl_rshadow_box);
   return _FL_RSHADOW_BOX;
+}
+
+Fl_Boxtype fl_define_FL_ASYM_BOX() {
+  fl_internal_boxtype(_FL_ASYM_BOX, fl_asym_box);
+  fl_internal_boxtype(_FL_ASYM_FLAT_BOX, fl_asym_flat_box);
+  return _FL_ASYM_BOX;
 }
 
 //
