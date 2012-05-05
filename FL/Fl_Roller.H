@@ -31,13 +31,20 @@
 #ifndef Fl_Roller_H
 #define Fl_Roller_H
 
-#ifndef Fl_Valuator_H
-#include "Fl_Valuator.H"
-#endif
-
 #include <FL/Fl_Slider.H>
 
-#define Fl_Roller Fl_Slider
+class Fl_Roller : public Fl_Slider
+{
+public:
+
+    Fl_Roller( int X, int Y, int W, int H, char const *L = 0 ) : Fl_Slider( X,Y,W,H,L )
+        {
+        }
+
+    virtual ~Fl_Roller ( )
+        {
+        }
+};
 
 #endif
 
