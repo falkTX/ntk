@@ -1691,6 +1691,7 @@ Fl_X* Fl_X::set_xid(Fl_Window* win, Window winxid) {
   xp->setwindow(win);
   xp->next = Fl_X::first;
   xp->region = 0;
+  xp->wait_for_expose = 0;
 //  xp->backbuffer_bad = 1;
   Fl_X::first = xp;
   if (win->modal()) {Fl::modal_ = win; fl_fix_focus();}
@@ -2007,21 +2008,20 @@ static inline int can_boxcheat(uchar b) {return (b==1 || ((b&2) && b<=15));}
 void Fl_Window::show() {
   image(Fl::scheme_bg_);
   if (Fl::scheme_bg_) {
-    labeltype(FL_NORMAL_LABEL);
-    align(FL_ALIGN_CENTER | FL_ALIGN_INSIDE | FL_ALIGN_CLIP);
+//    labeltype(FL_NORMAL_LABEL);
+      align(FL_ALIGN_IMAGE_BACKDROP);
   } else {
     labeltype(FL_NO_LABEL);
   }
 
-
-
   Fl_Tooltip::exit(this);
   if (!shown()) {
     fl_open_display();
-    // Don't set background pixel for double-buffered windows...
-    if (type() == FL_WINDOW && can_boxcheat(box())) {
-      fl_background_pixel = int(fl_xpixel(color()));
-    }
+   
+ /* // Don't set background pixel for double-buffered windows... */
+ /*    if (type() == FL_WINDOW && can_boxcheat(box())) { */
+ /*      fl_background_pixel = int(fl_xpixel(color())); */
+ /*    } */
 
     Fl_X::make_xid(this);
   } else {

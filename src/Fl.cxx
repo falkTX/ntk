@@ -1703,14 +1703,6 @@ void Fl_Widget::damage(uchar fl, int X, int Y, int W, int H) {
   Fl::damage(FL_DAMAGE_CHILD);
 }
 void Fl_Window::flush() {
-
-    if ( ! i->cc )
-    {
-        i->cs = Fl::cairo_create_surface( i->xid, w(), h() );
-        i->cc = cairo_create( i->cs );
-        Fl::cairo_make_current( i->cs, i->cc );
-    }
-
   draw();
 
 #if FLTK_HAVE_CAIRO

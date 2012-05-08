@@ -275,6 +275,8 @@ public:
     See void scheme(const char *name) 
   */
   static int reload_scheme(); // platform dependent
+
+  static void scheme_bg ( Fl_Image *i ) { scheme_bg_ = i; }
   static int scrollbar_size();
   static void scrollbar_size(int W);
 

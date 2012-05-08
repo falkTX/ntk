@@ -45,6 +45,7 @@
   overlay will blink if you change the image in the window.
 */
 class FL_EXPORT Fl_Overlay_Window : public Fl_Double_Window {
+protected:
   virtual void draw_overlay() = 0;
 public:
   void flush();

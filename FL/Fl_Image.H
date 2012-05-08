@@ -176,6 +176,9 @@ class FL_EXPORT Fl_RGB_Image : public Fl_Image {
   friend class Fl_Quartz_Graphics_Driver;
   friend class Fl_GDI_Graphics_Driver;
   friend class Fl_Xlib_Graphics_Driver;
+#if FLTK_HAVE_CAIRO
+  friend class Fl_Cairo_Graphics_Driver;
+#endif
 public:
 
   const uchar *array;

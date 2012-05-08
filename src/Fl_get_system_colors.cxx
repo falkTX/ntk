@@ -276,12 +276,6 @@ int Fl::scheme(const char *s) {
 int Fl::reload_scheme() {
     Fl_Window *win;
 
-    // Use the standard FLTK look-n-feel...
-    if (scheme_bg_) {
-        delete scheme_bg_;
-        scheme_bg_ = (Fl_Image *)0;
-    }
-  
     set_boxtype(FL_UP_FRAME,        fl_up_frame, D1, D1, D2, D2);
     set_boxtype(FL_DOWN_FRAME,      fl_down_frame, D1, D1, D2, D2);
     set_boxtype(FL_THIN_UP_FRAME,   fl_thin_up_frame, 1, 1, 2, 2);
@@ -299,8 +293,9 @@ int Fl::reload_scheme() {
 
 // Set (or clear) the background tile for all windows...
     for (win = first_window(); win; win = next_window(win)) {
-        win->labeltype(scheme_bg_ ? FL_NORMAL_LABEL : FL_NO_LABEL);
-        win->align(FL_ALIGN_CENTER | FL_ALIGN_INSIDE | FL_ALIGN_CLIP);
+//        win->labeltype(scheme_bg_ ? FL_NORMAL_LABEL : FL_NO_LABEL);
+//        win->align(FL_ALIGN_CENTER | FL_ALIGN_INSIDE | FL_ALIGN_CLIP | FL_ALIGN_IMAGE_BACKDROP );
+        win->align( FL_ALIGN_IMAGE_BACKDROP );
         win->image(scheme_bg_);
         win->redraw();
     }
