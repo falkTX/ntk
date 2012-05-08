@@ -859,6 +859,88 @@ void Fl_Cairo_Graphics_Driver::yxline ( int x, int y, int y1, int x2, int y3 )
     cairo_set_antialias( cr, aa );
 }
 
+static int start(Fl_RGB_Image *img, int XP, int YP, int WP, int HP, int w, int h, int &cx, int &cy, 
+		 int &X, int &Y, int &W, int &H)
+{
+  // account for current clip region (faster on Irix):
+  fl_clip_box(XP,YP,WP,HP,X,Y,W,H);
+  cx += X-XP; cy += Y-YP;
+  // clip the box down to the size of image, quit if empty:
+  if (cx < 0) {W += cx; X -= cx; cx = 0;}
+  if (cx+W > w) W = w-cx;
+  if (W <= 0) return 1;
+  if (cy < 0) {H += cy; Y -= cy; cy = 0;}
+  if (cy+H > h) H = h-cy;
+  if (H <= 0) return 1;
+  return 0;
+}
+
+void
+Fl_Cairo_Graphics_Driver::draw(Fl_RGB_Image *img, int XP, int YP, int WP, int HP, int cx, int cy)
+{
+  int X, Y, W, H;
+
+  // Don't draw an empty image...
+  if (!img->d() || !img->array) {
+//    img->draw_empty(XP, YP);
+    return;
+  }
+ 
+  if (start(img, XP, YP, WP, HP, img->w(), img->h(), cx, cy, X, Y, W, H)) {
+      return;
+  }
+
+  /* if (!img->id_) { */
+  /*   img->id_ = fl_create_offscreen(img->w(), img->h()); */
+  /*   if ((img->d() == 2 || img->d() == 4) ) { */
+  /*     fl_begin_offscreen((Fl_Offscreen)img->id_); */
+  /*     fl_draw_image(img->array, 0, 0, img->w(), img->h(), img->d()|FL_IMAGE_WITH_ALPHA, img->ld()); */
+  /*     fl_end_offscreen(); */
+  /*   } */
+  /* } */
+  
+  cairo_t *cr = Fl::cairo_cc();
+
+  cairo_format_t fmt;
+
+  switch (img->d() )
+  {
+      case 4:
+          fmt = CAIRO_FORMAT_ARGB32;
+          break;
+      case 3:
+          fmt = CAIRO_FORMAT_RGB24;
+          break;
+  }
+
+  cairo_save( cr );
+
+  cairo_reset_clip( cr );
+
+  cairo_surface_t *image = cairo_image_surface_create_for_data( (unsigned char *)img->array, fmt, img->w(), img->h( ), cairo_format_stride_for_width( fmt, img->w() ) );
+
+  /* cairo_surface_t *image = cairo_image_surface_create_for_data( (unsigned char *)img->array, fmt, img->w(), img->h(), img->ld() ); */
+
+
+  /* cairo_patter_t *pat = cairo_surface_pattern( image ); */
+
+  /* cairo_matrix_t matr; */
+
+  /* cairo_matrix_scale( &matr,   */
+
+
+  cairo_set_source_surface( cr, image, X - cx, Y - cy );
+
+  cairo_rectangle( cr, X, Y, W, H );
+  
+  cairo_fill(cr);
+
+  cairo_surface_destroy( image );
+
+  cairo_restore( cr );
+}
+
+
 #else
 
 void fl_set_antialias ( int v ) { }

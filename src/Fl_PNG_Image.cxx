@@ -187,6 +187,11 @@ void Fl_PNG_Image::load_png_(const char *name_png, const unsigned char *buffer_p
     png_set_tRNS_to_alpha(pp);
 #  endif // HAVE_PNG_GET_VALID && HAVE_PNG_SET_TRNS_TO_ALPHA
 
+#if FLTK_USE_CAIRO
+//  png_set_swap_alpha(pp);
+  png_set_bgr(pp);
+#endif
+
   array = new uchar[w() * h() * d()];
   alloc_array = 1;
 
