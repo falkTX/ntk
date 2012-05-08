@@ -28,6 +28,19 @@
 
 #include <FL/Fl_Shared_Image.H>
 
+class image_node {
+    
+public:
+    
+    Fl_Image *original;                                     /* originl image */
+    
+    Fl_Image *scaled;                                        /* downscaled image */
+    
+    class image_node *next;
+};
+
+static image_node *_first = 0;
+
 int Fl_Dial::_default_style = Fl_Dial::PLASTIC_DIAL;
 Fl_Image *Fl_Dial::_default_image = 0;
 
@@ -152,10 +165,10 @@ Fl_Dial::draw ( void )
 
             fl_push_clip( x(), y(), w(), h() );
 
-            const int knob_width = im->h();
+            int knob_width = im->h();
             const int frames = im->w() / im->h();
 
-            const int index = knob_width * (int)( ( frames - 1 ) * ( value() - minimum()) / ( maximum() - minimum() ));
+            const int index = (int)( ( frames - 1 ) * ( value() - minimum()) / ( maximum() - minimum() ));
 
             /* if ( ( damage() == FL_DAMAGE_ALL ) || */
             /*      ( ( damage() & FL_DAMAGE_EXPOSE ) && */
@@ -168,13 +181,53 @@ Fl_Dial::draw ( void )
                 /*     im->inactive(); */
                 /* } */
 
-                im->draw( x() + ( w() / 2 ) - ( knob_width / 2 ),
-                          y() + ( h() / 2 ) - ( knob_width / 2 ),
-                          knob_width,
-                          knob_width,
-                          index,
-                          0 );
+                if ( w() >= knob_width )
+                {
+                    im->draw( x() + ( w() / 2 ) - ( knob_width / 2 ),
+                              y() + ( h() / 2 ) - ( knob_width / 2 ),
+                              knob_width,
+                              knob_width,
+                              knob_width * index,
+                              0 );
+                }
+                else
+                {
+//                    while ( knob_width > w() )
+                    knob_width = w();
 
+                    image_node *i;
+
+                    Fl_Image *scaled = 0;
+
+                    for ( i = _first; i; i = i->next )
+                    {
+                        if ( i->original == im &&
+                             i->scaled && i->scaled->h() == knob_width )
+                        {
+                            scaled = i->scaled;
+                            break;
+                        }
+                    }
+
+                    if ( ! scaled )
+                    {
+                        scaled = im->copy( knob_width * frames, knob_width );
+
+                        i = new image_node();
+
+                        i->original = im;
+                        i->scaled = scaled;
+                        i->next = _first;
+                        _first = i;
+                    }
+                  
+                    scaled->draw( x() + ( w() / 2 ) - ( knob_width / 2 ),
+                                  y() + ( h() / 2 ) - ( knob_width / 2 ),
+                                  knob_width,
+                                  knob_width,
+                                  knob_width * index,
+                                  0 );
+                }
                 
                 _last_pixmap_index = index;
             }
