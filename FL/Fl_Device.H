@@ -208,7 +208,7 @@ protected:
   friend void fl_end_complex_polygon();
   friend void fl_push_matrix();
   friend void fl_pop_matrix();
-  friend void fl_mult_matrix(double a, double b, double c, double d, double x, double y);
+  friend void fl_mult_matrix(double a, double b, double c, double d, double x, double y );
   friend void fl_scale(double x, double y);
   friend void fl_scale(double x);
   friend void fl_translate(double x, double y);
@@ -322,19 +322,19 @@ protected:
   virtual void pop_clip();
     
   /** \brief see fl_push_matrix(). */
-  void push_matrix();
+  virtual void push_matrix();
   /** \brief see fl_pop_matrix(). */
-  void pop_matrix();
+  virtual void pop_matrix();
   /** \brief see fl_mult_matrix(double a, double b, double c, double d, double x, double y). */
-  void mult_matrix(double a, double b, double c, double d, double x, double y);
+  virtual void mult_matrix(double a, double b, double c, double d, double x, double y);
   /** \brief see fl_scale(double x, double y). */
-  inline void scale(double x, double y) { mult_matrix(x,0,0,y,0,0); }
+  virtual void scale(double x, double y) { mult_matrix(x,0,0,y,0,0); }
   /** \brief see fl_scale(double x). */
-  inline void scale(double x) { mult_matrix(x,0,0,x,0,0); }
+  virtual void scale(double x) { scale( x, x ); }
   /** \brief see fl_translate(double x, double y). */
-  inline void translate(double x,double y) { mult_matrix(1,0,0,1,x,y); }
+  virtual void translate(double x,double y) { mult_matrix(1,0,0,1,x,y); }
   /** \brief see fl_rotate(double d). */
-  void rotate(double d);
+  virtual void rotate(double d);
   /** \brief see fl_transform_x(double x, double y). */
   double transform_x(double x, double y);
   /** \brief see fl_transform_y(double x, double y). */
@@ -505,6 +505,10 @@ public:
 
 class Fl_Cairo_Graphics_Driver : public Fl_Xlib_Graphics_Driver {
 
+    static cairo_matrix_t m;
+    static cairo_matrix_t stack[FL_MATRIX_STACK_SIZE];
+    static int sptr;
+    
 public:
 
 //    void set_current(void);
@@ -536,6 +540,7 @@ public:
     void end_complex_polygon ( void );
     void end_polygon ( void );
     void curve( double x, double y, double x1, double y1, double x2, double y2, double x3, double y3 );
+    void gap();
 
     void loop ( int x, int y, int x1, int y1, int x2, int y2 );
     void polygon ( int x, int y, int x1, int y1, int x2, int y2 );
@@ -548,6 +553,20 @@ public:
     void yxline(int x, int y, int y1, int x2);
     void yxline(int x, int y, int y1, int x2, int y3);
     
+
+  virtual void begin_points();
+  virtual void begin_line();
+  virtual void begin_loop();
+  virtual void begin_polygon();
+  virtual void begin_complex_polygon();
+
+    void vertex( double x, double y );
+  virtual void push_matrix();
+  virtual void pop_matrix();
+  virtual void mult_matrix(double a, double b, double c, double d, double x, double y);
+    virtual void rotate(double d);
+    virtual void scale(double x, double y);
+    virtual void translate(double x,double y);
 
   /* void draw(const char* str, int n, int x, int y); */
   /* void draw(int angle, const char *str, int n, int x, int y); */

@@ -106,6 +106,12 @@ static double lw = 1;
 static double hlw;
 static cairo_antialias_t aa = CAIRO_ANTIALIAS_GRAY;
 
+cairo_matrix_t Fl_Cairo_Graphics_Driver::m;
+cairo_matrix_t  Fl_Cairo_Graphics_Driver::stack[FL_MATRIX_STACK_SIZE];
+int  Fl_Cairo_Graphics_Driver::sptr;
+
+static int awaiting_vertex = false;
+
 #define cairo_set_antialias( cr, aa )
 
 Fl_Cairo_Graphics_Driver::Fl_Cairo_Graphics_Driver ( )   : Fl_Xlib_Graphics_Driver ()
@@ -133,6 +139,83 @@ Fl_Cairo_Graphics_Driver::Fl_Cairo_Graphics_Driver ( )   : Fl_Xlib_Graphics_Driv
 /* } */
 
 
+#define set_cairo_matrix() \
+{ \
+    cairo_t *cr = fl_cairo_context; \
+    if ( sptr ) \
+         cairo_set_matrix( cr, &m );                     \
+    else \
+        cairo_identity_matrix( cr ); \
+} 
+
+#define restore_cairo_matrix() \
+{ \
+    cairo_t *cr = fl_cairo_context; \
+    cairo_identity_matrix( cr ); \
+}
+
+
+void Fl_Cairo_Graphics_Driver::push_matrix ( void )
+{
+    cairo_t *cr = Fl::cairo_cc();
+
+  cairo_get_matrix( cr, &m );
+
+  if (sptr==FL_MATRIX_STACK_SIZE)
+    Fl::error("fl_push_matrix(): matrix stack overflow.");
+  else
+    stack[sptr++] = m;
+}
+
+void Fl_Cairo_Graphics_Driver::pop_matrix ( void )
+{
+    cairo_t *cr = Fl::cairo_cc();
+    
+    if (sptr==0)
+        Fl::error("fl_pop_matrix(): matrix stack underflow.");
+    else 
+        m = stack[--sptr];
+
+    set_cairo_matrix();
+}
+
+void Fl_Cairo_Graphics_Driver::translate ( double x, double y )
+{
+    cairo_t *cr = Fl::cairo_cc();
+    cairo_matrix_translate( &m, x, y );
+
+    set_cairo_matrix();
+}
+
+void Fl_Cairo_Graphics_Driver::scale ( double x, double y )
+{
+    cairo_t *cr = Fl::cairo_cc();
+    cairo_matrix_scale( &m, x, y );
+
+    set_cairo_matrix();
+}
+
+void Fl_Cairo_Graphics_Driver::rotate ( double a )
+{
+    cairo_t *cr = Fl::cairo_cc();
+    cairo_matrix_rotate( &m, a * ( M_PI / 180.0 ) );
+
+    set_cairo_matrix();
+}
+
+void Fl_Cairo_Graphics_Driver::mult_matrix ( double a, double b, double c, double d, double x, double y )
+{
+    cairo_t *cr = Fl::cairo_cc();
+
+    cairo_matrix_t m2;
+
+    cairo_matrix_init( &m2, a, b, c, d, x, y );
+
+    cairo_matrix_multiply( &m, &m2, &m );
+
+    set_cairo_matrix();
+}
+
 void Fl_Cairo_Graphics_Driver::line_style ( int style, int t, char* )
 {
     cairo_t *cr = Fl::cairo_cc();
@@ -151,12 +234,23 @@ void Fl_Cairo_Graphics_Driver::line_style ( int style, int t, char* )
     
     cairo_set_line_width( cr, lw );
 
+    cairo_set_line_cap( cr, CAIRO_LINE_CAP_BUTT );
+
     if ( style & FL_DASH )
     {
         const double dash[] = { lw, lw };
         int len  = sizeof(dash) / sizeof(dash[0]);
 
         cairo_set_dash( cr, dash, len, 0 );
+    }
+    else if ( style & FL_DOT )
+    {
+        const double dash[] = { lw, lw };
+        int len  = sizeof(dash) / sizeof(dash[0]);
+        
+        cairo_set_dash( cr, dash, len, 0 );
+        
+        cairo_set_line_cap( cr, CAIRO_LINE_CAP_ROUND );
     }
     else
     {
@@ -255,27 +349,16 @@ void Fl_Cairo_Graphics_Driver::circle( double x, double y, double r )
 {
     cairo_t *cr = Fl::cairo_cc();
 
-    matrix m = *fl_matrix;
-
-    double xt = fl_transform_x(x,y);
-    double yt = fl_transform_y(x,y);
-    double rx = r * (m.c ? sqrt(m.a*m.a+m.c*m.c) : fabs(m.a));
-    double ry = r * (m.b ? sqrt(m.b*m.b+m.d*m.d) : fabs(m.d));
-    int llx = (int)rint(xt-rx);
-    int w = (int)rint(xt+rx)-llx;
-    int lly = (int)rint(yt-ry);
-    int h = (int)rint(yt+ry)-lly;
+    cairo_arc( cr, x, y, r, 0, 2.0f * M_PI );
     
-  cairo_arc( cr, xt, yt, (w+h)*0.25f, 0, 2.0f * M_PI );
+    restore_cairo_matrix();
 
- /* r * ( M_PI / 180.0 ) */
+    if ( what == POLYGON )
+        cairo_fill( cr );
+    else
+        cairo_stroke( cr );
 
-  if ( what == POLYGON )
-      cairo_fill( cr );
-  else
-      cairo_stroke( cr );
-
-  //  cairo_arc( cr, x, y, r * ( M_PI / 180.0 ), 0, 360 );
+    set_cairo_matrix();
 }
 
 /* static void add_arc( int x, int y, int w, int h, double a1, double a2 ) */
@@ -320,6 +403,7 @@ static void add_arc( int x, int y, int w, int h, double a1, double a2, bool pie 
     double cx = x + 0.5 * w, cy = y + 0.5 * h;
 
     cairo_save( cr );
+
     cairo_translate( cr, cx, cy );
 //    cairo_scale( cr, (w - lw), 0 - ((h - lw) ));
     cairo_scale( cr, w, 0 - h );
@@ -344,7 +428,11 @@ void Fl_Cairo_Graphics_Driver::arc( int x, int y, int w, int h, double a1, doubl
 
     add_arc( x, y, w, h, a1, a2, false );
 
+    restore_cairo_matrix();
+
     cairo_stroke( cr );
+
+    set_cairo_matrix();
 }
 
 void Fl_Cairo_Graphics_Driver::arc( double x, double y, double r, double a1, double a2 )
@@ -362,7 +450,11 @@ void Fl_Cairo_Graphics_Driver::pie( int x, int y, int w, int h, double a1, doubl
 
     add_arc( x, y, w, h, a1, a2, true );
 
+    restore_cairo_matrix();
+
     cairo_fill( cr );
+
+    set_cairo_matrix();
 }
 
 void Fl_Cairo_Graphics_Driver::line( int x1, int y1, int x2, int y2 )
@@ -371,7 +463,8 @@ void Fl_Cairo_Graphics_Driver::line( int x1, int y1, int x2, int y2 )
 
     cairo_set_line_width( cr, lw );
 
-        
+//    restore_cairo_matrix();
+
     if ( x1 == x2 )
     {
         cairo_set_antialias( cr, CAIRO_ANTIALIAS_NONE );
@@ -403,6 +496,8 @@ void Fl_Cairo_Graphics_Driver::line( int x1, int y1, int x2, int y2 )
 
     cairo_stroke( cr );
 
+//    set_cairo_matrix();
+        
     cairo_set_antialias( cr, aa );
 }
 
@@ -417,10 +512,15 @@ void Fl_Cairo_Graphics_Driver::line( int x1, int y1, int x2, int y2, int x3, int
         cairo_set_antialias( cr, CAIRO_ANTIALIAS_NONE );
     }
 
+//    restore_cairo_matrix();
+
     cairo_move_to( cr, x1 , y1  );
     cairo_line_to( cr, x2 , y2  );
     cairo_line_to( cr, x3 , y3  );
+    
     cairo_stroke( cr );
+
+//    set_cairo_matrix();
 
     cairo_set_antialias( cr, aa );
 }
@@ -438,10 +538,16 @@ void Fl_Cairo_Graphics_Driver::rect ( int x, int y, int w, int h )
     /* const double o = line_width / 2.0;     */
 
     cairo_set_antialias( cr, CAIRO_ANTIALIAS_NONE );
+
+//    restore_cairo_matrix();
     
 //    cairo_rectangle( cr, x + hlw, y + hlw, w - lw - 1, h - lw - 1); 
     cairo_rectangle( cr, VXO( x ), HYO( y  ), w - 1, h - 1 );
+
+
     cairo_stroke( cr );
+
+//    set_cairo_matrix();
 
     cairo_set_antialias( cr, aa );
 }
@@ -452,22 +558,52 @@ void Fl_Cairo_Graphics_Driver::rectf ( int x, int y, int w, int h )
 
     cairo_set_antialias( cr, CAIRO_ANTIALIAS_NONE );
 
+//    restore_cairo_matrix();
+
     /* cairo fills the inside of the path... */
     cairo_rectangle( cr, x, y, w, h );
+
     cairo_fill( cr );
 
+//    set_cairo_matrix();
+
     cairo_set_antialias( cr, aa );
+}
+
+
+void Fl_Cairo_Graphics_Driver::begin_line ( void )
+{
+    awaiting_vertex = true;
+    what = LINE;
+}
+
+void Fl_Cairo_Graphics_Driver::begin_points ( void )
+{
+    awaiting_vertex = true;
+    what = POINT_;
+}
+
+void Fl_Cairo_Graphics_Driver::begin_polygon ( void )
+{
+    awaiting_vertex = true;
+    what = POLYGON;
+}
+
+void Fl_Cairo_Graphics_Driver::begin_loop ( void )
+{
+    awaiting_vertex = true;
+    what = LOOP;
+}
+
+void Fl_Cairo_Graphics_Driver::begin_complex_polygon ( void )
+{
+    what = POLYGON;
+    awaiting_vertex = true;
 }
 
 void Fl_Cairo_Graphics_Driver::end_line ( void )
 {
    cairo_t *cr = Fl::cairo_cc();
-
-   /* if ( n < 3 ) */
-   /* { */
-   /*     end_points(); */
-   /*     return; */
-   /* } */
 
    if ( lw <= 1 )
    {
@@ -476,12 +612,11 @@ void Fl_Cairo_Graphics_Driver::end_line ( void )
 
    cairo_set_line_width( cr, lw );
 
-   cairo_move_to( cr, p[0].x + 0.5 , p[0].y + 0.5 );
-
-   for (int i=1; i<n; i++)
-    cairo_line_to( cr, p[i].x + 0.5 , p[i].y + 0.5 );
+   restore_cairo_matrix();
 
    cairo_stroke( cr );
+
+   set_cairo_matrix();
 
    cairo_set_antialias( cr, aa );
 }
@@ -492,9 +627,6 @@ void Fl_Cairo_Graphics_Driver::end_points ( void )
 
    cairo_set_antialias( cr, CAIRO_ANTIALIAS_NONE );
 
-   for (int i=0; i<n; i++)
-       cairo_rectangle( cr, p[1].x , p[1].y , 1, 1 );
-
    cairo_fill( cr );
 
    cairo_set_antialias( cr, aa );
@@ -502,13 +634,28 @@ void Fl_Cairo_Graphics_Driver::end_points ( void )
 
 void Fl_Cairo_Graphics_Driver::end_loop ( void )
 {
-   /* cairo_t *cr = Fl::cairo_cc(); */
-
-   fixloop();
-   
-   if (n>2) fl_transformed_vertex((COORD_T)p[0].x, (COORD_T)p[0].y);
-
+   cairo_t *cr = Fl::cairo_cc();
+   cairo_close_path( cr );
    end_line();
+}
+
+
+void Fl_Cairo_Graphics_Driver::vertex ( double x, double y )
+{
+    cairo_t *cr = Fl::cairo_cc();
+
+    if ( awaiting_vertex )
+    {
+        cairo_move_to( cr, x, y );
+        awaiting_vertex = false;
+    }
+    else
+        cairo_line_to( cr, x, y );
+}
+
+void Fl_Cairo_Graphics_Driver::gap ( void )
+{
+    awaiting_vertex = true;
 }
 
 void Fl_Cairo_Graphics_Driver::end_complex_polygon ( void )
@@ -516,42 +663,27 @@ void Fl_Cairo_Graphics_Driver::end_complex_polygon ( void )
    cairo_t *cr = Fl::cairo_cc();
 
    gap();
-   
-   if ( n < 3 )
-   {
-       end_line();
-       return;
-   }
-
-   cairo_move_to( cr, p[0].x , p[0].y );
-
-   for (int i=1; i<n; i++)
-    cairo_line_to( cr, p[i].x , p[i].y );
 
    cairo_close_path( cr );
 
+   restore_cairo_matrix();
+   
    cairo_fill( cr );
+
+   set_cairo_matrix();
 }
 
 void Fl_Cairo_Graphics_Driver::end_polygon ( void )
 {
    cairo_t *cr = Fl::cairo_cc();
 
-   fixloop();
-   
-   if ( n < 3 )
-   {
-       end_line();
-       return;
-   }
-
-   cairo_move_to( cr, p[0].x , p[0].y  );
-
-   for (int i=1; i<n; i++)
-       cairo_line_to( cr, p[i].x , p[i].y  );
-
    cairo_close_path( cr );
+
+   restore_cairo_matrix();
+
    cairo_fill( cr );
+
+   set_cairo_matrix();
 }
 
 void Fl_Cairo_Graphics_Driver::curve( double x, double y, double x1, double y1, double x2, double y2, double x3, double y3 )

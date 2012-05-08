@@ -438,9 +438,6 @@ void Fl_Widget::draw_box(Fl_Boxtype t, Fl_Color c) const {
 }
 /** Draws a box of type t, of color c at the position X,Y and size W,H. */
 void Fl_Widget::draw_box(Fl_Boxtype t, int X, int Y, int W, int H, Fl_Color c) const {
-
-    if ( type() >= FL_WINDOW )
-        printf( "NTK: drawing window box\n" );
   draw_it_active = active_r();
   fl_box_table[t].f(X, Y, W, H, c);
   draw_backdrop();
