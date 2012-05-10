@@ -24,6 +24,7 @@
 //
 //     http://www.fltk.org/str.php
 //
+#include "config.h"
 
 #include <FL/Fl.H>
 #include <FL/fl_draw.H>
@@ -32,6 +33,7 @@
 #include <FL/Fl_Menu_Item.H>
 #include <FL/Fl_Image.H>
 #include "flstring.h"
+#include <FL/Fl_Cairo.H>
 
 #ifdef WIN32
 void fl_release_dc(HWND, HDC); // from Fl_win32.cxx
@@ -228,6 +230,51 @@ Fl_Image *Fl_RGB_Image::copy(int W, int H) {
   }
   if (W <= 0 || H <= 0) return 0;
 
+#if FLTK_USE_CAIRO
+
+
+  new_array = new uchar [W * H * d()];
+  new_image = new Fl_RGB_Image(new_array, W, H, d());
+  new_image->alloc_array = 1;
+
+  
+  cairo_format_t fmt;
+  
+  switch (d() )
+  {
+      case 4:
+          fmt = CAIRO_FORMAT_ARGB32;
+          break;
+      case 3:
+          fmt = CAIRO_FORMAT_RGB24;
+          break;
+      case 1:
+          fmt = CAIRO_FORMAT_A8;
+          break;
+  }
+
+  cairo_surface_t *si = cairo_image_surface_create_for_data( (unsigned char *)array, fmt, w(), h( ), 
+                                                                cairo_format_stride_for_width( fmt, w() ) );
+
+  cairo_surface_t *di = cairo_image_surface_create_for_data( (unsigned char *)new_array, fmt, W, H,
+                                                                cairo_format_stride_for_width( fmt, W ) );
+
+  cairo_t *cr = cairo_create( di );
+
+  cairo_scale( cr, (double)W / w(), (double)H / h() );
+  cairo_set_source_surface( cr, si, 0, 0 );
+
+  cairo_pattern_set_filter (cairo_get_source (cr), CAIRO_FILTER_GOOD);
+  cairo_set_operator( cr, CAIRO_OPERATOR_SOURCE );
+
+  cairo_paint( cr );
+
+  cairo_destroy( cr );
+  cairo_surface_destroy( si );
+  cairo_surface_destroy( di );
+ 
+#else
+
   // OK, need to resize the image data; allocate memory and 
   uchar		*new_ptr;	// Pointer into new array
   const uchar	*old_ptr;	// Pointer into old array
@@ -273,6 +320,7 @@ Fl_Image *Fl_RGB_Image::copy(int W, int H) {
       sy ++;
     }
   }
+#endif
 
   return new_image;
 }
