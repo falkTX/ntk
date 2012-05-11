@@ -1675,8 +1675,14 @@ void Fl_Widget::damage(uchar fl, int X, int Y, int W, int H) {
     wi->damage_ |= fl;
     wi = wi->parent();
     if (!wi) return;
-    fl = FL_DAMAGE_CHILD;
+    /* we use FL_DAMAGE_EXPOSE now because of alpha blending and FL_NO_BOX and frames... */
+    fl = FL_DAMAGE_EXPOSE;
   }
+
+  fl = FL_DAMAGE_CHILD;
+
+  /* at this point 'wi' is the window */
+
   Fl_X* i = Fl_X::i((Fl_Window*)wi);
   if (!i) return; // window not mapped, so ignore it
 

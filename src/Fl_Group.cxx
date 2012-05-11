@@ -725,24 +725,25 @@ void Fl_Group::draw_children() {
 		 h() - Fl::box_dh(box()));
   }
 
-  if (damage() & ~FL_DAMAGE_CHILD) { // redraw the entire thing:
+//  if (damage() & ~FL_DAMAGE_CHILD) { // redraw the entire thing:
+//  if ( damage() & FL_DAMAGE_ALL ) {
     for (int i=children_; i--;) {
       Fl_Widget& o = **a++;
       draw_child(o);
       draw_outside_label(o);
     }
-  } else {	// only redraw the children that need it:
-    for (int i=children_; i--;) update_child(**a++);
-  }
+  /* } else {	// only redraw the children that need it: */
+  /*   for (int i=children_; i--;) update_child(**a++); */
+  /* } */
 
   if (clip_children()) fl_pop_clip();
 }
 
 void Fl_Group::draw() {
-  if (damage() & ~FL_DAMAGE_CHILD) { // redraw the entire thing:
+//  if (damage() & ~FL_DAMAGE_CHILD) { // redraw the entire thing:
     draw_box();
     draw_label();
-  }
+//  }
   draw_children();
 }
 
