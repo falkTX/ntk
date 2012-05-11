@@ -428,7 +428,11 @@ void Fl_Widget::draw_backdrop() const {
       img = deimage();
     if (img) 
     {
-     ((Fl_Image*)img)->draw(x_+(w_-img->w())/2, y_+(h_-img->h())/2);
+//     ((Fl_Image*)img)->draw(x_+(w_-img->w())/2, y_+(h_-img->h())/2);
+        if ( type() < FL_WINDOW )
+            ((Fl_Image*)img)->draw(x_+(w_-img->w())/2, y_+(h_-img->h())/2);
+        else
+            ((Fl_Image*)img)->draw(0+(w_-img->w())/2, 0+(h_-img->h())/2);
     }
     }
 }

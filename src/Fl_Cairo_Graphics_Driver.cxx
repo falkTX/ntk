@@ -862,8 +862,8 @@ void Fl_Cairo_Graphics_Driver::yxline ( int x, int y, int y1, int x2, int y3 )
 static int start(Fl_RGB_Image *img, int XP, int YP, int WP, int HP, int w, int h, int &cx, int &cy, 
 		 int &X, int &Y, int &W, int &H)
 {
-  // account for current clip region (faster on Irix):
   fl_clip_box(XP,YP,WP,HP,X,Y,W,H);
+
   cx += X-XP; cy += Y-YP;
   // clip the box down to the size of image, quit if empty:
   if (cx < 0) {W += cx; X -= cx; cx = 0;}
@@ -872,6 +872,7 @@ static int start(Fl_RGB_Image *img, int XP, int YP, int WP, int HP, int w, int h
   if (cy < 0) {H += cy; Y -= cy; cy = 0;}
   if (cy+H > h) H = h-cy;
   if (H <= 0) return 1;
+
   return 0;
 }
 
@@ -911,13 +912,17 @@ Fl_Cairo_Graphics_Driver::draw(Fl_RGB_Image *img, int XP, int YP, int WP, int HP
       case 3:
           fmt = CAIRO_FORMAT_RGB24;
           break;
+      case 1:
+          fmt = CAIRO_FORMAT_A8;
+          break;
   }
 
-  cairo_save( cr );
+  /* cairo_save( cr ); */
 
-  cairo_reset_clip( cr );
+  /* cairo_reset_clip( cr ); */
 
-  cairo_surface_t *image = cairo_image_surface_create_for_data( (unsigned char *)img->array, fmt, img->w(), img->h( ), cairo_format_stride_for_width( fmt, img->w() ) );
+  cairo_surface_t *image = cairo_image_surface_create_for_data( (unsigned char *)img->array, fmt, img->w(), img->h( ), 
+                                                                cairo_format_stride_for_width( fmt, img->w() ) );
 
   /* cairo_surface_t *image = cairo_image_surface_create_for_data( (unsigned char *)img->array, fmt, img->w(), img->h(), img->ld() ); */
 
@@ -928,7 +933,6 @@ Fl_Cairo_Graphics_Driver::draw(Fl_RGB_Image *img, int XP, int YP, int WP, int HP
 
   /* cairo_matrix_scale( &matr,   */
 
-
   cairo_set_source_surface( cr, image, X - cx, Y - cy );
 
   cairo_rectangle( cr, X, Y, W, H );
@@ -937,7 +941,7 @@ Fl_Cairo_Graphics_Driver::draw(Fl_RGB_Image *img, int XP, int YP, int WP, int HP
 
   cairo_surface_destroy( image );
 
-  cairo_restore( cr );
+  /* cairo_restore( cr ); */
 }
 
 

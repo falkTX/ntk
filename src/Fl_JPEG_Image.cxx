@@ -41,7 +41,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <setjmp.h>
-
+#include <stdint.h>
 
 // Some releases of the Cygwin JPEG libraries don't have a correctly
 // updated header file for the INT32 data type; the following define
@@ -107,7 +107,8 @@ Fl_JPEG_Image::Fl_JPEG_Image(const char *filename)	// I - File to load
   FILE				*fp;	// File pointer
   jpeg_decompress_struct	dinfo;	// Decompressor info
   fl_jpeg_error_mgr		jerr;	// Error handler info
-  JSAMPROW			row;	// Sample row pointer
+//  JSAMPROW			row;	// Sample row pointer
+  uint32_t *row;
   
   // the following variables are pointers allocating some private space that
   // is not reset by 'setjmp()'
@@ -175,18 +176,31 @@ Fl_JPEG_Image::Fl_JPEG_Image(const char *filename)	// I - File to load
   h(dinfo.output_height);
   d(dinfo.output_components);
   
-  array = new uchar[w() * h() * d()];
+  uchar *line = new uchar[ w() * d() ];
+
+  array = new uchar[w() * h() * ( d() + 1 )];
   alloc_array = 1;
   
   jpeg_start_decompress(&dinfo);
   
   while (dinfo.output_scanline < dinfo.output_height) {
-    row = (JSAMPROW)(array +
-                     dinfo.output_scanline * dinfo.output_width *
-                     dinfo.output_components);
-    jpeg_read_scanlines(&dinfo, &row, (JDIMENSION)1);
+      row = (uint32_t*)
+          (array + dinfo.output_scanline * dinfo.output_width * ( dinfo.output_components + 1 ));
+
+      jpeg_read_scanlines(&dinfo, &line, (JDIMENSION)1);
+
+      for ( int i = 0, j = 0; i < w() * d(); i += 3, j++ )
+      {
+          row[ j ] = ( line[ i ] << 16 ) |
+              ( line[ i + 1 ] << 8 ) |
+              ( line[ i + 2 ] );
+      }
   }
-  
+
+  d(4);
+
+  delete[] line;
+
   jpeg_finish_decompress(&dinfo);
   jpeg_destroy_decompress(&dinfo);
   

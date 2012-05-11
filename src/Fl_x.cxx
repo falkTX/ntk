@@ -2010,12 +2010,10 @@ void Fl_Window::show() {
   if (Fl::scheme_bg_) {
 //    labeltype(FL_NORMAL_LABEL);
       align(FL_ALIGN_IMAGE_BACKDROP);
-  } else {
-    labeltype(FL_NO_LABEL);
   }
 
-
-
+  labeltype(FL_NO_LABEL);
+ 
   Fl_Tooltip::exit(this);
   if (!shown()) {
     fl_open_display();
