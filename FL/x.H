@@ -46,7 +46,6 @@
 
 #  include "Enumerations.H"
 #include <FL/Fl_Cairo.H>
-#include <FL/Fl_Rectangle.H>
 
 #  ifdef WIN32
 #    include "win32.H"
@@ -65,7 +64,11 @@
 #    include "Fl_Window.H"
 #    include "Xutf8.h"
 // Mirror X definition of Region to Fl_Region, for portability...
-typedef Fl_Rectangle * Fl_Region;
+#if FLTK_USE_CAIRO
+typedef cairo_region_t * Fl_Region;
+#else
+typedef Region Fl_Region;
+#endif
 
 FL_EXPORT void fl_open_display();
 FL_EXPORT void fl_open_display(Display*);

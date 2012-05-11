@@ -113,7 +113,7 @@ void *fl_xftfont = 0;
 //const char* fl_encoding_ = "iso8859-1";
 const char* fl_encoding_ = "iso10646-1";
 
-extern Region XRegionFromRectangle ( Fl_Rectangle *rg );
+extern Region XRegionFromRectangle ( Fl_Region rg );
 
 static void fl_xft_font(Fl_Xlib_Graphics_Driver *driver, Fl_Font fnum, Fl_Fontsize size, int angle) {
   if (fnum==-1) { // special case to stop font caching

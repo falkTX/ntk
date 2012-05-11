@@ -1691,7 +1691,7 @@ Fl_X* Fl_X::set_xid(Fl_Window* win, Window winxid) {
   xp->setwindow(win);
   xp->next = Fl_X::first;
   xp->region = 0;
-  xp->wait_for_expose = 0;
+  xp->wait_for_expose = 1;
 //  xp->backbuffer_bad = 1;
   Fl_X::first = xp;
   if (win->modal()) {Fl::modal_ = win; fl_fix_focus();}
@@ -2013,6 +2013,8 @@ void Fl_Window::show() {
   } else {
     labeltype(FL_NO_LABEL);
   }
+
+
 
   Fl_Tooltip::exit(this);
   if (!shown()) {

@@ -170,7 +170,6 @@ CPPFILES = \
 	Clean_Theme.cxx \
 	Crystal_Theme.cxx \
 	themes.cxx \
-	Fl_Rectangle.cxx \
 	ps_image.cxx
 	
 OBJCPPFILES = \
