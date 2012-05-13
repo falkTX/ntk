@@ -430,9 +430,15 @@ void Fl_Widget::draw_backdrop() const {
     {
 //     ((Fl_Image*)img)->draw(x_+(w_-img->w())/2, y_+(h_-img->h())/2);
         if ( type() < FL_WINDOW )
+        {
+            fl_push_clip( x_, y_, w_, h_ );
             ((Fl_Image*)img)->draw(x_+(w_-img->w())/2, y_+(h_-img->h())/2);
+            fl_pop_clip();
+        }
         else
+        {
             ((Fl_Image*)img)->draw(0+(w_-img->w())/2, 0+(h_-img->h())/2);
+        }
     }
     }
 }
