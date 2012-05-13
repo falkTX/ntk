@@ -46,12 +46,12 @@ void Fl_Window::_Fl_Window() {
   type(FL_WINDOW);
   box(FL_FLAT_BOX);
   if (Fl::scheme_bg_) {
-    labeltype(FL_NORMAL_LABEL);
-    align(FL_ALIGN_CENTER | FL_ALIGN_INSIDE | FL_ALIGN_CLIP);
-    image(Fl::scheme_bg_);
-  } else {
-    labeltype(FL_NO_LABEL);
-  }
+      align(FL_ALIGN_IMAGE_BACKDROP);
+      image(Fl::scheme_bg_);
+  }      
+  
+  labeltype(FL_NO_LABEL);
+ 
   i = 0;
   xclass_ = 0;
   icon_ = 0;
