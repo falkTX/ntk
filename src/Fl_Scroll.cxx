@@ -242,16 +242,17 @@ void Fl_Scroll::bbox(int& X, int& Y, int& W, int& H) {
 }
 
 void Fl_Scroll::draw() {
+    box( FL_FLAT_BOX );
   fix_scrollbar_order();
   int X,Y,W,H; bbox(X,Y,W,H);
 
-  uchar d = damage();
+  fl_damage_t d = damage();
 
-  if (d & FL_DAMAGE_ALL) { // full redraw
+  if ( d & FL_DAMAGE_ALL ) { // full redraw
     draw_box(box(),x(),y(),w(),h(),color());
     draw_clip(this, X, Y, W, H);
   } else {
-    if (d & FL_DAMAGE_SCROLL) {
+      if ( d & FL_DAMAGE_SCROLL) {
       // scroll the contents:
       fl_scroll(X, Y, W, H, oldx-xposition_, oldy-yposition_, draw_clip, this);
 
@@ -273,7 +274,7 @@ void Fl_Scroll::draw() {
       if (T > Y) draw_clip(this, X, Y, W, T - Y);
       if (B < (Y + H)) draw_clip(this, X, B, W, Y + H - B);
     }
-    if (d & FL_DAMAGE_CHILD) { // draw damaged children
+    if ( d & FL_DAMAGE_CHILD) { // draw damaged children
       fl_push_clip(X, Y, W, H);
       Fl_Widget*const* a = array();
       for (int i=children()-2; i--;) update_child(**a++);
@@ -370,8 +371,9 @@ void Fl_Scroll::scroll_to(int X, int Y) {
     if (o == &hscrollbar || o == &scrollbar) continue;
     o->position(o->x()+dx, o->y()+dy);
   }
-  if (parent() == (Fl_Group *)window() && Fl::scheme_bg_) damage(FL_DAMAGE_ALL);
-  else damage(FL_DAMAGE_SCROLL);
+  /* if (parent() == (Fl_Group *)window() && Fl::scheme_bg_) damage(FL_DAMAGE_ALL); */
+  /* else */
+  damage(FL_DAMAGE_SCROLL);
 }
 
 void Fl_Scroll::hscrollbar_cb(Fl_Widget* o, void*) {

@@ -49,6 +49,8 @@ typedef long fl_intptr_t;
 typedef unsigned long fl_uintptr_t;
 #endif
 
+typedef unsigned short fl_damage_t;
+
 class Fl_Widget;
 class Fl_Window;
 class Fl_Group;
@@ -118,7 +120,7 @@ class FL_EXPORT Fl_Widget {
   Fl_Color color_;
   Fl_Color color2_;
   uchar type_;
-  uchar damage_;
+  fl_damage_t short damage_;
   uchar box_;
   uchar when_;
 
@@ -885,7 +887,7 @@ public:
       \return a bitmap of flags describing the kind of damage to the widget
       \see damage(uchar), clear_damage(uchar)
    */
-  uchar damage() const {return damage_;}
+  fl_damage_t damage() const {return damage_;}
 
   /** Clears or sets the damage flags.
       Damage flags are cleared when parts of the widget drawing is repaired.
@@ -899,14 +901,14 @@ public:
       \param[in] c new bitmask of damage flags (default: 0)
       \see damage(uchar), damage()
    */
-  void clear_damage(uchar c = 0) {damage_ = c;}
+  void clear_damage(fl_damage_t c = 0) {damage_ = c;}
 
   /** Sets the damage bits for the widget.
       Setting damage bits will schedule the widget for the next redraw.
       \param[in] c bitmask of flags to set
       \see damage(), clear_damage(uchar)
    */
-  void damage(uchar c);
+  void damage(fl_damage_t c);
 
   /** Sets the damage bits for an area inside the widget.
       Setting damage bits will schedule the widget for the next redraw.
@@ -914,7 +916,7 @@ public:
       \param[in] x, y, w, h size of damaged area
       \see damage(), clear_damage(uchar)
    */
-  void damage(uchar c, int x, int y, int w, int h);
+  void damage(fl_damage_t c, int x, int y, int w, int h);
 
   void draw_label(int, int, int, int, Fl_Align) const;
 

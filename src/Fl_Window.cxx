@@ -106,10 +106,10 @@ void Fl_Window::draw() {
   //  - we draw the box with x=0 and y=0 instead of x() and y()
   //  - we don't draw a label
 
-//    if (damage() & ~FL_DAMAGE_CHILD) {	 // draw the entire thing
-    /* always draw the box because the children may be transparent */
+    if (damage() & FL_DAMAGE_BACKGROUND || damage() & ~FL_DAMAGE_CHILD) {	 // draw the entire thing
+//    /* always draw the box because the children may be transparent */
         draw_box(box(),0,0,w(),h(),color()); // draw box with x/y = 0
-//    }
+   }
     draw_children();
 
   if (fl_gc && !parent() && resizable() && (!size_range_set || minh!=maxh || minw!=maxw)) {

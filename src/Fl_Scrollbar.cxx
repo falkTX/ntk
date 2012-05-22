@@ -118,7 +118,7 @@ int Fl_Scrollbar::handle(int event) {
   case FL_LEAVE:
     return 1;
   case FL_RELEASE:
-      damage(FL_DAMAGE_ALL);
+      redraw();
     if (pushed_) {
       Fl::remove_timeout(timeout_cb, this);
       pushed_ = 0;
@@ -132,7 +132,7 @@ int Fl_Scrollbar::handle(int event) {
       handle_push();
       Fl::add_timeout(INITIALREPEAT, timeout_cb, this);
       increment_cb();
-      damage(FL_DAMAGE_ALL);
+      redraw();
       return 1;
     }
     return Fl_Slider::handle(event, X,Y,W,H);

@@ -59,7 +59,7 @@ void Fl_Pack::draw() {
   int rw, rh;
   int current_position = horizontal() ? tx : ty;
   int maximum_position = current_position;
-  uchar d = damage();
+  fl_damage_t d = damage();
   Fl_Widget*const* a = array();
   if (horizontal()) {
     rw = -spacing_;

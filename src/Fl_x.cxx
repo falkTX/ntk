@@ -2044,6 +2044,7 @@ void Fl_Window::make_current() {
   fl_window = i->xid;
   fl_gc = gc;
 #ifdef FLTK_HAVE_CAIRO
+
   if ( i->cairo_surface_invalid && i->cc )
   {
       cairo_destroy( i->cc ); i->cc = 0;
@@ -2055,6 +2056,8 @@ void Fl_Window::make_current() {
       i->cs = Fl::cairo_create_surface( i->xid, w(), h() );
       i->cc = cairo_create( i->cs );
   }
+
+
   Fl::cairo_make_current( i->cs, i->cc );
 #endif
   current_ = this;

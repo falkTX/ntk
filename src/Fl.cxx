@@ -1646,7 +1646,7 @@ void Fl_Widget::redraw_label() {
   }
 }
 
-void Fl_Widget::damage(uchar fl) {
+void Fl_Widget::damage(fl_damage_t fl) {
   if (type() < FL_WINDOW) {
     // damage only the rectangle covered by a child widget:
     damage(fl, x(), y(), w(), h());
@@ -1668,18 +1668,36 @@ void Fl_Widget::damage(uchar fl) {
   }
 }
 
-void Fl_Widget::damage(uchar fl, int X, int Y, int W, int H) {
+void Fl_Widget::damage(fl_damage_t fl, int X, int Y, int W, int H) {
   Fl_Widget* wi = this;
   // mark all parent widgets between this and window with FL_DAMAGE_CHILD:
-  while (wi->type() < FL_WINDOW) {
+  /* mark as exposed all parent widgets between this one and the window, stopping at the first widget to have FL_FLAT_BOX (and therefore be completely opaque! 
+   FIXME: check the color for an alpha less than 1! */
+
+  bool hit_opaque_widget = false;
+
+  while (wi->type() < FL_WINDOW )
+  {
     wi->damage_ |= fl;
-    wi = wi->parent();
-    if (!wi) return;
+
+    if ( wi->box() == FL_FLAT_BOX )
+    {
+        hit_opaque_widget = true;
+    }
+    
+    if ( ! ( wi = wi->parent() ) )
+        return;
+
     /* we use FL_DAMAGE_EXPOSE now because of alpha blending and FL_NO_BOX and frames... */
-    fl = FL_DAMAGE_EXPOSE;
+//    fl = FL_DAMAGE_EXPOSE;
+    
+    fl = hit_opaque_widget ? FL_DAMAGE_CHILD : FL_DAMAGE_ALL;
   }
 
   fl = FL_DAMAGE_CHILD;
+
+  if ( ! hit_opaque_widget )
+      fl |= FL_DAMAGE_BACKGROUND;
 
   /* at this point 'wi' is the window */
 

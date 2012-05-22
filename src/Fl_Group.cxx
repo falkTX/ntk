@@ -725,25 +725,25 @@ void Fl_Group::draw_children() {
 		 h() - Fl::box_dh(box()));
   }
 
-//  if (damage() & ~FL_DAMAGE_CHILD) { // redraw the entire thing:
+ if (damage() & ~FL_DAMAGE_CHILD) { // redraw the entire thing:
 //  if ( damage() & FL_DAMAGE_ALL ) {
     for (int i=children_; i--;) {
       Fl_Widget& o = **a++;
       draw_child(o);
       draw_outside_label(o);
     }
-  /* } else {	// only redraw the children that need it: */
-  /*   for (int i=children_; i--;) update_child(**a++); */
-  /* } */
+  } else {	// only redraw the children that need it:
+    for (int i=children_; i--;) update_child(**a++);
+  }
 
   if (clip_children()) fl_pop_clip();
 }
 
 void Fl_Group::draw() {
-//  if (damage() & ~FL_DAMAGE_CHILD) { // redraw the entire thing:
+ if (damage() & ~FL_DAMAGE_CHILD) { // redraw the entire thing:
     draw_box();
     draw_label();
-//  }
+ }
   draw_children();
 }
 
@@ -771,10 +771,10 @@ void Fl_Group::update_child(Fl_Widget& widget) const {
 */
 void Fl_Group::draw_child(Fl_Widget& widget) const {
     if (widget.visible() && widget.type() < FL_WINDOW &&
-      fl_not_clipped(widget.x(), widget.y(), widget.w(), widget.h())) {
-    widget.clear_damage(FL_DAMAGE_ALL);
-    widget.draw();
-    widget.clear_damage();
+        fl_not_clipped(widget.x(), widget.y(), widget.w(), widget.h())) {
+        widget.clear_damage(FL_DAMAGE_ALL);
+        widget.draw();
+        widget.clear_damage();
   }
 }
 

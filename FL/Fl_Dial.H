@@ -66,11 +66,11 @@ public:
             Fl_Dial_Base::type( n );
         }
 
-    virtual void value_damage ( void )
-        {
-        if ( window() )
-            window()->damage( FL_DAMAGE_ALL, x(), y(), w(), h() );
-        }
+    /* virtual void value_damage ( void ) */
+    /*     { */
+    /*     if ( window() ) */
+    /*         window()->damage( FL_DAMAGE_ALL, x(), y(), w(), h() ); */
+    /*     } */
 
     static void default_style ( int n ) { Fl_Dial::_default_style = n; }
     static void default_image ( Fl_Image *i ) { Fl_Dial::_default_image = i; }
