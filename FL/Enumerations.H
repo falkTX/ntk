@@ -44,6 +44,14 @@
  */
 /*@{*/
 
+#define NTK_MAJOR_VERSION 1
+#define NTK_MINOR_VERSION 0
+#define NTK_PATCH_VERSION 0
+
+#define NTK_VERSION		((double)NTK_MAJOR_VERSION + \
+				 (double)NTK_MINOR_VERSION * 0.01 + \
+				 (double)NTK_PATCH_VERSION * 0.0001)
+
 /**
    The major release version of this FLTK library.
    \sa FL_VERSION
