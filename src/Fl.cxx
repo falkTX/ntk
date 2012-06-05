@@ -1680,9 +1680,14 @@ void Fl_Widget::damage(fl_damage_t fl, int X, int Y, int W, int H) {
   {
     wi->damage_ |= fl;
 
-    if ( wi->box() == FL_FLAT_BOX )
+    switch ( wi->box() )
     {
-        hit_opaque_widget = true;
+        case FL_FLAT_BOX:
+        case FL_BORDER_BOX:
+            hit_opaque_widget = true;
+            break;
+        default:
+            break;
     }
     
     if ( ! ( wi = wi->parent() ) )
