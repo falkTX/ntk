@@ -120,7 +120,7 @@ class FL_EXPORT Fl_Widget {
   Fl_Color color_;
   Fl_Color color2_;
   uchar type_;
-  fl_damage_t short damage_;
+  fl_damage_t damage_;
   uchar box_;
   uchar when_;
 
