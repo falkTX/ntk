@@ -1817,8 +1817,9 @@ void Fl_X::make_xid(Fl_Window* win, XVisualInfo *visual, Colormap colormap)
     if (win->xclass()) {
       char buffer[1024];
       char *p; const char *q;
-      // truncate on any punctuation, because they break XResource lookup:
-      for (p = buffer, q = win->xclass(); isalnum(*q)||(*q&128);) *p++ = *q++;
+      // replace punctuation with underscores, because it breaks XResource lookup
+      for (p = buffer, q = win->xclass(); *q || (*q&128); q++)
+          *p++ = isalnum(*q) ? *q : '_';
       *p++ = 0;
       // create the capitalized version:
       q = buffer;
