@@ -153,18 +153,19 @@ Fl_Dial::draw ( void )
 
     double angle = ( angle2() - angle1() ) * ( value() - minimum()) / ( maximum() - minimum() ) + angle1();
 
-  if ( type() == PIXMAP_DIAL )
+    int t = type();
+
+    if ( t == PIXMAP_DIAL )
     {
         Fl_Image *im = pixmap();
-
+        
         if ( !im )
             im = Fl_Dial::_default_image;
-  
+               
         if ( im )
         {
-
             fl_push_clip( x(), y(), w(), h() );
-
+      
             int knob_width = im->h();
             const int frames = im->w() / im->h();
 
@@ -233,17 +234,15 @@ Fl_Dial::draw ( void )
             }
 
             fl_pop_clip();
+
+            return;
         }
         else
-        {
-            /* missing image... */
-        }
-
-        return;
-
+            /* draw as plastic dial instead when image is missing */
+            t = PLASTIC_DIAL;
     }
 
-    if ( type() == ARC_DIAL )
+    if ( t == ARC_DIAL )
     {
         /* fl_line_style( FL_SOLID, 0 ); */
         if ( type() == ARC_DIAL )
@@ -268,24 +267,24 @@ Fl_Dial::draw ( void )
 
         fl_color( fl_contrast( labelcolor(), color() ) );
     }
-    else if ( type() == PLASTIC_DIAL || type() == BURNISHED_DIAL )
+    else if ( t == PLASTIC_DIAL || t == BURNISHED_DIAL )
     {
-        draw_knob();
+        draw_knob(t);
         
         draw_cursor( X, Y, S);
     }
 
-    /* Some strange bug in FLTK prevents us from always been able to draw text
-     * here, so don't even try for now. */
-    /* char s[10]; */
+/* Some strange bug in FLTK prevents us from always been able to draw text
+ * here, so don't even try for now. */
+/* char s[10]; */
     
-    /* fl_font( FL_HELVETICA, 8 ); */
+/* fl_font( FL_HELVETICA, 8 ); */
     
-    /* snprintf( s, sizeof( s ), "%.1f", value() ); */
+/* snprintf( s, sizeof( s ), "%.1f", value() ); */
 
-    /* /\* fl_rectf( X, Y + S, S, 14, FL_BACKGROUND2_COLOR ); *\/ */
-    /* fl_color( FL_WHITE );  */
-    /* fl_draw( s, X, Y + S, S, 14, FL_ALIGN_CENTER ); */
+/* /\* fl_rectf( X, Y + S, S, 14, FL_BACKGROUND2_COLOR ); *\/ */
+/* fl_color( FL_WHITE );  */
+/* fl_draw( s, X, Y + S, S, 14, FL_ALIGN_CENTER ); */
 }
 
 void
@@ -344,7 +343,7 @@ Fl_Dial::draw_cursor ( int ox, int oy, int side )
 }
 
 void
-Fl_Dial::draw_knob ( void )
+Fl_Dial::draw_knob ( int type )
 {
     int ox, oy, ww, hh, side;
 
@@ -375,14 +374,14 @@ Fl_Dial::draw_knob ( void )
 
     Fl_Color c = active_r() ? fl_color_average(FL_BACKGROUND_COLOR, FL_WHITE, .7) : FL_INACTIVE_COLOR;
 
-    if ( type() == BURNISHED_DIAL )
+    if ( type == BURNISHED_DIAL )
     {
         burnished_oval_box( ox + o, oy + o, side - (o*2), side - (o*2), c );
     }
     else
     {
             
-       fl_color(FL_BACKGROUND_COLOR);
+        fl_color(FL_BACKGROUND_COLOR);
 
         fl_pie(ox + o, oy + o, side - (o*2), side - (o*2), 0, 360);
 

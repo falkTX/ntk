@@ -36,7 +36,7 @@ class Fl_Dial : public Fl_Dial_Base
     Fl_Image *_pixmap;
     int _last_pixmap_index;
 
-    void draw_knob ( void );
+    void draw_knob ( int type );
     void draw_scale ( int ox,  int oy,  int side );
     void draw_cursor ( int ox,  int oy,  int sidei );
 
