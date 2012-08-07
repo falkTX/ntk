@@ -106,11 +106,11 @@ static double lw = 1;
 static double hlw;
 static cairo_antialias_t aa = CAIRO_ANTIALIAS_GRAY;
 
+static int npoints = 0;
+
 cairo_matrix_t Fl_Cairo_Graphics_Driver::m;
 cairo_matrix_t  Fl_Cairo_Graphics_Driver::stack[FL_MATRIX_STACK_SIZE];
 int  Fl_Cairo_Graphics_Driver::sptr;
-
-static int awaiting_vertex = false;
 
 #define cairo_set_antialias( cr, aa )
 
@@ -573,32 +573,32 @@ void Fl_Cairo_Graphics_Driver::rectf ( int x, int y, int w, int h )
 
 void Fl_Cairo_Graphics_Driver::begin_line ( void )
 {
-    awaiting_vertex = true;
     what = LINE;
+    npoints = 0;
 }
 
 void Fl_Cairo_Graphics_Driver::begin_points ( void )
 {
-    awaiting_vertex = true;
     what = POINT_;
+    npoints = 0;
 }
 
 void Fl_Cairo_Graphics_Driver::begin_polygon ( void )
 {
-    awaiting_vertex = true;
     what = POLYGON;
+    npoints = 0;
 }
 
 void Fl_Cairo_Graphics_Driver::begin_loop ( void )
 {
-    awaiting_vertex = true;
     what = LOOP;
+    npoints = 0;
 }
 
 void Fl_Cairo_Graphics_Driver::begin_complex_polygon ( void )
 {
     what = POLYGON;
-    awaiting_vertex = true;
+    npoints = 0;
 }
 
 void Fl_Cairo_Graphics_Driver::end_line ( void )
@@ -634,35 +634,47 @@ void Fl_Cairo_Graphics_Driver::end_points ( void )
 
 void Fl_Cairo_Graphics_Driver::end_loop ( void )
 {
+    if ( npoints < 3 )
+    {
+        end_line();
+        return;
+    }
+
    cairo_t *cr = Fl::cairo_cc();
    cairo_close_path( cr );
    end_line();
 }
 
 
+/* static double last_vertex_x; */
+/* static double last_vertex_y; */
+
 void Fl_Cairo_Graphics_Driver::vertex ( double x, double y )
 {
     cairo_t *cr = Fl::cairo_cc();
 
-    if ( awaiting_vertex )
-    {
+    if ( !npoints )
         cairo_move_to( cr, x, y );
-        awaiting_vertex = false;
-    }
     else
         cairo_line_to( cr, x, y );
+
+    ++npoints;
 }
 
 void Fl_Cairo_Graphics_Driver::gap ( void )
 {
-    awaiting_vertex = true;
+    npoints = 0;
 }
 
 void Fl_Cairo_Graphics_Driver::end_complex_polygon ( void )
 {
-   cairo_t *cr = Fl::cairo_cc();
+    if ( npoints < 3 )
+    {
+        end_line();
+        return;
+    }
 
-   gap();
+   cairo_t *cr = Fl::cairo_cc();
 
    cairo_close_path( cr );
 
@@ -675,6 +687,12 @@ void Fl_Cairo_Graphics_Driver::end_complex_polygon ( void )
 
 void Fl_Cairo_Graphics_Driver::end_polygon ( void )
 {
+    if ( npoints < 3 )
+    {
+        end_line();
+        return;
+    }
+
    cairo_t *cr = Fl::cairo_cc();
 
    cairo_close_path( cr );
