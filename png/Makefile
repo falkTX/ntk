@@ -35,7 +35,7 @@ OBJS	=	png.o pngset.o pngget.o pngrutil.o pngtrans.o pngwutil.o \
 		pngread.o pngrio.o pngwio.o pngwrite.o pngrtran.o \
 		pngwtran.o pngmem.o pngerror.o pngpread.o
 
-LIBPNG	=	../lib/libfltk_png$(LIBEXT)
+LIBPNG	=	../lib/libntk_png$(LIBEXT)
 
 
 #
@@ -59,10 +59,10 @@ clean:
 #
 
 install: $(LIBPNG)
-	echo "Installing libfltk_png$(LIBEXT) in $(libdir)..."
+	echo "Installing libntk_png$(LIBEXT) in $(libdir)..."
 	-$(INSTALL_DIR) $(DESTDIR)$(libdir)
 	$(INSTALL_LIB) $(LIBPNG) $(DESTDIR)$(libdir)
-	$(RANLIB) $(DESTDIR)$(libdir)/libfltk_png$(LIBEXT)
+	$(RANLIB) $(DESTDIR)$(libdir)/libntk_png$(LIBEXT)
 	echo "Installing png headers in $(includedir)/FL/images..."
 	-$(INSTALL_DIR) $(DESTDIR)$(includedir)/FL/images
 	$(INSTALL_DATA) png.h $(DESTDIR)$(includedir)/FL/images
@@ -75,8 +75,8 @@ install: $(LIBPNG)
 #
 
 uninstall:
-	echo "Uninstalling libfltk_png$(LIBEXT) in $(libdir)..."
-	$(RM) $(DESTDIR)$(libdir)/libfltk_png$(LIBEXT)
+	echo "Uninstalling libntk_png$(LIBEXT) in $(libdir)..."
+	$(RM) $(DESTDIR)$(libdir)/libntk_png$(LIBEXT)
 	echo "Uninstalling png headers in $(includedir)/FL/images..."
 	$(RM) $(DESTDIR)$(includedir)/FL/images/png.h
 	$(RM) $(DESTDIR)$(includedir)/FL/images/pngconf.h
@@ -84,7 +84,7 @@ uninstall:
 
 
 #
-# libfltk_png.a
+# libntk_png.a
 #
 
 $(LIBPNG):	$(OBJS)

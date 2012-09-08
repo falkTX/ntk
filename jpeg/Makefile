@@ -1,7 +1,7 @@
 #
 # "$Id: Makefile 8425 2011-02-15 15:25:53Z mike $"
 #
-# JPEG library makefile for the Fast Light Toolkit (FLTK).
+# JPEG library makefile for the Fast Light Toolkit (NTK).
 #
 # Copyright 1997-2011 by Bill Spitzak and others.
 #
@@ -22,7 +22,7 @@
 #
 # Please report all bugs and problems on the following page:
 #
-#     http://www.fltk.org/str.php
+#     http://www.ntk.org/str.php
 #
 
 include ../makeinclude
@@ -80,7 +80,7 @@ OBJS	=	\
 		jquant2.o \
 		jutils.o
 
-LIBJPEG	=	../lib/libfltk_jpeg$(LIBEXT)
+LIBJPEG	=	../lib/libntk_jpeg$(LIBEXT)
 
 
 #
@@ -107,7 +107,7 @@ install:	$(LIBJPEG)
 	echo "Installing $(LIBJPEG) in $(libdir)..."
 	-$(INSTALL_DIR) $(DESTDIR)$(libdir)
 	$(INSTALL_LIB) $(LIBJPEG) $(DESTDIR)$(libdir)
-	$(RANLIB) $(DESTDIR)$(libdir)/libfltk_jpeg$(LIBEXT)
+	$(RANLIB) $(DESTDIR)$(libdir)/libntk_jpeg$(LIBEXT)
 	echo "Installing jpeg headers in $(includedir)/FL/images..."
 	-$(INSTALL_DIR) $(DESTDIR)$(includedir)/FL/images
 	$(INSTALL_DATA) jconfig.h $(DESTDIR)$(includedir)/FL/images
@@ -121,8 +121,8 @@ install:	$(LIBJPEG)
 #
 
 uninstall:
-	echo "Uninstalling libfltk_jpeg$(LIBEXT) in $(libdir)..."
-	$(RM) $(libdir)/libfltk_jpeg$(LIBEXT)
+	echo "Uninstalling libntk_jpeg$(LIBEXT) in $(libdir)..."
+	$(RM) $(libdir)/libntk_jpeg$(LIBEXT)
 	echo "Uninstalling jpeg headers in $(includedir)/FL/images..."
 	$(RM) $(includedir)/FL/images/jconfig.h
 	$(RM) $(includedir)/FL/images/jerror.h
@@ -131,7 +131,7 @@ uninstall:
 
 
 #
-# libfltk_jpeg.a
+# libntk_jpeg.a
 #
 
 $(LIBJPEG):	$(OBJS)

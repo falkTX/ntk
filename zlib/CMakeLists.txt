@@ -13,20 +13,20 @@ set(ZLIB_SRCS
 )
 
 #######################################################################
-add_library(fltk_z ${ZLIB_SRCS})
+add_library(ntk_z ${ZLIB_SRCS})
 
 if(MSVC)
-   set_target_properties(fltk_z
+   set_target_properties(ntk_z
       PROPERTIES
          OUTPUT_NAME zlib
          DEBUG_OUTPUT_NAME zlibd
    )
    if(OPTION_LARGE_FILE)
-      set_target_properties(fltk_z PROPERTIES LINK_FLAGS /LARGEADDRESSAWARE)
+      set_target_properties(ntk_z PROPERTIES LINK_FLAGS /LARGEADDRESSAWARE)
    endif(OPTION_LARGE_FILE)
 endif(MSVC)
 
-install(TARGETS fltk_z
+install(TARGETS ntk_z
    EXPORT fltk-install
    DESTINATION ${PREFIX_LIB}
 )

@@ -32,20 +32,20 @@ set(decompression_SRCS
 )
 
 #######################################################################
-add_library(fltk_jpeg ${systemdependent_SRCS} ${common_SRCS} ${compression_SRCS} ${decompression_SRCS})
+add_library(ntk_jpeg ${systemdependent_SRCS} ${common_SRCS} ${compression_SRCS} ${decompression_SRCS})
 
 if(MSVC)
-   set_target_properties(fltk_jpeg
+   set_target_properties(ntk_jpeg
       PROPERTIES
-         OUTPUT_NAME fltkjpeg
-         DEBUG_OUTPUT_NAME fltkjpegd
+         OUTPUT_NAME ntkjpeg
+         DEBUG_OUTPUT_NAME ntkjpegd
    )
    if(OPTION_LARGE_FILE)
-      set_target_properties(fltk_jpeg PROPERTIES LINK_FLAGS /LARGEADDRESSAWARE)
+      set_target_properties(ntk_jpeg PROPERTIES LINK_FLAGS /LARGEADDRESSAWARE)
    endif(OPTION_LARGE_FILE)
 endif(MSVC)
 
-install(TARGETS fltk_jpeg
-   EXPORT fltk-install
+install(TARGETS ntk_jpeg
+   EXPORT ntk-install
    DESTINATION ${PREFIX_LIB}
 )

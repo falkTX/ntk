@@ -64,7 +64,7 @@ if test -f "$selfdir/bin/UseFLTK.cmake"; then
 	includedir="@FLTK_SOURCE_DIR@"
 	libdir="$selfdir/lib"
 
-	if test -f "$libdir/libfltk_jpeg.a"; then
+	if test -f "$libdir/libntk_jpeg.a"; then
 		CFLAGS="-I$includedir/jpeg $CFLAGS"
 		CXXFLAGS="-I$includedir/jpeg $CXXFLAGS"
 	fi
@@ -74,7 +74,7 @@ if test -f "$selfdir/bin/UseFLTK.cmake"; then
 		CXXFLAGS="-I$includedir/zlib $CXXFLAGS"
 	fi
 
-	if test -f "$libdir/libfltk_png.a"; then
+	if test -f "$libdir/libntk_png.a"; then
 		CFLAGS="-I$includedir/png $CFLAGS"
 		CXXFLAGS="-I$includedir/png $CXXFLAGS"
 	fi
@@ -383,7 +383,7 @@ if test "$echo_libs" = "yes"; then
     if test x$use_images = xyes; then
         USELIBS="$libdir/libfltk_images.a $USELIBS"
 
-        for lib in fltk_jpeg fltk_png fltk_z; do
+        for lib in ntk_jpeg ntk_png fltk_z; do
             if test -f $libdir/lib$lib.a; then
                 USELIBS="$libdir/lib$lib.a $USELIBS"
             fi

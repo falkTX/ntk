@@ -16,20 +16,20 @@ set(PNG_SRCS
 )
 
 #######################################################################
-add_library(fltk_png ${PNG_SRCS})
+add_library(ntk_png ${PNG_SRCS})
 
 if(MSVC)
-   set_target_properties(fltk_png PROPERTIES OUTPUT_NAME fltkpng)
+   set_target_properties(ntk_png PROPERTIES OUTPUT_NAME ntkpng)
    if(OPTION_LARGE_FILE)
-      set_target_properties(fltk_png PROPERTIES LINK_FLAGS /LARGEADDRESSAWARE)
+      set_target_properties(ntk_png PROPERTIES LINK_FLAGS /LARGEADDRESSAWARE)
    endif(OPTION_LARGE_FILE)
 else()
-   set_target_properties(fltk_png PROPERTIES OUTPUT_NAME fltk_png)
+   set_target_properties(ntk_png PROPERTIES OUTPUT_NAME ntk_png)
 endif(MSVC)
 
-target_link_libraries(fltk_png ${FLTK_ZLIB_LIBRARIES})
+target_link_libraries(ntk_png ${FLTK_ZLIB_LIBRARIES})
 
-install(TARGETS fltk_png
-   EXPORT fltk-install
+install(TARGETS ntk_png
+   EXPORT ntk-install
    DESTINATION ${PREFIX_LIB}
 )
