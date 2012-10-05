@@ -89,6 +89,8 @@ Fl_Dial::draw_box ( void )
 {
 }
 
+static Fl_Widget *_mouse_inside = NULL;
+
 int
 Fl_Dial::handle ( int m )
 {
@@ -96,6 +98,14 @@ Fl_Dial::handle ( int m )
 
     switch ( m )
     {
+        case FL_ENTER:
+            _mouse_inside = this;
+            redraw();
+            return Fl_Dial_Base::handle(m) || 1;
+        case FL_LEAVE:
+            _mouse_inside = NULL;
+            redraw();
+            return Fl_Dial_Base::handle(m) || 1;
         case FL_MOUSEWHEEL:
         {
             if ( this != Fl::belowmouse() )
@@ -235,7 +245,7 @@ Fl_Dial::draw ( void )
 
             fl_pop_clip();
 
-            return;
+            goto done;
         }
         else
             /* draw as plastic dial instead when image is missing */
@@ -274,17 +284,20 @@ Fl_Dial::draw ( void )
         draw_cursor( X, Y, S);
     }
 
-/* Some strange bug in FLTK prevents us from always been able to draw text
- * here, so don't even try for now. */
-/* char s[10]; */
-    
-/* fl_font( FL_HELVETICA, 8 ); */
-    
-/* snprintf( s, sizeof( s ), "%.1f", value() ); */
+done:
 
-/* /\* fl_rectf( X, Y + S, S, 14, FL_BACKGROUND2_COLOR ); *\/ */
-/* fl_color( FL_WHITE );  */
-/* fl_draw( s, X, Y + S, S, 14, FL_ALIGN_CENTER ); */
+    if ( _mouse_inside == this )
+    {
+        /* TODO: Make this optional */
+        char s[10];
+    
+        fl_font( FL_HELVETICA, 10 );
+    
+        snprintf( s, sizeof( s ), "%.1f", value() );
+
+        fl_color( FL_FOREGROUND_COLOR );
+        fl_draw( s, X, Y, S, S, FL_ALIGN_CENTER );
+    }
 }
 
 void
