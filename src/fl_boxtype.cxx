@@ -417,31 +417,42 @@ void Fl_Widget::draw_box() const {
   if (box_) draw_box((Fl_Boxtype)box_, x_, y_, w_, h_, color_);
 }
 
+static const Fl_Image * 
+get_backdrop_image ( const Fl_Widget *o )
+{
+    if (o->align() & FL_ALIGN_IMAGE_BACKDROP ||
+        o->type() >= FL_WINDOW ) {
+        const Fl_Image *img = o->image();
+        // if there is no image, we will not draw the deimage either
+        if (img && o->deimage() && !o->active_r())
+            img = o->deimage();
+        
+        return img;
+    }
+    
+    return 0;
+}
+
 /** If FL_ALIGN_IMAGE_BACKDROP is set, the image or deimage will be drawn */
 void Fl_Widget::draw_backdrop() const {
 
-    if (align() & FL_ALIGN_IMAGE_BACKDROP ||
-        type() >= FL_WINDOW ) {
-        const Fl_Image *img = image();
-        // if there is no image, we will not draw the deimage either
-        if (img && deimage() && !active_r())
-            img = deimage();
-        if (img) 
+    const Fl_Image *img = get_backdrop_image(this);
+
+    if (img) 
+    {
+        if ( type() < FL_WINDOW )
         {
-            if ( type() < FL_WINDOW )
-            {
-                /* FIXME: There's something broken about tiled images
-                 * larger than some dimension of the space they're
-                 * meant to tile over that this clipping is a
-                 * hack for. */
-                fl_push_clip( x_, y_, w_, h_ );
-                ((Fl_Image*)img)->draw(x_, y_ );
-                fl_pop_clip();
-            }
-            else
-            {
-                ((Fl_Image*)img)->draw( 0, 0, w_, h_);
-            }
+            /* FIXME: There's something broken about tiled images
+             * larger than some dimension of the space they're
+             * meant to tile over that this clipping is a
+             * hack for. */
+            fl_push_clip( x_, y_, w_, h_ );
+            ((Fl_Image*)img)->draw(x_, y_ );
+            fl_pop_clip();
+        }
+        else
+        {
+            ((Fl_Image*)img)->draw( 0, 0, w_, h_);
         }
     }
 }
@@ -452,8 +463,12 @@ void Fl_Widget::draw_box(Fl_Boxtype t, Fl_Color c) const {
 /** Draws a box of type t, of color c at the position X,Y and size W,H. */
 void Fl_Widget::draw_box(Fl_Boxtype t, int X, int Y, int W, int H, Fl_Color c) const {
   draw_it_active = active_r();
-  fl_box_table[t].f(X, Y, W, H, c);
-  draw_backdrop();
+
+  if ( get_backdrop_image(this) )
+      draw_backdrop();
+  else
+      fl_box_table[t].f(X, Y, W, H, c);
+
   draw_it_active = 1;
 }
 
