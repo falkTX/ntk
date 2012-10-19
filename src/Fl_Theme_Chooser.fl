@@ -176,5 +176,5 @@ w->end();
 w->show();
 
 while( w->shown() )
-  Fl::check();} {}
+  Fl::wait();} {}
 } 

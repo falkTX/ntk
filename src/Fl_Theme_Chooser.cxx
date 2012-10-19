@@ -236,5 +236,5 @@ void fl_theme_chooser() {
   w->show();
   
   while( w->shown() )
-    Fl::check();
+    Fl::wait();
 }
