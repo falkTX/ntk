@@ -422,24 +422,27 @@ void Fl_Widget::draw_backdrop() const {
 
     if (align() & FL_ALIGN_IMAGE_BACKDROP ||
         type() >= FL_WINDOW ) {
-    const Fl_Image *img = image();
-    // if there is no image, we will not draw the deimage either
-    if (img && deimage() && !active_r())
-      img = deimage();
-    if (img) 
-    {
-//     ((Fl_Image*)img)->draw(x_+(w_-img->w())/2, y_+(h_-img->h())/2);
-        if ( type() < FL_WINDOW )
+        const Fl_Image *img = image();
+        // if there is no image, we will not draw the deimage either
+        if (img && deimage() && !active_r())
+            img = deimage();
+        if (img) 
         {
-            fl_push_clip( x_, y_, w_, h_ );
-            ((Fl_Image*)img)->draw(x_+(w_-img->w())/2, y_+(h_-img->h())/2);
-            fl_pop_clip();
+            if ( type() < FL_WINDOW )
+            {
+                /* FIXME: There's something broken about tiled images
+                 * larger than some dimension of the space they're
+                 * meant to tile over that this clipping is a
+                 * hack for. */
+                fl_push_clip( x_, y_, w_, h_ );
+                ((Fl_Image*)img)->draw(x_, y_ );
+                fl_pop_clip();
+            }
+            else
+            {
+                ((Fl_Image*)img)->draw( 0, 0, w_, h_);
+            }
         }
-        else
-        {
-            ((Fl_Image*)img)->draw(0+(w_-img->w())/2, 0+(h_-img->h())/2);
-        }
-    }
     }
 }
 /** Draws a box of type t, of color c at the widget's position and size. */
