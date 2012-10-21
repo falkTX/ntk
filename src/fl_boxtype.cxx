@@ -465,7 +465,26 @@ void Fl_Widget::draw_box(Fl_Boxtype t, int X, int Y, int W, int H, Fl_Color c) c
   draw_it_active = active_r();
 
   if ( get_backdrop_image(this) )
+  {
       draw_backdrop();
+
+      switch ( box() )
+      {
+          case FL_UP_FRAME:
+          case FL_DOWN_FRAME:
+          case FL_EMBOSSED_FRAME:
+          case FL_ENGRAVED_FRAME:
+          case FL_THIN_UP_FRAME:
+          case FL_THIN_DOWN_FRAME:
+          case FL_BORDER_FRAME:
+          case _FL_SHADOW_FRAME:
+          case _FL_ROUNDED_FRAME:
+              fl_box_table[t].f(X, Y, W, H, c);
+              break;
+          default:
+              break;
+      }              
+  }
   else
       fl_box_table[t].f(X, Y, W, H, c);
 
