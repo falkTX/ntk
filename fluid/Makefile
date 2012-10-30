@@ -52,23 +52,23 @@ OBJECTS = $(CPPFILES:.cxx=.o)
 
 include ../makeinclude
 
-all:	$(FLUID) fluid$(EXEEXT)
+all:	$(FLUID) ntk-fluid$(EXEEXT)
 
-fluid$(EXEEXT):		$(OBJECTS) $(LIBNAME) $(FLLIBNAME) \
+ntk-fluid$(EXEEXT):		$(OBJECTS) $(LIBNAME) $(FLLIBNAME) \
 			$(IMGLIBNAME)
 	echo Linking $@...
 	$(CXX) $(ARCHFLAGS) $(LDFLAGS) -o $@ $(OBJECTS) $(LINKFLTKFORMS) $(LINKFLTKIMG) $(LDLIBS)
-	$(OSX_ONLY) $(INSTALL_BIN) fluid fluid.app/Contents/MacOS
+	$(OSX_ONLY) $(INSTALL_BIN) ntk-fluid ntk-fluid.app/Contents/MacOS
 
-fluid-shared$(EXEEXT):	$(OBJECTS) ../src/$(DSONAME) ../src/$(FLDSONAME) \
+ntk-fluid-shared$(EXEEXT):	$(OBJECTS) ../src/$(DSONAME) ../src/$(FLDSONAME) \
 			../src/$(IMGDSONAME)
 	echo Linking $@...
 	$(CXX) $(ARCHFLAGS) $(LDFLAGS) -o $@ $(OBJECTS) $(LINKSHARED) $(LDLIBS)
 
 clean:
 	-$(RM) *.o core.* *~ *.bck *.bck
-	-$(RM) core fluid$(EXEEXT) fluid-shared$(EXEEXT)
-	-$(RM) fluid.app/Contents/MacOS/fluid$(EXEEXT)
+	-$(RM) core ntk-fluid$(EXEEXT) ntk-fluid-shared$(EXEEXT)
+	-$(RM) ntk-fluid.app/Contents/MacOS/ntk-fluid$(EXEEXT)
 
 depend:	$(CPPFILES)
 	makedepend -Y -I.. -f makedepend $(CPPFILES)
@@ -79,42 +79,42 @@ include makedepend
 install: all
 	echo "Installing FLUID in $(DESTDIR)$(bindir)..."
 	-$(INSTALL_DIR) $(DESTDIR)$(bindir)
-	$(INSTALL_BIN) $(FLUID) $(DESTDIR)$(bindir)/fluid$(EXEEXT)
+	$(INSTALL_BIN) $(FLUID) $(DESTDIR)$(bindir)/ntk-fluid$(EXEEXT)
 
 install-linux:
 	-$(INSTALL_DIR) $(DESTDIR)/usr/share/applications
-	$(INSTALL_DATA) fluid.desktop  $(DESTDIR)/usr/share/applications
+	$(INSTALL_DATA) ntk-fluid.desktop  $(DESTDIR)/usr/share/applications
 	for size in 16 32 48 64 128; do \
 		if test ! -d $(DESTDIR)/usr/share/icons/hicolor/$${size}x$${size}/apps; then \
 			$(INSTALL_DIR) $(DESTDIR)/usr/share/icons/hicolor/$${size}x$${size}/apps; \
 		fi; \
-		$(INSTALL_DATA) icons/fluid-$$size.png $(DESTDIR)/usr/share/icons/hicolor/$${size}x$${size}/apps/fluid.png; \
+		$(INSTALL_DATA) icons/ntk-fluid-$$size.png $(DESTDIR)/usr/share/icons/hicolor/$${size}x$${size}/apps/ntk-fluid.png; \
 	done
 	-$(INSTALL_DIR) $(DESTDIR)/usr/share/mimelnk/application
-	$(INSTALL_DATA) x-fluid.desktop  $(DESTDIR)/usr/share/mimelnk/application
+	$(INSTALL_DATA) x-ntk-fluid.desktop  $(DESTDIR)/usr/share/mimelnk/application
 
 install-osx:
 	echo Installing Fluid in $(DESTDIR)/Applications...
-	-$(INSTALL_DIR) $(DESTDIR)/Applications/fluid.app
-	-$(INSTALL_DIR) $(DESTDIR)/Applications/fluid.app/Contents
-	$(INSTALL_DATA) fluid.app/Contents/Info.plist $(DESTDIR)/Applications/fluid.app/Contents/Info.plist
-	$(INSTALL_DATA) fluid.app/Contents/PkgInfo $(DESTDIR)/Applications/fluid.app/Contents/PkgInfo
-	-$(INSTALL_DIR) $(DESTDIR)/Applications/fluid.app/Contents/MacOS
-	$(RM) $(DESTDIR)/Applications/fluid.app/Contents/MacOS/fluid
-	$(LN) $(bindir)/fluid $(DESTDIR)/Applications/fluid.app/Contents/MacOS/fluid
-	-$(INSTALL_DIR) $(DESTDIR)/Applications/fluid.app/Contents/Resources
-	$(INSTALL_DATA) fluid.app/Contents/Resources/fluid.icns $(DESTDIR)/Applications/fluid.app/Contents/Resources
+	-$(INSTALL_DIR) $(DESTDIR)/Applications/ntk-fluid.app
+	-$(INSTALL_DIR) $(DESTDIR)/Applications/ntk-fluid.app/Contents
+	$(INSTALL_DATA) ntk-fluid.app/Contents/Info.plist $(DESTDIR)/Applications/ntk-fluid.app/Contents/Info.plist
+	$(INSTALL_DATA) ntk-fluid.app/Contents/PkgInfo $(DESTDIR)/Applications/ntk-fluid.app/Contents/PkgInfo
+	-$(INSTALL_DIR) $(DESTDIR)/Applications/ntk-fluid.app/Contents/MacOS
+	$(RM) $(DESTDIR)/Applications/ntk-fluid.app/Contents/MacOS/ntk-fluid
+	$(LN) $(bindir)/ntk-fluid $(DESTDIR)/Applications/ntk-fluid.app/Contents/MacOS/ntk-fluid
+	-$(INSTALL_DIR) $(DESTDIR)/Applications/ntk-fluid.app/Contents/Resources
+	$(INSTALL_DATA) ntk-fluid.app/Contents/Resources/ntk-fluid.icns $(DESTDIR)/Applications/ntk-fluid.app/Contents/Resources
 
 uninstall:
-	$(RM) $(DESTDIR)$(bindir)/fluid$(EXEEXT)
+	$(RM) $(DESTDIR)$(bindir)/ntk-fluid$(EXEEXT)
 
 uninstall-linux:
-	$(RM) $(DESTDIR)/usr/share/applications/fluid.desktop
-	$(RM) $(DESTDIR)/usr/share/icons/hicolor/*/fluid.png
-	$(RM) $(DESTDIR)/usr/share/mimelnk/application/x-fluid.desktop
+	$(RM) $(DESTDIR)/usr/share/applications/ntk-fluid.desktop
+	$(RM) $(DESTDIR)/usr/share/icons/hicolor/*/ntk-fluid.png
+	$(RM) $(DESTDIR)/usr/share/mimelnk/application/x-ntk-fluid.desktop
 
 uninstall-osx:
-	$(RM) -r $(DESTDIR)/Applications/fluid.app
+	$(RM) -r $(DESTDIR)/Applications/ntk-fluid.app
 
 
 #
@@ -123,12 +123,12 @@ uninstall-osx:
 #
 
 rebuild:
-	./fluid -c about_panel.fl
-	./fluid -c alignment_panel.fl
-	./fluid -c function_panel.fl
-	./fluid -c print_panel.fl
-	./fluid -c template_panel.fl
-	./fluid -c widget_panel.fl
+	./ntk-fluid -c about_panel.fl
+	./ntk-fluid -c alignment_panel.fl
+	./ntk-fluid -c function_panel.fl
+	./ntk-fluid -c print_panel.fl
+	./ntk-fluid -c template_panel.fl
+	./ntk-fluid -c widget_panel.fl
 
 #
 # End of "$Id: Makefile 8086 2010-12-20 20:33:24Z matt $".
