@@ -2632,7 +2632,7 @@ fi
 if test x$enable_shared = xyes; then
     PICFLAG=1
     SHAREDSUFFIX=""
-    FLUID="fluid-shared"
+    FLUID="ntk-fluid-shared"
 
     case $uname in
 	Darwin*)
@@ -2744,7 +2744,7 @@ else
     CAIRODSONAME=""
     PICFLAG=0
     SHAREDSUFFIX=""
-    FLUID="fluid"
+    FLUID="ntk-fluid"
     LINKSHARED="$LINKFLTKCAIRO ../lib/libntk_images.a ../lib/libntk.a"
 fi
 
