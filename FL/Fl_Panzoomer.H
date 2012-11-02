@@ -26,11 +26,6 @@ class FL_EXPORT Fl_Panzoomer : public Fl_Valuator
 {
 protected:
 
-    typedef void (draw_thumbnail_view_callback_t)( int X,int Y,int W,int H,void *v );
-
-    draw_thumbnail_view_callback_t *_draw_thumbnail_view_callback;
-    void *_draw_thumbnail_view_userdata;
-
     int _zoom;
     bool _zoom_changed;
     int _zoom_min;
@@ -43,19 +38,32 @@ protected:
      * between 0-1. */
     double _ysize, _xsize;
 
+protected:
+
+    virtual void draw_cursor ( int X, int Y, int W, int H );
+    /* override this method to draw a thumbnail background... */
+    virtual void draw_background ( int X, int Y, int W, int H );
+    virtual void draw ( int X, int Y, int W, int H );
+    virtual int handle ( int m, int X, int Y, int W, int H );
+    void cursor_bounds ( int &cx, int &cy, int &cw, int &ch ) const;
+
 public:
+
+    virtual void draw ( void );
+    virtual int handle ( int m );
 
     Fl_Panzoomer ( int X, int Y, int W, int H, const char *L=0 );
     virtual ~Fl_Panzoomer ( ) { }
 
-    virtual void draw ( void );
-    virtual int handle ( int m );
 
     /* these behave like Fl_Scrollbar::value() */
     /* first and total are the bounds, size is the size of the window,
      * and pos is the leftmost edge. */
     int x_value ( int pos, int size, int first, int total )
         {
+            if ( pos + size > first + total )
+                total = pos+size-first;
+
             _xmin = first;
             _xmax = total;
             _xpos = pos;
@@ -68,10 +76,14 @@ public:
 
     int y_value ( int pos, int size, int first, int total )
         {
+            if ( pos + size > first + total )
+                total = pos+size-first;
+
             _ymin = first;
             _ymax = total;
             _ypos = pos;
             _ysize = size;
+
 
             redraw();
 
@@ -83,7 +95,6 @@ public:
     void x_value ( double v );
     void y_value ( double v );
 
-    void cursor_bounds ( int &cx, int &cy, int &cw, int &ch ) const;
 
     bool zoom_changed ( void ) const { return _zoom_changed; }
     double zoom ( void ) const { return _zoom; }
@@ -91,15 +102,8 @@ public:
 
     void zoom_range ( int zmin, int zmax ) { _zoom_min = zmin; _zoom_max = zmax; }
 
-    void zoom_in ( void ) { int z = _zoom; zoom( _zoom + 1 ); if ( z != _zoom ) do_callback(); }
-    void zoom_out ( void ) { int z = _zoom; zoom( _zoom - 1 ); if ( z != _zoom ) do_callback(); }
-
-    /* set this callback if you want to display a thumbnail view of the canvas being scrolled */
-    void draw_thumbnail_view_callback( draw_thumbnail_view_callback_t *cb, void *v )
-        {
-            _draw_thumbnail_view_callback = cb;
-            _draw_thumbnail_view_userdata = v;
-        }
+    void zoom_in ( void ) { int z = _zoom; zoom( _zoom - 1 ); if ( z != _zoom ) do_callback(); }
+    void zoom_out ( void ) { int z = _zoom; zoom( _zoom + 1 ); if ( z != _zoom ) do_callback(); }
 };
 
 #endif

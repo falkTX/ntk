@@ -88,24 +88,40 @@ Fl_Panzoomer::zoom ( int v )
 void
 Fl_Panzoomer::draw ( void )
 {
-    type( FL_HORIZONTAL );
+    draw(x(),y(),w(),h());
+}
 
-    fl_draw_box( box(), x(),y(),w(),h(), color());
-//    fl_rectf( x(),y(),w(),h(), color() );
+void
+Fl_Panzoomer::draw ( int X, int Y, int W, int H )
+{
+    fl_draw_box( box(), X,Y,W,H,color());
 
-    fl_push_clip( x(), y(), w(), h());
+    X += Fl::box_dx( box() );
+    Y += Fl::box_dy( box() );
+    W -= Fl::box_dw( box() );
+    H -= Fl::box_dh( box() );
 
-    int X,Y,W,H;
+    fl_push_clip( X,Y,W,H );
+
+    draw_background( X,Y,W,H );
+    draw_cursor( X,Y,W,H );
     
-    X = x() + Fl::box_dx( box() );
-    Y = y() + Fl::box_dy( box() );
-    W = w() - Fl::box_dw( box() );
-    H = h() - Fl::box_dh( box() );
-    
-    if ( _draw_thumbnail_view_callback )
-        _draw_thumbnail_view_callback( X,Y,W,H, _draw_thumbnail_view_userdata );
+    fl_pop_clip();
 
+    draw_label();
+}
+
+void
+Fl_Panzoomer::draw_background ( int X, int Y, int W, int H )
+{
+}
+
+void
+Fl_Panzoomer::draw_cursor ( int X, int Y, int W, int H )
+{
     int cx,cy,cw,ch;
+
+    cx = X; cy = Y; cw = W; ch = H;
 
     cursor_bounds( cx,cy,cw,ch );
 
@@ -114,10 +130,6 @@ Fl_Panzoomer::draw ( void )
 
     fl_rect( cx,cy,cw,ch,
               fl_color_add_alpha( FL_WHITE, 80 ));
-    
-    fl_pop_clip();
-
-    draw_label();
 }
 
 void
@@ -125,10 +137,10 @@ Fl_Panzoomer::cursor_bounds ( int &cx, int &cy, int &cw, int &ch ) const
 {
     int X,Y,W,H;
     
-    X = x() + Fl::box_dx( box() );
-    Y = y() + Fl::box_dy( box() );
-    W = w() - Fl::box_dw( box() );
-    H = h() - Fl::box_dh( box() );
+    X = cx;
+    Y = cy;
+    W = cw;
+    H = ch;
 
     double hval;
     if ( _xmin == _xmax )
@@ -161,9 +173,20 @@ Fl_Panzoomer::cursor_bounds ( int &cx, int &cy, int &cw, int &ch ) const
 int
 Fl_Panzoomer::handle ( int m )
 {
+    return handle( m, x(),y(),w(),h());
+}
+
+int
+Fl_Panzoomer::handle ( int m, int X, int Y, int W, int H )
+{
     static int xoffset;
     static int yoffset;
     static bool drag;
+
+    X += Fl::box_dx( box() );
+    Y += Fl::box_dy( box() );
+    W -= Fl::box_dw( box() );
+    H -= Fl::box_dh( box() );
 
     switch ( m )
     {
@@ -174,6 +197,8 @@ Fl_Panzoomer::handle ( int m )
         {
             int cx,cy,cw,ch;
 
+            cx = X; cy = Y; cw = W; ch = H;
+            
             cursor_bounds( cx,cy,cw,ch );
 
             xoffset = Fl::event_x() - cx;
@@ -188,13 +213,15 @@ Fl_Panzoomer::handle ( int m )
         case FL_DRAG:
         {
             int cx,cy,cw,ch;
+
+            cx = X; cy = Y; cw = W; ch = H;
             
             cursor_bounds( cx,cy,cw,ch );
             
             if ( drag )
             {
-                x_value((((double)Fl::event_x() - x() - xoffset) / w()) * _xmax);
-                y_value( (((double)Fl::event_y() - y() - yoffset) / h()) * _ymax );
+                x_value((((double)Fl::event_x() - X - xoffset) / W) * _xmax);
+                y_value( (((double)Fl::event_y() - Y - yoffset) / H) * _ymax );
                 
                 if ( when() & FL_WHEN_CHANGED )
                     do_callback();
@@ -215,7 +242,7 @@ Fl_Panzoomer::handle ( int m )
             }
             else if (!Fl::event_alt() && !Fl::event_shift())
             {
-                y_value( _ypos + ( (double)d*5 / h() ) * _ymax );
+                y_value( _ypos + ( (double)d*5 / H ) * _ymax );
                 
                 if ( when() & FL_WHEN_CHANGED )
                     do_callback();
@@ -236,6 +263,47 @@ Fl_Panzoomer::handle ( int m )
             }
             
             return 1;
+        }
+        case FL_KEYBOARD: 
+        {
+            if ( Fl::event_shift() || Fl::event_ctrl() || Fl::event_alt() )
+                return 0;
+
+            double xv = _xpos;
+            double yv = _ypos;
+
+            /* FIXME: hack */
+            int xls = _xsize / 50;
+            int yls = _ysize / 50;
+
+            switch ( Fl::event_key() )
+            {
+                case FL_Up:
+                    yv -= yls;
+                    break;
+                case FL_Down:
+                    yv += yls;
+                    break;
+                case FL_Left:
+                    xv -= xls;
+                    break;
+                case FL_Right:
+                    xv += xls;
+                    break;
+                default:
+                    return 0;
+            }
+            
+            x_value( xv );
+            y_value( yv );
+
+            do_callback();
+
+            redraw();
+
+            return 1;
+
+            break;
         }
     }
 
