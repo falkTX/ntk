@@ -1,7 +1,7 @@
 #
 # "$Id: Makefile 8195 2011-01-05 23:00:33Z AlbrechtS $"
 #
-# Documentation makefile for the Fast Light Tool Kit (FLTK).
+# Documentation makefile for the Fast Light Tool Kit (NTK).
 #
 # Copyright 1998-2010 by Bill Spitzak and others.
 #
@@ -22,7 +22,7 @@
 #
 # Please report all bugs and problems on the following page:
 #
-#      http://www.fltk.org/str.php
+#      http://www.ntk.org/str.php
 #
 
 # Get configuration stuff...
@@ -58,7 +58,7 @@ HTMLFILES	= 	 \
                          $(SRC_DOCDIR)/license.dox \
                          $(SRC_DOCDIR)/examples.dox
 
-MANPAGES =	$(SRC_DOCDIR)/fltk.$(CAT3EXT) $(SRC_DOCDIR)/fltk-config.$(CAT1EXT) \
+MANPAGES =	$(SRC_DOCDIR)/ntk.$(CAT3EXT) $(SRC_DOCDIR)/ntk-config.$(CAT1EXT) \
 		$(SRC_DOCDIR)/fluid.$(CAT1EXT) $(SRC_DOCDIR)/blocks.$(CAT6EXT) \
 		$(SRC_DOCDIR)/checkers.$(CAT6EXT) $(SRC_DOCDIR)/sudoku.$(CAT6EXT)
 
@@ -72,7 +72,7 @@ dist:	all html pdf
 alldocs: dist
 
 clean:
-	$(RM) fltk.pdf refman.pdf
+	$(RM) ntk.pdf refman.pdf
 	$(RMDIR) html latex
 	$(RM) *~ *.bck *.bak *.log
 	$(RM) $(MANPAGES) $(SRC_DOCDIR)/*.0
@@ -87,21 +87,21 @@ install: $(MANPAGES)
 		$(INSTALL_DATA) $$file $(DESTDIR)$(docdir); \
 	  done \
 	fi
-	if test -f fltk.pdf ; then \
-	  echo "Installing fltk.pdf in $(DESTDIR)$(docdir) ..."; \
-	  $(INSTALL_DATA) fltk.pdf $(DESTDIR)$(docdir); \
+	if test -f ntk.pdf ; then \
+	  echo "Installing ntk.pdf in $(DESTDIR)$(docdir) ..."; \
+	  $(INSTALL_DATA) ntk.pdf $(DESTDIR)$(docdir); \
 	fi
 	echo "Installing man pages in $(DESTDIR)$(mandir) ..."
 	-$(INSTALL_DIR) $(DESTDIR)$(mandir)/cat1
 	$(INSTALL_MAN) $(SRC_DOCDIR)/fluid.$(CAT1EXT) $(DESTDIR)$(mandir)/cat1
-	$(INSTALL_MAN) $(SRC_DOCDIR)/fltk-config.$(CAT1EXT) $(DESTDIR)$(mandir)/cat1
+	$(INSTALL_MAN) $(SRC_DOCDIR)/ntk-config.$(CAT1EXT) $(DESTDIR)$(mandir)/cat1
 	-$(INSTALL_DIR) $(DESTDIR)$(mandir)/cat3
-	$(INSTALL_MAN) $(SRC_DOCDIR)/fltk.$(CAT3EXT) $(DESTDIR)$(mandir)/cat3
+	$(INSTALL_MAN) $(SRC_DOCDIR)/ntk.$(CAT3EXT) $(DESTDIR)$(mandir)/cat3
 	-$(INSTALL_DIR) $(DESTDIR)$(mandir)/man1
 	$(INSTALL_MAN) $(SRC_DOCDIR)/fluid.man $(DESTDIR)$(mandir)/man1/fluid.1
-	$(INSTALL_MAN) $(SRC_DOCDIR)/fltk-config.man $(DESTDIR)$(mandir)/man1/fltk-config.1
+	$(INSTALL_MAN) $(SRC_DOCDIR)/ntk-config.man $(DESTDIR)$(mandir)/man1/ntk-config.1
 	-$(INSTALL_DIR) $(DESTDIR)$(mandir)/man3
-	$(INSTALL_MAN) $(SRC_DOCDIR)/fltk.man $(DESTDIR)$(mandir)/man3/fltk.3
+	$(INSTALL_MAN) $(SRC_DOCDIR)/ntk.man $(DESTDIR)$(mandir)/man3/ntk.3
 
 install-linux install-osx:
 	-$(INSTALL_DIR) $(DESTDIR)$(mandir)/cat6
@@ -118,10 +118,10 @@ uninstall:
 	$(RMDIR) $(DESTDIR)$(docdir)
 	$(RM) $(DESTDIR)$(mandir)/cat1/fluid.$(CAT1EXT)
 	$(RM) $(DESTDIR)$(mandir)/man1/fluid.1
-	$(RM) $(DESTDIR)$(mandir)/cat1/fltk-config.$(CAT1EXT)
-	$(RM) $(DESTDIR)$(mandir)/man1/fltk-config.1
-	$(RM) $(DESTDIR)$(mandir)/cat3/fltk.$(CAT3EXT)
-	$(RM) $(DESTDIR)$(mandir)/man3/fltk.3
+	$(RM) $(DESTDIR)$(mandir)/cat1/ntk-config.$(CAT1EXT)
+	$(RM) $(DESTDIR)$(mandir)/man1/ntk-config.1
+	$(RM) $(DESTDIR)$(mandir)/cat3/ntk.$(CAT3EXT)
+	$(RM) $(DESTDIR)$(mandir)/man3/ntk.3
 
 uninstall-linux uninstall-osx:
 	$(RM) $(DESTDIR)$(mandir)/cat6/blocks.$(CAT6EXT)
@@ -154,7 +154,7 @@ html-online: html
 	./strip_tags
 
 pdf:	refman.pdf
-	cp -f latex/refman.pdf fltk.pdf
+	cp -f latex/refman.pdf ntk.pdf
 
 refman.pdf: $(HTMLFILES) Doxybook
 	-$(RMDIR) latex
