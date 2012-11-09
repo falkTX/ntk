@@ -393,6 +393,7 @@ void Fl_Double_Window::flush(int eraseoverlay) {
   /* cairo_rectangle( myi->cc, 0, 0, w(), h() ); */
   /* cairo_fill( myi->cc ); */
   cairo_paint( myi->cc );
+  cairo_set_operator( myi->cc, CAIRO_OPERATOR_OVER );
 #else
   int X,Y,W,H; fl_clip_box(0,0,w(),h(),X,Y,W,H);
   if (myi->other_xid) fl_copy_offscreen(X, Y, W, H, myi->other_xid, X, Y);
