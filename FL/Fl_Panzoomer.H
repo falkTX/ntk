@@ -69,7 +69,7 @@ public:
             _xpos = pos;
             _xsize = size;
 
-            redraw();
+            damage( FL_DAMAGE_USER1 );
 
             return pos;
         }
@@ -84,8 +84,7 @@ public:
             _ypos = pos;
             _ysize = size;
 
-
-            redraw();
+            damage( FL_DAMAGE_USER1 );
 
             return pos;
         }

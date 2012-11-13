@@ -94,7 +94,8 @@ Fl_Panzoomer::draw ( void )
 void
 Fl_Panzoomer::draw ( int X, int Y, int W, int H )
 {
-    fl_draw_box( box(), X,Y,W,H,color());
+    if ( ! (damage() & FL_DAMAGE_USER1 ))
+        fl_draw_box( box(), X,Y,W,H,color());
 
     X += Fl::box_dx( box() );
     Y += Fl::box_dy( box() );
