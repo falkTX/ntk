@@ -94,6 +94,7 @@ extern FL_EXPORT ulong fl_event_time;
 
 // off-screen pixmaps: create, destroy, draw into, copy to window:
 typedef ulong Fl_Offscreen;
+FL_EXPORT void fl_offscreen_get_dimensions ( Fl_Offscreen p, unsigned int *w, unsigned int *h );
 #   define fl_create_offscreen(w,h) \
   XCreatePixmap(fl_display, \
 	      (Fl_Surface_Device::surface()->class_name() == Fl_Display_Device::class_id ? \
@@ -103,9 +104,17 @@ typedef ulong Fl_Offscreen;
 #    define fl_begin_offscreen(pixmap) \
   Window _sw=fl_window; fl_window=pixmap; \
   Fl_Surface_Device *_ss = Fl_Surface_Device::surface(); Fl_Display_Device::display_device()->set_current(); \
+  unsigned int _W, _H; \
+  fl_offscreen_get_dimensions( pixmap, &_W, &_H ); \
+  cairo_surface_t *_cs = Fl::cairo_create_surface( fl_window, _W, _H ); \
+  cairo_t *_old_cc = fl_cairo_context; \
+  fl_cairo_context = cairo_create( _cs );       \
+  cairo_surface_destroy( _cs ); \
   fl_push_no_clip()
 #    define fl_end_offscreen() \
-  fl_pop_clip(); fl_window = _sw; _ss->set_current()
+    fl_pop_clip(); fl_window = _sw; _ss->set_current(); \
+    cairo_destroy( fl_cairo_context ); \
+    fl_cairo_context = _old_cc
 
 extern void fl_copy_offscreen(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy);
 #    define fl_delete_offscreen(pixmap) XFreePixmap(fl_display, pixmap)

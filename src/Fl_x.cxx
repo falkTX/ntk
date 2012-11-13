@@ -65,6 +65,15 @@ FL_EXPORT Fl_Graphics_Driver *fl_graphics_driver = (Fl_Graphics_Driver*)&fl_cair
 Fl_Surface_Device* Fl_Surface_Device::_surface = (Fl_Surface_Device*)&fl_cairo_display; // the current target surface of graphics operations
 Fl_Display_Device *Fl_Display_Device::_display = &fl_cairo_display;// the platform display
 
+void
+fl_offscreen_get_dimensions ( Fl_Offscreen p, unsigned int *w, unsigned int *h )
+{
+    Window rr;
+    int x, y;
+    unsigned int br, dr;
+    XGetGeometry( fl_display, p, &rr, &x, &y, w, h, &br, &dr );
+}
+
 ////////////////////////////////////////////////////////////////
 // interface to poll/select call:
 
