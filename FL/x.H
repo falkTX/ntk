@@ -156,9 +156,7 @@ public:
   Window xid;
   Window other_xid;                                             /* for double buffering */
   cairo_t *cc;
-  cairo_surface_t *cs;
   cairo_t *other_cc;                                            /* for double buffering */
-  cairo_surface_t *other_cs;                                    /* for double buffering  */
   Fl_Window *w;
   Fl_Region region;
   Fl_X *next;

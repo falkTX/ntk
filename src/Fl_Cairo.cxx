@@ -50,7 +50,6 @@ cairo_surface_t * cairo_create_surface(void * gc, Window w, int W, int H) {
 # endif
 }
 
-cairo_surface_t *fl_cairo_surface;
 cairo_t *fl_cairo_context;
 
 cairo_surface_t *
@@ -60,9 +59,8 @@ Fl::cairo_create_surface ( Window xid, int W, int H )
 }
 
 cairo_t * 
-Fl::cairo_make_current( cairo_surface_t *cs, cairo_t *cc ) {
-
-    fl_cairo_surface = cs;
+Fl::cairo_make_current( cairo_t *cc )
+{
     fl_cairo_context = cc;
 
     return cc;

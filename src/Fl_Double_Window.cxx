@@ -325,16 +325,16 @@ void Fl_Double_Window::flush(int eraseoverlay) {
 #else
 # error unsupported platform
 #endif
-    myi->other_cs = Fl::cairo_create_surface( myi->other_xid, w(), h() );
-    myi->other_cc = cairo_create( myi->other_cs );
-
+    cairo_surface_t *cs = Fl::cairo_create_surface( myi->other_xid, w(), h() );
+    myi->other_cc = cairo_create( cs );
+    cairo_surface_destroy( cs );
   }
   
   fl_clip_region(myi->region);
 
   if (damage() & ~FL_DAMAGE_EXPOSE) {
 
-  Fl::cairo_make_current( myi->other_cs, myi->other_cc );
+  Fl::cairo_make_current( myi->other_cc );
   
 #ifdef WIN32
     HDC _sgc = fl_gc;
@@ -363,15 +363,11 @@ void Fl_Double_Window::flush(int eraseoverlay) {
 
     draw();
 
-#if FLTK_HAVE_CAIRO
-    cairo_surface_flush( myi->other_cs );
-#endif
+    /* cairo_surface_flush( myi->other_cs ); */
 
     fl_window = myi->xid;
 
-#if FLTK_HAVE_CAIRO
-    Fl::cairo_make_current( myi->cs, myi->cc );
-#endif
+    Fl::cairo_make_current( myi->cc );
 
 //    fl_restore_clip();
     fl_clip_region(myi->region);
@@ -388,10 +384,8 @@ void Fl_Double_Window::flush(int eraseoverlay) {
   // the current clip region:
 
 #if 1 // FLTK_USE_CAIRO
-  cairo_set_source_surface( myi->cc, myi->other_cs, 0, 0 );
+  cairo_set_source_surface( myi->cc, cairo_get_target( myi->other_cc ), 0, 0 );
   cairo_set_operator( myi->cc, CAIRO_OPERATOR_SOURCE );
-  /* cairo_rectangle( myi->cc, 0, 0, w(), h() ); */
-  /* cairo_fill( myi->cc ); */
   cairo_paint( myi->cc );
   cairo_set_operator( myi->cc, CAIRO_OPERATOR_OVER );
 #else
@@ -415,13 +409,10 @@ void Fl_Double_Window::resize(int X,int Y,int W,int H) {
   Fl_Window::resize(X,Y,W,H);
   Fl_X* myi = Fl_X::i(this);
   if (myi && myi->other_xid && (ow != w() || oh != h())) {
-#if FLTK_HAVE_CAIRO
-      if ( myi->other_cs )
+      if ( myi->other_cc )
       {
           cairo_destroy( myi->other_cc ); myi->other_cc = 0;
-          cairo_surface_destroy( myi->other_cs ); myi->other_cs = 0;
       }
-#endif
     fl_delete_offscreen(myi->other_xid);
     myi->other_xid = 0;
   }
@@ -430,13 +421,8 @@ void Fl_Double_Window::resize(int X,int Y,int W,int H) {
 void Fl_Double_Window::hide() {
   Fl_X* myi = Fl_X::i(this);
   if (myi && myi->other_xid) {
-#if FLTK_HAVE_CAIRO
-      if ( myi->other_cs )
-      {
+      if ( myi->other_cc )
           cairo_destroy( myi->other_cc ); myi->other_cc = 0;
-          cairo_surface_destroy( myi->other_cs ); myi->other_cs = 0;
-      }
-#endif
       fl_delete_offscreen(myi->other_xid);
       myi->other_xid = 0;
   }

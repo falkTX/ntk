@@ -1618,11 +1618,11 @@ Fl_X* Fl_X::set_xid(Fl_Window* win, Window winxid) {
   Fl_X* xp = new Fl_X;
   xp->xid = winxid;
   xp->other_xid = 0;
-  xp->cs = Fl::cairo_create_surface( winxid, win->w(), win->h() );
-  xp->cc = cairo_create( xp->cs );
+  cairo_surface_t *cs = Fl::cairo_create_surface( winxid, win->w(), win->h() );
+  xp->cc = cairo_create( cs );
+  cairo_surface_destroy( cs );
   xp->cairo_surface_invalid = 0;
   xp->other_cc = 0;
-  xp->other_cs = 0;
   xp->setwindow(win);
   xp->next = Fl_X::first;
   xp->region = 0;
@@ -1983,17 +1983,16 @@ void Fl_Window::make_current() {
   if ( i->cairo_surface_invalid && i->cc )
   {
       cairo_destroy( i->cc ); i->cc = 0;
-      cairo_surface_destroy( i->cs ); i->cs = 0;
   }
 
   if ( ! i->cc )
   {
-      i->cs = Fl::cairo_create_surface( i->xid, w(), h() );
-      i->cc = cairo_create( i->cs );
+      cairo_surface_t *cs = Fl::cairo_create_surface( i->xid, w(), h() );
+      i->cc = cairo_create( cs );
+      cairo_surface_destroy( cs );
   }
 
-
-  Fl::cairo_make_current( i->cs, i->cc );
+  Fl::cairo_make_current( i->cc );
   
   current_ = this;
 

@@ -46,7 +46,6 @@
 #  include <cairo/cairo-xlib.h>
 # endif
 
-FL_EXPORT extern cairo_surface_t *fl_cairo_surface;
 FL_EXPORT extern cairo_t *fl_cairo_context;
 
 cairo_surface_t * cairo_create_surface(void * gc, int W, int H);
