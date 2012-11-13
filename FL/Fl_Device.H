@@ -511,6 +511,8 @@ class Fl_Cairo_Graphics_Driver : public Fl_Xlib_Graphics_Driver {
     
 public:
 
+    static const char *class_id;
+
 //    void set_current(void);
 
     Fl_Cairo_Graphics_Driver ( );
