@@ -230,7 +230,6 @@ Fl_Image *Fl_RGB_Image::copy(int W, int H) {
   }
   if (W <= 0 || H <= 0) return 0;
 
-#if FLTK_USE_CAIRO
 
 
   new_array = new uchar [W * H * d()];
@@ -273,55 +272,6 @@ Fl_Image *Fl_RGB_Image::copy(int W, int H) {
   cairo_surface_destroy( si );
   cairo_surface_destroy( di );
  
-#else
-
-  // OK, need to resize the image data; allocate memory and 
-  uchar		*new_ptr;	// Pointer into new array
-  const uchar	*old_ptr;	// Pointer into old array
-  int		c,		// Channel number
-		sy,		// Source coordinate
-		dx, dy,		// Destination coordinates
-		xerr, yerr,	// X & Y errors
-		xmod, ymod,	// X & Y moduli
-		xstep, ystep,	// X & Y step increments
-    line_d; // stride from line to line
-
-
-  // Figure out Bresenheim step/modulus values...
-  xmod   = w() % W;
-  xstep  = (w() / W) * d();
-  ymod   = h() % H;
-  ystep  = h() / H;
-  line_d = ld() ? ld() : w() * d();
-
-  // Allocate memory for the new image...
-  new_array = new uchar [W * H * d()];
-  new_image = new Fl_RGB_Image(new_array, W, H, d());
-  new_image->alloc_array = 1;
-
-  // Scale the image using a nearest-neighbor algorithm...
-  for (dy = H, sy = 0, yerr = H, new_ptr = new_array; dy > 0; dy --) {
-    for (dx = W, xerr = W, old_ptr = array + sy * line_d; dx > 0; dx --) {
-      for (c = 0; c < d(); c ++) *new_ptr++ = old_ptr[c];
-
-      old_ptr += xstep;
-      xerr    -= xmod;
-
-      if (xerr <= 0) {
-	xerr    += W;
-	old_ptr += d();
-      }
-    }
-
-    sy   += ystep;
-    yerr -= ymod;
-    if (yerr <= 0) {
-      yerr += H;
-      sy ++;
-    }
-  }
-#endif
-
   return new_image;
 }
 

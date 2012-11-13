@@ -753,15 +753,11 @@ void Fl::flush() {
       if (!wi->visible_r()) continue;
       if (wi->damage()) {wi->make_current(); i->flush(); wi->clear_damage();}
       // destroy damage regions for windows that don't use them:
-#if FLTK_USE_CAIRO
       if ( i->region )
       {
           cairo_region_destroy( i->region );
           i->region = 0;
       }
-#else
-      if (i->region) {XDestroyRegion(i->region); i->region = 0;}
-#endif
     }
   }
 #if defined(USE_X11)
@@ -1441,15 +1437,11 @@ void Fl_Window::hide() {
   if ( ip->xid == fl_window && !parent() )
     fl_window = 0;
 #endif
-#if FLTK_USE_CAIRO
   if (ip->region)
   {
       cairo_region_destroy( ip->region );
       ip->region = 0;
   }
-#else
-  if (ip->region) XDestroyRegion(ip->region);
-#endif
 
 #if defined(USE_X11)
 #if FLTK_HAVE_CAIRO
@@ -1654,15 +1646,11 @@ void Fl_Widget::damage(fl_damage_t fl) {
     // damage entire window by deleting the region:
     Fl_X* i = Fl_X::i((Fl_Window*)this);
     if (!i) return; // window not mapped, so ignore it
-#if FLTK_USE_CAIRO
     if ( i->region )
     {
         cairo_region_destroy( i->region );
         i->region = 0;
     }
-#else
-    if (i->region) {XDestroyRegion(i->region); i->region = 0;}
-#endif
     damage_ |= fl;
     Fl::damage(FL_DAMAGE_CHILD);
   }
@@ -1727,7 +1715,6 @@ void Fl_Widget::damage(fl_damage_t fl, int X, int Y, int W, int H) {
     if (i->region) {
 #if defined(USE_X11)
 
-#if FLTK_USE_CAIRO
       cairo_rectangle_int_t rect;
       
       rect.x = X;
@@ -1736,11 +1723,6 @@ void Fl_Widget::damage(fl_damage_t fl, int X, int Y, int W, int H) {
       rect.height = H;
 
       cairo_region_union_rectangle( i->region, &rect );
-#else
-      XRectangle R;
-      R.x = X; R.y = Y; R.width = W; R.height = H;
-      XUnionRectWithRegion(&R, i->region, i->region);
-#endif
 #elif defined(WIN32)
       Fl_Region R = XRectangleRegion(X, Y, W, H);
       CombineRgn(i->region, i->region, R, RGN_OR);
@@ -1763,7 +1745,6 @@ void Fl_Widget::damage(fl_damage_t fl, int X, int Y, int W, int H) {
   } else {
 
 
-#if FLTK_USE_CAIRO
     if ( i->region )
         cairo_region_destroy( i->region );
 
@@ -1776,12 +1757,7 @@ void Fl_Widget::damage(fl_damage_t fl, int X, int Y, int W, int H) {
       rect.height = H;
 
       cairo_region_union_rectangle( i->region, &rect );
-#else
 
-    // create a new region:
-    if (i->region) XDestroyRegion(i->region);
-    i->region = XRectangleRegion(X,Y,W,H);
-#endif
     wi->damage_ = fl;
   }
   Fl::damage(FL_DAMAGE_CHILD);

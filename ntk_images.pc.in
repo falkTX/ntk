@@ -1,0 +1,13 @@
+prefix=@PREFIX@
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: ntk_images
+Description: Non ToolKit image support
+Version: @VERSION@
+
+Requires: cairo >= 1.9.0
+Requires.private: x11 xft
+Libs: -L${libdir} -lntk_images -lntk
+Cflags: -I${includedir}/ntk

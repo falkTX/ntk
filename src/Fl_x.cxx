@@ -55,10 +55,8 @@
 
 #include <FL/themes.H>
 
-#if FLTK_USE_CAIRO
 static Fl_Cairo_Graphics_Driver fl_cairo_driver;
 static Fl_Display_Device fl_cairo_display(&fl_cairo_driver);
-#endif
 
 static Fl_Xlib_Graphics_Driver fl_xlib_driver;
 static Fl_Display_Device fl_xlib_display(&fl_xlib_driver);
@@ -69,67 +67,6 @@ Fl_Display_Device *Fl_Display_Device::_display = &fl_cairo_display;// the platfo
 
 ////////////////////////////////////////////////////////////////
 // interface to poll/select call:
-
-static bool use_cairo_stack[100];
-static int use_cairo_ptr = 0;
-
-FL_EXPORT void fl_push_use_cairo ( bool v ) 
-{
-#if FLTK_USE_CAIRO
-    if ( v )
-    {
-        /* FIXME: why are there *SO MANY VERSIONS OF THE SAME THING*? */
-        fl_graphics_driver = &fl_cairo_driver;
-        Fl_Surface_Device::_surface = (Fl_Surface_Device*)&fl_cairo_display;
-        Fl_Display_Device::_display = &fl_cairo_display;
-    }
-    else
-    {
-        fl_graphics_driver = &fl_xlib_driver;
-        Fl_Surface_Device::_surface = (Fl_Surface_Device*)&fl_xlib_display;
-        Fl_Display_Device::_display = &fl_xlib_display;
-    }
-
-    fl_restore_clip();
-
-    if ( use_cairo_ptr < (int) (sizeof( use_cairo_stack ) / sizeof( bool ) ))
-        use_cairo_stack[++use_cairo_ptr] = v;
-#else
-    /* noop */
-    ;
-#endif
-}
-
-FL_EXPORT void fl_pop_use_cairo ( void ) 
-{
-#if FLTK_USE_CAIRO
-    bool v = false;
-
-    if ( use_cairo_ptr > 0 )
-        v = use_cairo_stack[--use_cairo_ptr];
-
-    if ( v )
-    {
-        /* FIXME: why are there *SO MANY VERSIONS OF THE SAME THING*? */
-        fl_graphics_driver = &fl_cairo_driver;
-        Fl_Surface_Device::_surface = (Fl_Surface_Device*)&fl_cairo_display;
-        Fl_Display_Device::_display = &fl_cairo_display;
-    }
-    else
-    {
-        fl_graphics_driver = &fl_xlib_driver;
-        Fl_Surface_Device::_surface = (Fl_Surface_Device*)&fl_xlib_display;
-        Fl_Display_Device::_display = &fl_xlib_display;
-    }
-
-    fl_restore_clip();
-
-#else
-    /* noop */
-    ;
-#endif
-}
-
 
 #  if USE_POLL
 
@@ -1681,13 +1618,11 @@ Fl_X* Fl_X::set_xid(Fl_Window* win, Window winxid) {
   Fl_X* xp = new Fl_X;
   xp->xid = winxid;
   xp->other_xid = 0;
-#if FLTK_HAVE_CAIRO
   xp->cs = Fl::cairo_create_surface( winxid, win->w(), win->h() );
   xp->cc = cairo_create( xp->cs );
   xp->cairo_surface_invalid = 0;
   xp->other_cc = 0;
   xp->other_cs = 0;
-#endif
   xp->setwindow(win);
   xp->next = Fl_X::first;
   xp->region = 0;
@@ -2044,7 +1979,6 @@ void Fl_Window::make_current() {
   if (!gc) gc = XCreateGC(fl_display, i->xid, 0, 0);
   fl_window = i->xid;
   fl_gc = gc;
-#ifdef FLTK_HAVE_CAIRO
 
   if ( i->cairo_surface_invalid && i->cc )
   {
@@ -2060,7 +1994,7 @@ void Fl_Window::make_current() {
 
 
   Fl::cairo_make_current( i->cs, i->cc );
-#endif
+  
   current_ = this;
 
   fl_clip_region(i->region);

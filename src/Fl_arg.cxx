@@ -181,13 +181,6 @@ int Fl::arg(int argc, char **argv, int &i) {
     return 1;
   }
 
-#if FLTK_USE_CAIRO
-  else if (fl_match(s, "cairo", 1)) {
-      fl_push_use_cairo( true );
-      i++;
-      return 1;
-  }
-#endif
 
 #ifdef __APPLE__
   // The Finder application in MacOS X passes the "-psn_N_NNNNN" option
@@ -396,9 +389,6 @@ static const char * const helpmsg =
 " -not[ooltips]\n"
 " -s[cheme] scheme\n"
 " -ti[tle] windowtitle\n"
-#if FLTK_USE_CAIRO
-" -c[airo]\n"
-#endif
 " -to[oltips]";
 
 const char * const Fl::help = helpmsg+13;

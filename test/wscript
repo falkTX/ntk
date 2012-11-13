@@ -1,0 +1,84 @@
+#!/usr/bin/env python
+from waflib.Configure import conf
+
+def options(opt):
+    pass
+
+def configure(conf):
+    pass
+
+@conf
+def example(bld,*k,**kw):
+    kw['features' ] = 'cxx cxxprogram'
+    kw['use'] = [ 'ntk', 'ntk_images' ]
+    kw['uselib'] = [ 'X11', 'XFT', 'CAIRO' ]
+    kw['includes'] = [ '.', '..' ]
+    kw['install_path'] = None
+    return bld(*k,**kw)
+
+def build(bld):
+
+    if bld.env.ENABLE_TESTS:
+        bld.example(source='hello.cxx', target='hello')
+        bld.example(source='input_choice.cxx', target='input_choice')
+        bld.example(source='label.cxx', target='label')
+        bld.example(source='native-filechooser.cxx', target='native-filechooser')
+        bld.example(source='fonts.cxx', target='fonts')
+        bld.example(source='editor.cxx', target='editor')
+        bld.example(source='mandelbrot.cxx mandelbrot_ui.cxx', target='mandelbrot')
+        bld.example(source='buttons.cxx', target='buttons')
+        bld.example(source='sudoku.cxx', target='sudoku')
+        bld.example(source='ask.cxx', target='ask')
+        bld.example(source='pixmap.cxx', target='pixmap')
+        bld.example(source='cursor.cxx', target='cursor')
+        bld.example(source='line_style.cxx', target='line_style')
+        bld.example(source='adjuster.cxx', target='adjuster')
+        bld.example(source='list_visuals.cxx', target='list_visuals')
+        bld.example(source='subwindow.cxx', target='subwindow')
+        bld.example(source='resize.cxx', target='resize')
+        bld.example(source='image.cxx', target='image')
+        bld.example(source='file_chooser.cxx', target='file_chooser')
+        bld.example(source='tiled_image.cxx', target='tiled_image')
+        bld.example(source='navigation.cxx', target='navigation')
+        bld.example(source='device.cxx', target='device')
+        bld.example(source='utf8.cxx', target='utf8')
+        bld.example(source='overlay.cxx', target='overlay')
+        bld.example(source='arc.cxx', target='arc')
+        bld.example(source='cairo_test.cxx', target='cairo_test')
+        bld.example(source='browser.cxx', target='browser')
+        bld.example(source='colbrowser.cxx', target='colbrowser')
+        bld.example(source='rotated_text.cxx', target='rotated_text')
+        bld.example(source='inactive.cxx', target='inactive')
+        bld.example(source='threads.cxx', target='threads')
+        bld.example(source='demo.cxx', target='demo')
+        bld.example(source='menubar.cxx', target='menubar')
+        bld.example(source='input.cxx', target='input')
+        bld.example(source='message.cxx', target='message')
+        bld.example(source='preferences.cxx', target='preferences')
+        bld.example(source='tree.cxx', target='tree')
+        bld.example(source='output.cxx', target='output')
+        bld.example(source='scroll.cxx', target='scroll')
+        bld.example(source='symbols.cxx', target='symbols')
+        bld.example(source='tabs.cxx', target='tabs')
+        bld.example(source='blocks.cxx', target='blocks')
+        bld.example(source='keyboard.cxx keyboard_ui.cxx', target='keyboard')
+        bld.example(source='iconize.cxx', target='iconize')
+        bld.example(source='radio.cxx', target='radio')
+        bld.example(source='resizebox.cxx', target='resizebox')
+        bld.example(source='fast_slow.cxx', target='fast_slow')
+        bld.example(source='boxtype.cxx', target='boxtype')
+        bld.example(source='help.cxx', target='help')
+        bld.example(source='bitmap.cxx', target='bitmap')
+        bld.example(source='tile.cxx', target='tile')
+        bld.example(source='color_chooser.cxx', target='color_chooser')
+        bld.example(source='valuators.cxx', target='valuators')
+        bld.example(source='doublebuffer.cxx', target='doublebuffer')
+        bld.example(source='pixmap_browser.cxx', target='pixmap_browser')
+        bld.example(source='curve.cxx', target='curve')
+        bld.example(source='minimum.cxx', target='minimum')
+        bld.example(source='button.cxx', target='button')
+        bld.example(source='pack.cxx', target='pack')
+        bld.example(source='checkers.cxx', target='checkers')
+        bld.example(source='table.cxx', target='table')
+
+   

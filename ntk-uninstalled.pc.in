@@ -1,0 +1,8 @@
+Name: ntk
+Description: Non ToolKit
+Version: 1.3.0
+
+Requires.private: cairo >= 1.9.0 x11 xft
+Libs: @BUILD@/libs/libntk.a
+Libs.private:   -lcairo -lxft -lx11
+Cflags: -I@BUILD@/FL

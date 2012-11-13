@@ -32,9 +32,7 @@
 #ifndef Fl_H
 #  define Fl_H
 
-#ifdef FLTK_HAVE_CAIRO
 # include <FL/Fl_Cairo.H>
-#endif
 
 #  include "fl_utf8.h"
 #  include "Enumerations.H"
@@ -1035,7 +1033,6 @@ public:
   static void clear_widget_pointer(Fl_Widget const *w);
   /** @} */
 
-#ifdef FLTK_HAVE_CAIRO
   /** \defgroup group_cairo Cairo support functions and classes 
       @{ 
   */
@@ -1070,8 +1067,6 @@ public:
 private:
 public:
   /** @} */ 
-
-#endif // FLTK_HAVE_CAIRO
 
 };
 

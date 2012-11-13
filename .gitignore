@@ -4,5 +4,5 @@
 *.[ao]
 TAGS
 .nfs*
-make.conf
-.deps
+build
+.waf*

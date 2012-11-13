@@ -387,7 +387,7 @@ void Fl_Double_Window::flush(int eraseoverlay) {
   // on Irix (at least) it is faster to reduce the area copied to
   // the current clip region:
 
-#if FLTK_USE_CAIRO
+#if 1 // FLTK_USE_CAIRO
   cairo_set_source_surface( myi->cc, myi->other_cs, 0, 0 );
   cairo_set_operator( myi->cc, CAIRO_OPERATOR_SOURCE );
   /* cairo_rectangle( myi->cc, 0, 0, w(), h() ); */

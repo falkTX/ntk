@@ -515,7 +515,6 @@ Region XRegionFromRectangle ( Fl_Region rg )
 {
   if ( rg )
   {
-#if FLTK_USE_CAIRO
  Region region = XCreateRegion();
 
       XRectangle rr;
@@ -532,19 +531,6 @@ Region XRegionFromRectangle ( Fl_Region rg )
       XUnionRectWithRegion( &rr, region, region );
 
       return region;
-#else
-      Region region = XCreateRegion();
-
-      XRectangle rr;
-      rr.x = rg->x();
-      rr.y = rg->y();
-      rr.width = rg->w();
-      rr.height = rg->h();
-      
-      XUnionRectWithRegion( &rr, region, region );
-
-      return region;
-#endif
   }
 
   return 0;
@@ -557,7 +543,6 @@ Region XRegionFromRectangle ( Fl_Region rg )
 // MSWindows equivalent exists, implemented inline in win32.H
 Fl_Region XRectangleRegion(int x, int y, int w, int h) {
 
-#if FLTK_USE_CAIRO
     
     cairo_rectangle_int_t rect;
     
@@ -568,15 +553,6 @@ Fl_Region XRectangleRegion(int x, int y, int w, int h) {
 
     return cairo_region_create_rectangle( &rect );
 
-#else
-
-  XRectangle R;
-  clip_to_short(x, y, w, h);
-  R.x = x; R.y = y; R.width = w; R.height = h;
-  Fl_Region r = XCreateRegion();
-  XUnionRectWithRegion(&R, r, r);
-  return r;
-#endif
 }
 #endif
 
@@ -584,10 +560,6 @@ void Fl_Graphics_Driver::restore_clip() {
   fl_clip_state_number++;
   Fl_Region r = rstack[rstackptr];
 #if defined(USE_X11)
-#if ! FLTK_USE_CAIRO
-  if (r) XSetRegion(fl_display, fl_gc, r);
-  else XSetClipMask(fl_display, fl_gc, 0);
-#endif
 #elif defined(WIN32)
   SelectClipRgn(fl_gc, r); //if r is NULL, clip is automatically cleared
 #elif defined(__APPLE_QUARTZ__)
@@ -609,7 +581,6 @@ void Fl_Graphics_Driver::restore_clip() {
 # error unsupported platform
 #endif
 
-#if FLTK_HAVE_CAIRO
   cairo_t *cr = fl_cairo_context;
 
   if ( cr )
@@ -633,23 +604,17 @@ void Fl_Graphics_Driver::restore_clip() {
         cairo_clip( cr );
     }
   }
-#endif
 
 }
 
 void Fl_Graphics_Driver::clip_region(Fl_Region r) {
   Fl_Region oldr = rstack[rstackptr];
-#if FLTK_USE_CAIRO
 if (oldr && r != oldr )
   {
       cairo_region_destroy( oldr );
   }
  
   rstack[rstackptr] = r ? cairo_region_reference( r ) : 0;
-#else
-  if (oldr && r != oldr ) XDestroyRegion(oldr);
-  rstack[rstackptr] = r;
-#endif
   fl_restore_clip();
 }
 
@@ -664,14 +629,7 @@ void Fl_Graphics_Driver::push_clip(int x, int y, int w, int h) {
     Fl_Region current = rstack[rstackptr];
     if (current) {
 #if defined(USE_X11)
-#if FLTK_USE_CAIRO 
         cairo_region_intersect( r, current );
-#else
-      Fl_Region temp = XCreateRegion();
-      XIntersectRegion(current, r, temp);
-      XDestroyRegion(r);
-      r = temp;
-#endif
 #elif defined(WIN32)
       CombineRgn(r,r,current,RGN_AND);
 #elif defined(__APPLE_QUARTZ__)
@@ -708,14 +666,10 @@ void Fl_Graphics_Driver::push_no_clip() {
 void Fl_Graphics_Driver::pop_clip() {
   if (rstackptr > 0) {
     Fl_Region oldr = rstack[rstackptr--];
-#if FLTK_USE_CAIRO
   if (oldr)
     {
         cairo_region_destroy( oldr );
     }
-#else
-    if (oldr) XDestroyRegion(oldr);
-#endif
   } else Fl::warning("fl_pop_clip: clip stack underflow!\n");
   fl_restore_clip();
 }
@@ -728,16 +682,12 @@ int Fl_Graphics_Driver::not_clipped(int x, int y, int w, int h) {
   // get rid of coordinates outside the 16-bit range the X calls take.
   if (clip_to_short(x,y,w,h)) return 0;	// clipped
 
-#if FLTK_USE_CAIRO
 cairo_rectangle_int_t rect;
   rect.x = x; rect.y = y; rect.width = w; rect.height = h;
 
   cairo_region_overlap_t o = cairo_region_contains_rectangle( r, &rect );
 
   return o != CAIRO_REGION_OVERLAP_OUT;
-#else
-  return XRectInRegion(r, x, y, w, h);
-#endif
 #elif defined(WIN32)
   RECT rect;
   if (Fl_Surface_Device::surface()->class_name() == Fl_Printer::class_id) { // in case of print context, convert coords from logical to device
@@ -766,7 +716,6 @@ int Fl_Graphics_Driver::clip_box(int x, int y, int w, int h, int& X, int& Y, int
   Fl_Region r = rstack[rstackptr];
   if (!r) return 0;
 #if defined(USE_X11)
-#if FLTK_USE_CAIRO
  cairo_rectangle_int_t rect;
   rect.x = x; rect.y = y; rect.width = w; rect.height = h;
 
@@ -791,26 +740,6 @@ int Fl_Graphics_Driver::clip_box(int x, int y, int w, int h, int& X, int& Y, int
       default:
           return 2;
   }
-#else
-  switch (XRectInRegion(r, x, y, w, h)) {
-  case RectangleOut: // completely outside
-    W = H = 0;
-    return 2;
-  case RectangleIn: // completely inside:
-    return 0;
-  default: // partial:
-    break;
-  }
-  Fl_Region rr = XRectangleRegion(x,y,w,h);
-  Fl_Region temp = XCreateRegion();
-  XIntersectRegion(r, rr, temp);
-  XRectangle rect;
-  XClipBox(temp, &rect);
-  X = rect.x; Y = rect.y; W = rect.width; H = rect.height;
-  XDestroyRegion(temp);
-  XDestroyRegion(rr);
-  return 1;
-#endif
 
 #elif defined(WIN32)
 // The win32 API makes no distinction between partial and complete

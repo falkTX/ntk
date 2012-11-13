@@ -41,9 +41,7 @@ const char *Fl_GDI_Graphics_Driver::class_id = "Fl_GDI_Graphics_Driver";
 #endif
 #if !(defined(__APPLE__) || defined(WIN32))
 const char *Fl_Xlib_Graphics_Driver::class_id = "Fl_Xlib_Graphics_Driver";
-#if FLTK_USE_CAIRO
 const char *Fl_Cairo_Graphics_Driver::class_id = "Fl_Cairo_Graphics_Driver";
-#endif
 #endif
 
 

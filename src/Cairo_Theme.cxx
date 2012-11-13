@@ -20,10 +20,6 @@
 
 #include <cairo/cairo.h>
 
-#define USE_X11 1
-#define FLTK_HAVE_CAIRO 1
-#define FLTK_USE_CAIRO 1
-
 #include <FL/Fl.H>
 #include <FL/Fl_Cairo.H>
 #include <FL/x.H>

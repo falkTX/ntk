@@ -27,7 +27,6 @@
 
 #include <config.h>
 
-#ifdef FLTK_HAVE_CAIRO
 #include <FL/Fl.H>
 #include <FL/x.H>
 #include <FL/Fl_Window.H>
@@ -68,8 +67,6 @@ Fl::cairo_make_current( cairo_surface_t *cs, cairo_t *cc ) {
 
     return cc;
 }
-
-#endif // FLTK_HAVE_CAIRO
 
 //
 // End of "$Id: Fl_Cairo.cxx 8198 2011-01-06 10:24:58Z manolo $" .

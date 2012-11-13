@@ -93,8 +93,6 @@ Fl_Color fl_color_add_alpha ( Fl_Color c, uchar alpha )
     return ( c & 0xFFFFFF00 ) | alpha;
 }
 
-#if FLTK_USE_CAIRO
-
 #include <FL/x.H>
 #include <cairo/cairo.h>
 #include <FL/Fl_Cairo.H>
@@ -962,9 +960,3 @@ Fl_Cairo_Graphics_Driver::draw(Fl_RGB_Image *img, int XP, int YP, int WP, int HP
   /* cairo_restore( cr ); */
 }
 
-
-#else
-
-void fl_set_antialias ( int v ) { }
-
-#endif

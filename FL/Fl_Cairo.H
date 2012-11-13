@@ -31,30 +31,25 @@
 
 #ifndef FL_CAIRO_H
 # define FL_CAIRO_H
-# ifdef FLTK_HAVE_CAIRO
 
 // Cairo is currently supported for the following platforms:
 // Win32, Apple Quartz, X11
 
 # include <FL/Fl_Export.H>
 
-# if defined(USE_X11) // X11
-#  include <cairo/cairo-xlib.h>
-# elif defined(WIN32)
+# if defined(WIN32)
 #  include <cairo/cairo-win32.h>
 # elif defined(__APPLE_QUARTZ__)
 #  include <cairo/cairo-quartz.h>
 # else
-#  error Cairo is not supported on that platform.
+// X11
+#  include <cairo/cairo-xlib.h>
 # endif
 
 FL_EXPORT extern cairo_surface_t *fl_cairo_surface;
 FL_EXPORT extern cairo_t *fl_cairo_context;
 
 cairo_surface_t * cairo_create_surface(void * gc, int W, int H);
-
-# endif // FLTK_HAVE_CAIRO
-
 
 #endif // FL_CAIRO_H
 

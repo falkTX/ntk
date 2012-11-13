@@ -40,9 +40,7 @@
 #include <FL/Fl_Pixmap.H>
 #include <FL/Fl_RGB_Image.H>
 
-#if FLTK_USE_CAIRO
 #include <FL/Fl_Cairo.H>
-#endif
 
 class Fl_Graphics_Driver;
 class Fl_Font_Descriptor;
@@ -501,8 +499,6 @@ public:
   int descent();
 };
 
-#if FLTK_USE_CAIRO
-
 class Fl_Cairo_Graphics_Driver : public Fl_Xlib_Graphics_Driver {
 
     static cairo_matrix_t m;
@@ -588,7 +584,6 @@ public:
   /* int descent();                                               */
 
 };
-#endif
 #endif
 
 /**

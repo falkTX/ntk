@@ -64,19 +64,11 @@
 #    include "Fl_Window.H"
 #    include "Xutf8.h"
 // Mirror X definition of Region to Fl_Region, for portability...
-#if FLTK_USE_CAIRO
 typedef cairo_region_t * Fl_Region;
-#else
-typedef Region Fl_Region;
-#endif
 
 FL_EXPORT void fl_open_display();
 FL_EXPORT void fl_open_display(Display*);
 FL_EXPORT void fl_close_display();
-
-
-FL_EXPORT void fl_push_use_cairo( bool v );
-FL_EXPORT void fl_pop_use_cairo( void );
 
 // constant info about the X server connection:
 extern FL_EXPORT Display *fl_display;
@@ -163,12 +155,10 @@ class FL_EXPORT Fl_X {
 public:
   Window xid;
   Window other_xid;                                             /* for double buffering */
-#if FLTK_HAVE_CAIRO
   cairo_t *cc;
   cairo_surface_t *cs;
   cairo_t *other_cc;                                            /* for double buffering */
   cairo_surface_t *other_cs;                                    /* for double buffering  */
-#endif
   Fl_Window *w;
   Fl_Region region;
   Fl_X *next;
