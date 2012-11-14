@@ -1,0 +1,13 @@
+prefix=@PREFIX@
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: ntk_images
+Description: Non ToolKit OpenGL support
+Version: @VERSION@
+
+Requires: gl
+Requires.private: x11 xft
+Libs: -L${libdir} -lntk -lgl -lntk_gl
+Cflags: -I${includedir}/ntk

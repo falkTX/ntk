@@ -1,0 +1,8 @@
+Name: ntk
+Description: Non ToolKit
+Version: @VERSION@
+
+Requires: gl
+Libs: @BUILD@/libs/libntk_gl.a
+Libs.private: -lgl 
+Cflags: -I@BUILD@/FL
