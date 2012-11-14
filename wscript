@@ -37,12 +37,6 @@ def options(opt):
                    help='Build with OpenGL extension library')
     opt.add_option('--enable-test', action='store_true', default=False, dest='ENABLE_TEST',
                    help='Build test programs')
-    opt.add_option('--use-system-jpeg', action='store_true', default=False, dest='USE_SYSTEM_JPEG',
-                   help='Force use of system jpeg, otherwise statically link with bundled libjpeg')
-    opt.add_option('--use-system-png', action='store_true', default=False, dest='USE_SYSTEM_PNG',
-                   help='Force use of system png, otherwise statically link with bundled libpng')
-    opt.add_option('--use-system-zlib', action='store_true', default=False, dest='USE_SYSTEM_ZLIB',
-                   help='Force use of system zlib, otherwise statically link with bundled zlib')
 
 def configure(conf):
     conf.load('compiler_c')
@@ -88,38 +82,13 @@ def configure(conf):
     conf.check(function_name='strtoll', header_name="stdlib.h", define_name='HAVE_STRTOLL', mandatory=False)
     conf.check(function_name='scandir', header_name="dirent.h", define_name='HAVE_SCANDIR', mandatory=False)
 
-    if Options.options.USE_SYSTEM_JPEG:
-        if conf.check(lib='jpeg', uselib_store='LIBJPEG', mandatory=False ):
-            conf.env.append_value( 'USE_SYSTEM_JPEG', '1' )
-            
-    if not conf.env.USE_SYSTEM_JPEG:
-        # it's fine, we'll use the bundled lib
-        print 'Using bundled libjpeg'
-        conf.env.BUNDLED.append( 'jpeg' )
-        conf.define( 'HAVE_LIBJPEG', 1 ) 
+    conf.check(lib='jpeg', uselib_store='LIBJPEG', mandatory=True )
+    conf.check_cfg(package='libpng', uselib_store='LIBPNG', args="--cflags --libs",
+                          mandatory=True)
+    conf.check_cfg(package='zlib', uselib_store='LIBZ', args="--cflags --libs",
+                          mandatory=True)
 
-    if Options.options.USE_SYSTEM_PNG:
-        if conf.check_cfg(package='libpng', uselib_store='LIBPNG', args="--cflags --libs",
-                          mandatory=False):
-            conf.env.append_value( 'USE_SYSTEM_PNG', '1' )
-
-    if not conf.env.USE_SYSTEM_PNG:
-        # it's fine, we'll use the bundled lib
-        print 'Using bundled libpng'
-        conf.env.BUNDLED.append( 'png' )
-        conf.define( 'HAVE_LIBPNG', 1 ) 
-
-    if Options.options.USE_SYSTEM_ZLIB:
-        if conf.check_cfg(package='zlib', uselib_store='LIBZ', args="--cflags --libs",
-                          mandatory=False):
-            conf.env.append_value( 'USE_SYSTEM_ZLIB', '1' )
-
-    if not conf.env.USE_SYSTEM_ZLIB:
-        # it's fine, we'll use the bundled lib
-        print 'Using bundled libpng'
-        conf.env.BUNDLED.append( 'zlib' )
-        conf.define( 'HAVE_LIBZ', 1 ) 
-
+    
     if Options.options.USE_GL:
         conf.env.append_value( 'USE_GL', '1' )
 
@@ -395,27 +364,9 @@ src/Fl_PNG_Image.cxx
 src/Fl_PNM_Image.cxx
 '''
 
-    img_lib = [ 'ntk' ]
+    img_lib = [ 'ntk', 'LIBJPEG', 'LIBPNG', 'LIBZ' ]
     img_inc = ['.', 'src', 'FL', 'src/xutf8/headers' ]
     
-    if bld.env.USE_SYSTEM_JPEG:
-        img_lib.append( 'LIBJPEG' )
-    else:
-        img_lib.append( 'ntk_jpeg' )
-        img_inc.append( 'jpeg' )
-
-    if bld.env.USE_SYSTEM_PNG:
-        img_lib.append( 'LIBPNG' )
-    else:
-        img_lib.append( 'ntk_png' )
-        img_inc.append( 'png' )
-
-    if bld.env.USE_SYSTEM_ZLIB:
-        img_lib.append( 'LIBZ' )
-    else:
-        img_lib.append( 'ntk_zlib' )
-        img_inc.append( 'zlib' )
-        
     bld(    source = lib_images_source,
             features = 'cxx cxxshlib',
            vnum = API_VERSION,
