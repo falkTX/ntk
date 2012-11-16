@@ -74,6 +74,11 @@ def configure(conf):
     conf.check(header_name='pthread.h', define_name='HAVE_PTHREAD', mandatory=True)
     conf.check(header_name='png.h', define_name='HAVE_PNG_H', mandatory=False)
 
+    conf.check(features='c cprogram', 
+               fragment='#include <pthread.h>\nint main ( int argc, const char **argv ) { return PTHREAD_MUTEX_RECURSIVE; }\n',
+               execute = False,
+               define_name='HAVE_PTHREAD_MUTEX_RECURSIVE', mandatory=False,
+               msg='Checking for PTHREAD_MUTEX_RECURSIVE')
 #    conf.check(function_name='jpeg_CreateCompress', header_name='jpeglib.h', use='jpeg', define_name='HAVE_LIBJPEG', mandatory=False)
 
     if Options.options.ENABLE_TEST:

@@ -284,7 +284,7 @@ static void unlock_function_std() {
   if (!--counter) pthread_mutex_unlock(&fltk_mutex);
 }
 
-#  ifdef PTHREAD_MUTEX_RECURSIVE
+#  ifdef HAVE_PTHREAD_MUTEX_RECURSIVE
 static bool lock_function_init_rec() {
   pthread_mutexattr_t attrib;
   pthread_mutexattr_init(&attrib);
@@ -352,7 +352,7 @@ int Fl::lock() {
 
     // Set lock/unlock functions for this system, using a system-supplied
     // recursive mutex if supported...
-#  ifdef PTHREAD_MUTEX_RECURSIVE
+#  ifdef HAVE_PTHREAD_MUTEX_RECURSIVE
     if (!lock_function_init_rec()) {
       fl_lock_function   = lock_function_rec;
       fl_unlock_function = unlock_function_rec;
@@ -361,7 +361,7 @@ int Fl::lock() {
       lock_function_init_std();
       fl_lock_function   = lock_function_std;
       fl_unlock_function = unlock_function_std;
-#  ifdef PTHREAD_MUTEX_RECURSIVE
+#  ifdef HAVE_PTHREAD_MUTEX_RECURSIVE
     }
 #  endif // PTHREAD_MUTEX_RECURSIVE
   }
