@@ -313,6 +313,7 @@ src/Cairo_Theme.cxx
 src/Gleam_Theme.cxx
 src/Clean_Theme.cxx
 src/Crystal_Theme.cxx
+src/Vector_Theme.cxx
 src/themes.cxx
 src/ps_image.cxx
 src/fl_utf.c

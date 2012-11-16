@@ -23,6 +23,7 @@
 #include "FL/Crystal_Theme.H"
 #include "FL/Gleam_Theme.H"
 #include "FL/Clean_Theme.H"
+#include "FL/Vector_Theme.H"
 
 static bool themes_registered = 0;
 
@@ -37,6 +38,7 @@ void fl_register_themes ( void )
     init_clean_theme();
     init_crystal_theme();
     init_gleam_theme();
+    init_vector_theme();
 
     {
         Fl_Color_Scheme *o = new Fl_Color_Scheme( "Dark",
