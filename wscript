@@ -26,6 +26,8 @@ out = 'build'
 children = [ 'fluid', 'test' ]
 #children = []
 
+CFLAGS = [ '-D_LARGEFILE_SOURCE', '-D_LARGEFILE64_SOURCE', '-D_THREAD_SAFE', '-D_REENTRANT' ]
+
 def options(opt):
     opt.load('compiler_c')
     opt.load('compiler_cxx')
@@ -44,9 +46,9 @@ def configure(conf):
     conf.load('gnu_dirs')
     # conf.load('ntk_fluid')
     conf.line_just = 52
-    conf.env.append_value('CFLAGS',['-Wall'])
+    conf.env.append_value('CFLAGS', CFLAGS + ['-Wall'])
 #    conf.env.append_value('CXXFLAGS',['-Wall','-fno-exceptions', '-fno-rtti'])
-    conf.env.append_value('CXXFLAGS',['-Wall'])
+    conf.env.append_value('CXXFLAGS',CFLAGS + ['-Wall'])
 
     conf.check_cfg(package='x11', uselib_store='X11', args="--cflags --libs",
                    mandatory=True)
@@ -445,6 +447,7 @@ src/Fl_Gl_Window.cxx
          target = 'ntk.pc',
          encoding = 'utf8',
          install_path = '${LIBDIR}/pkgconfig',
+         CFLAGS = string.join( CFLAGS, ' ' ),
          VERSION = VERSION,
          PREFIX = bld.env.PREFIX )
 
@@ -453,6 +456,7 @@ src/Fl_Gl_Window.cxx
          target = 'ntk_images.pc',
          encoding = 'utf8',
          install_path = '${LIBDIR}/pkgconfig',
+         CFLAGS = string.join( CFLAGS, ' ' ),
          VERSION = VERSION,
          PREFIX = bld.env.PREFIX )
 
@@ -461,6 +465,7 @@ src/Fl_Gl_Window.cxx
          target = 'ntk_gl.pc',
          encoding = 'utf8',
          install_path = '${LIBDIR}/pkgconfig',
+         CFLAGS = string.join( CFLAGS, ' ' ),
          VERSION = VERSION,
          PREFIX = bld.env.PREFIX )
 
@@ -468,6 +473,7 @@ src/Fl_Gl_Window.cxx
          source = 'ntk-uninstalled.pc.in',
          target = 'ntk-uninstalled.pc',
          encoding = 'utf8',
+         CFLAGS = string.join( CFLAGS, ' ' ),
          VERSION = VERSION,
          BUILD = os.getcwd() + '/' + out )
 
@@ -476,6 +482,7 @@ src/Fl_Gl_Window.cxx
          target = 'ntk_images-uninstalled.pc',
          encoding = 'utf8',
          VERSION = VERSION,
+         CFLAGS = string.join( CFLAGS, ' ' ),
          BUILD = os.getcwd() + '/' + out )
 
 
@@ -484,6 +491,7 @@ src/Fl_Gl_Window.cxx
          target = 'ntk_gl-uninstalled.pc',
          encoding = 'utf8',
          VERSION = VERSION,
+         CFLAGS = string.join( CFLAGS, ' ' ),
          BUILD = os.getcwd() + '/' + out )
 
     # bld( features = 'subst',

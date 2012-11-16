@@ -10,4 +10,4 @@ Version: @VERSION@
 Requires: cairo >= 1.9.0
 Requires.private: x11 xft
 Libs: -L${libdir} -lntk_images -lntk
-Cflags: -I${includedir}/ntk
+Cflags: -I${includedir}/ntk @CFLAGS@

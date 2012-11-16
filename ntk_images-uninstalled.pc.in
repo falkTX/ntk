@@ -6,4 +6,4 @@ Requires: cairo >= 1.9.0
 Requires.private: x11 xft
 Libs: @BUILD@/libs/libntk_images.a
 Libs.private: -lcairo -lxft -lx11
-Cflags: -I@BUILD@/FL
+Cflags: -I@BUILD@/FL @CFLAGS@

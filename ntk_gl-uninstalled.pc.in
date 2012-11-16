@@ -5,4 +5,4 @@ Version: @VERSION@
 Requires: gl
 Libs: @BUILD@/libs/libntk_gl.a
 Libs.private: -lgl 
-Cflags: -I@BUILD@/FL
+Cflags: -I@BUILD@/FL @CFLAGS@
