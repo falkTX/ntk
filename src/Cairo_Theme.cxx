@@ -57,8 +57,6 @@ static void rect_path ( int x, int y, int w, int h, double radius )
 
     double degrees = M_PI / 180.0;
     
-//    x += 2;  y += 2; w -= 4; h -= 4;
-
     x += DX;  y += DX; w -= DX*2; h -= DX*2;
 
     cairo_new_sub_path (cr);
@@ -75,20 +73,11 @@ static void draw_rect(int x, int y, int w, int h, Fl_Color bc, double radius = 2
 
     rect_path( x, y, w, h, radius );
     
-//    uchar r,g,b;
-       
     cairo_color( bc );
 
-    cairo_set_line_width (cr, 1);
-    cairo_stroke_preserve (cr);
-    cairo_set_source_rgba (cr, 0, 0, 0, 0.1);
     cairo_set_line_width (cr, DX);
     cairo_stroke (cr);
     cairo_set_line_width (cr, 1);
-
-    /* cairo_set_source_rgb( cr, 1, 0, 0 ); */
-    /* cairo_rectangle( cr, x, y, w, h ); */
-    /* cairo_stroke( cr ); */
 }
 
 static void draw_rectf(int x, int y, int w, int h, Fl_Color bc, double radius = 2 )
@@ -129,19 +118,14 @@ static void draw_rectf(int x, int y, int w, int h, Fl_Color bc, double radius = 
     }
 
     cairo_fill_preserve (cr);
-    cairo_set_source_rgba (cr, 0, 0, 0, 0.3 );
-    cairo_set_line_width (cr, DX + 0.5 );
+    cairo_set_line_width (cr, DX);
+    cairo_set_source_rgba (cr, 0, 0, 0, 0.6 );
     cairo_stroke (cr);
 
     if ( grad )
         cairo_pattern_destroy( grad );
 
     cairo_set_line_width (cr, 1);
-
-    /* cairo_set_source_rgb( cr, 1, 0, 0 ); */
-    /* cairo_rectangle( cr, x + 0.5, y + 0.5, w + 1, h + 1 ); */
-    /* cairo_stroke( cr ); */
-
 }
 
 static void shade_rect_up(int x, int y, int w, int h, Fl_Color bc)
@@ -166,46 +150,32 @@ static void shade_rect_down(int x, int y, int w, int h, Fl_Color bc)
 
 static void up_frame(int x, int y, int w, int h, Fl_Color c)
 {
-    frame_rect_up(x, y, w - 1, h - 1, fl_darker(c));
+    frame_rect_up(x, y, w, h, fl_darker(c));
 }
 
 static void thin_up_box(int x, int y, int w, int h, Fl_Color c)
 {
-    shade_rect_up(x + 1, y, w - 2, h - 1, c);
-    draw_rect(x + 1, y + 1, w - 3, h - 3, fl_color_average(c, FL_WHITE, .25f));
-    frame_rect_up(x, y, w - 1, h - 1, fl_darker(c));
-
+    shade_rect_up(x, y, w, h, c);
 }
 
 static void up_box(int x, int y, int w, int h, Fl_Color c)
 {
-//    shade_rect_up(x + 1, y, w - 2, h - 1, c);
     shade_rect_up(x, y, w, h, c);
-
-//    frame_rect_up(x, y, w - 1, h - 1, fl_darker(c));
-    //draw the inner rect.
-    draw_rect(x + 1, y + 1, w - 3, h - 3, fl_color_average(c, FL_WHITE, .25f));
-
-    if ( fl_debug_boxes )
-        fl_rect( x, y, w, h, FL_RED );
 }
 
 static void down_frame(int x, int y, int w, int h, Fl_Color c)
 {
-    frame_rect_down(x, y, w - 1, h - 1, fl_darker(c));
+    frame_rect_down(x, y, w, h, fl_darker(c));
 }
 
 static void down_box(int x, int y, int w, int h, Fl_Color c)
 {
-    shade_rect_down(x + 1, y, w - 2, h, c);
-    down_frame(x, y, w, h, fl_darker(c));
-    //draw the inner rect.
-    //frame_rect(x + 1, y + 1, w - 3, h - 3, fl_color_average(c, FL_BLACK, .65));
+    shade_rect_down(x, y, w, h, fl_lighter(c));
 }
 
 static void thin_down_box(int x, int y, int w, int h, Fl_Color c)
 {
-    down_box(x, y, w, h, c);
+    down_box(x, y, w, h, fl_lighter(c));
 }
 
 static void round_box(int x, int y, int w, int h, Fl_Color c)
