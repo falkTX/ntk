@@ -1,6 +1,9 @@
 #!/usr/bin/env python
 from waflib.Configure import conf
 
+top = '.'
+out = 'build'
+
 def options(opt):
     pass
 
@@ -18,7 +21,7 @@ def example(bld,*k,**kw):
 
 def build(bld):
 
-    if bld.env.ENABLE_TESTS:
+    if bld.env.ENABLE_TEST:
         bld.example(source='hello.cxx', target='hello')
         bld.example(source='input_choice.cxx', target='input_choice')
         bld.example(source='label.cxx', target='label')
