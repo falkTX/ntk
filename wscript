@@ -452,7 +452,7 @@ src/Fl_Gl_Window.cxx
          target = 'ntk.pc',
          encoding = 'utf8',
          install_path = '${LIBDIR}/pkgconfig',
-         CFLAGS = string.join( CFLAGS, ' ' ),
+         CFLAGS = ' '.join( CFLAGS ),
          VERSION = VERSION,
          PREFIX = bld.env.PREFIX )
 
@@ -461,7 +461,7 @@ src/Fl_Gl_Window.cxx
          target = 'ntk_images.pc',
          encoding = 'utf8',
          install_path = '${LIBDIR}/pkgconfig',
-         CFLAGS = string.join( CFLAGS, ' ' ),
+         CFLAGS = ' '.join( CFLAGS ),
          VERSION = VERSION,
          PREFIX = bld.env.PREFIX )
 
@@ -470,7 +470,7 @@ src/Fl_Gl_Window.cxx
          target = 'ntk_gl.pc',
          encoding = 'utf8',
          install_path = '${LIBDIR}/pkgconfig',
-         CFLAGS = string.join( CFLAGS, ' ' ),
+         CFLAGS = ' '.join( CFLAGS ),
          VERSION = VERSION,
          PREFIX = bld.env.PREFIX )
 
@@ -478,7 +478,7 @@ src/Fl_Gl_Window.cxx
          source = 'ntk-uninstalled.pc.in',
          target = 'ntk-uninstalled.pc',
          encoding = 'utf8',
-         CFLAGS = string.join( CFLAGS, ' ' ),
+         CFLAGS = ' '.join( CFLAGS ),
          VERSION = VERSION,
          BUILD = os.getcwd() + '/' + out )
 
@@ -487,7 +487,7 @@ src/Fl_Gl_Window.cxx
          target = 'ntk_images-uninstalled.pc',
          encoding = 'utf8',
          VERSION = VERSION,
-         CFLAGS = string.join( CFLAGS, ' ' ),
+         CFLAGS = ' '.join( CFLAGS ),
          BUILD = os.getcwd() + '/' + out )
 
 
@@ -496,7 +496,7 @@ src/Fl_Gl_Window.cxx
          target = 'ntk_gl-uninstalled.pc',
          encoding = 'utf8',
          VERSION = VERSION,
-         CFLAGS = string.join( CFLAGS, ' ' ),
+         CFLAGS = ' '.join( CFLAGS ),
          BUILD = os.getcwd() + '/' + out )
 
     # bld( features = 'subst',
