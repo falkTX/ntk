@@ -499,6 +499,14 @@ src/Fl_Gl_Window.cxx
          CFLAGS = ' '.join( CFLAGS ),
          BUILD = os.getcwd() + '/' + out )
 
+    
+    bld.program(
+	source = 'src/ntk-chtheme.cxx',
+	target = 'ntk-chtheme',
+        use = 'ntk',
+        includes = [ '.' ], 
+	install_path = "${BINDIR}" )
+
     # bld( features = 'subst',
     #      source = 'ntk-config.in',
     #      target = '../ntk-config',
