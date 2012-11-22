@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import subprocess
 import waflib.Options as Options
+from waflib.Configure import conf
 import string
 import os
 import sys
@@ -27,6 +28,13 @@ children = [ 'fluid', 'test' ]
 #children = []
 
 CFLAGS = [ '-D_LARGEFILE_SOURCE', '-D_LARGEFILE64_SOURCE', '-D_THREAD_SAFE', '-D_REENTRANT' ]
+
+@conf
+def bothlib(bld,*k,**kw):
+    kw['features' ] = 'c cxx cxxshlib'
+    bld.stlib(*k,**kw)
+    kw['features' ] = 'c cxx cxxstlib'
+    bld.shlib(*k,**kw)
 
 def options(opt):
     opt.load('compiler_c')
@@ -59,9 +67,6 @@ def configure(conf):
     conf.check_cfg(package='cairo', uselib_store='CAIRO', args="--cflags --libs",
                    atleast_version='1.9.0', mandatory=True)
 
-    conf.check_cfg(package='gl', uselib_store='GL', args="--cflags --libs",
-                   mandatory=False)
-
 
     conf.check(header_name='unistd.h', define_name='HAVE_UNISTD_H', mandatory=False)
     conf.check(header_name='pthread.h', define_name='HAVE_PTHREAD_H', mandatory=False)
@@ -86,6 +91,12 @@ def configure(conf):
 
     conf.env.BUNDLED = []    
 
+    conf.env['LIB_PTHREAD'] = ['pthread']
+    conf.env['LIB_DL'] = ['dl']
+    conf.env['LIB_M'] = ['m']
+
+    conf.env.BUNDLED = []    
+
     conf.check(function_name='strtoll', header_name="stdlib.h", define_name='HAVE_STRTOLL', mandatory=False)
     conf.check(function_name='scandir', header_name="dirent.h", define_name='HAVE_SCANDIR', mandatory=False)
 
@@ -98,6 +109,8 @@ def configure(conf):
     
     if Options.options.USE_GL:
         conf.env.append_value( 'USE_GL', '1' )
+        conf.check_cfg(package='gl', uselib_store='GL', args="--cflags --libs",
+                   mandatory=True)
 
     # FIXME: HAVE_LONG_LONG
 
@@ -339,26 +352,14 @@ src/flstring.c
     # conf.define( 'FL_LIBRARY', 1 )
     # conf.define( 'FL_INTERNALS', 1 )
 
-    bld(   source = lib_source,
-           features = 'c cxx cxxshlib',
+    bld.bothlib(   source = lib_source,
            vnum = API_VERSION,
            target       = 'ntk',
            cflags = [ '-fPIC' ],
            cxxflags = [ '-fPIC' ],
            defines = [ 'FL_LIBRARY=1', 'FL_INTERNALS=1' ],
            includes     = ['.', 'src', 'FL' ],
-           uselib = [ 'X11', 'XFT', 'CAIRO' ],
-           install_path = '${LIBDIR}')
-
-    bld(   source = lib_source,
-           vnum = API_VERSION,
-           features = 'c cxx cxxstlib',
-           cflags = [ '-fPIC' ],
-           cxxflags = [ '-fPIC' ],
-           defines = [ 'FL_LIBRARY=1', 'FL_INTERNALS=1' ],
-           target       = 'ntk',
-           includes     = ['.', 'src', 'FL' ],
-           uselib = [ 'X11', 'XFT', 'CAIRO' ],
+           uselib = [ 'X11', 'XFT', 'CAIRO', 'DL', 'M', 'PTHREAD' ],
            install_path = '${LIBDIR}')
     
     lib_images_source = '''
@@ -372,34 +373,17 @@ src/Fl_PNG_Image.cxx
 src/Fl_PNM_Image.cxx
 '''
 
-    img_lib = [ 'ntk', 'LIBJPEG', 'LIBPNG', 'LIBZ' ]
-    img_inc = ['.', 'src', 'FL', 'src/xutf8/headers' ]
-    
-    bld(    source = lib_images_source,
-            features = 'cxx cxxshlib',
+    bld.bothlib(    source = lib_images_source,
            vnum = API_VERSION,
             target       = 'ntk_images',
             defines = [ 'FL_LIBRARY=1', 'FL_INTERNALS=1' ],
             cflags = [ '-fPIC' ],
             cxxflags = [ '-fPIC' ],
             uselib_local = [ 'ntk' ],
-            use = img_lib,
-            includes = img_inc,
-            #                  uselib = [ 'X11', 'cairo' ],
+            use = [ 'ntk', 'LIBJPEG', 'LIBPNG', 'LIBZ', 'DL', 'M', 'PTHREAD' ],
+            includes =['.', 'src', 'FL', 'src/xutf8/headers' ],
             install_path = '${LIBDIR}')
 
-    bld(    source = lib_images_source,
-            features = 'cxx cxxstlib',
-           vnum = API_VERSION,
-            cflags = [ '-fPIC' ],
-            cxxflags = [ '-fPIC' ],
-            target       = 'ntk_images',
-            defines = [ 'FL_LIBRARY=1', 'FL_INTERNALS=1' ],
-            use = img_lib,
-            includes = img_inc,
-            #                  uselib_local = [ 'ntk' ],
-            uselib = [ 'X11', 'cairo' ],
-            install_path = '${LIBDIR}')
     
 
     lib_gl_source = '''
@@ -411,41 +395,17 @@ src/Fl_Gl_Window.cxx
     
     if bld.env.USE_GL:
         print 'Using GL'
-        bld( source = lib_gl_source,
-             features = 'cxx cxxshlib',
-           vnum = API_VERSION,
-             target       = 'ntk_gl',
-             includes     = ['.', 'src', 'FL', 'src/xutf8/headers' ],
-             defines = [ 'FL_LIBRARY=1', 'FL_INTERNALS=1' ],
-             uselib_local = [ 'ntk' ],
-             cflags = [ '-fPIC' ],
-             cxxflags = [ '-fPIC' ],
-             install_path = '${LIBDIR}')
-        bld( source = lib_gl_source,
-             features = 'cxx cxxstlib',
-           vnum = API_VERSION,
-             target       = 'ntk_gl',
-             cflags = [ '-fPIC' ],
-             cxxflags = [ '-fPIC' ],
-             includes     = ['.', 'src', 'FL', 'src/xutf8/headers' ],
-             uselib_local = [ 'ntk' ],
-             defines = [ 'FL_LIBRARY=1', 'FL_INTERNALS=1' ],
-             uselib = [ 'X11', 'cairo' ],
-             install_path = '${LIBDIR}')
-
-    # bld(
-    #     source = 'ntk-config.in'
-    #     target = 'ntk-config'
-    #     dict = { 'prefix': bld.env.PREFIX,
-    #              'exec_prefix' : bld.env.EXEC_PREFIX,
-    #              'bindir' : bld.env.BINDIR,
-    #              'includedir' : bld.env.INCLUDEDIR,
-    #              'libdir' : bld.env.LIBDIR,
-    #              'srcdir' : bld.env.SRCDIR,
-    #              'cc' : bld.env.CC,
-    #              'cxx' : bld.env.CXX,
-    #              }
-    #     )
+        bld.bothlib( 
+            source = lib_gl_source,
+            vnum = API_VERSION,
+            target       = 'ntk_gl',
+            includes     = ['.', 'src', 'FL', 'src/xutf8/headers', 'GL' ],
+            defines = [ 'FL_LIBRARY=1', 'FL_INTERNALS=1' ],
+            uselib_local = [ 'ntk' ],
+            cflags = [ '-fPIC' ],
+            cxxflags = [ '-fPIC' ],
+            install_path = '${LIBDIR}',
+            uselib = [ 'X11', 'cairo', 'DL', 'M', 'PTHREAD', 'GL' ] )
 
     bld( features = 'subst',
          source = 'ntk.pc.in',
