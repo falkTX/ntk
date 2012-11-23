@@ -443,11 +443,16 @@ src/Fl_Gl_Window.cxx
          CFLAGS = ' '.join( CFLAGS ),
          BUILD = os.getcwd() + '/' + out )
 
-    
+
     bld.program(
 	source = 'src/ntk-chtheme.cxx',
 	target = 'ntk-chtheme',
-        use = 'ntk',
+        # force dynamic linkage to ntk
+        depends = [ 'ntk' ],
+        lib = [ 'ntk'] ,
+        linkflags = '-L.',
+        # # 
+        uselib = [ 'CAIRO', 'XFT', 'X11' ],
         includes = [ '.' ], 
 	install_path = "${BINDIR}" )
 
