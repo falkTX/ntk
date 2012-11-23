@@ -30,12 +30,18 @@ children = [ 'fluid', 'test' ]
 CFLAGS = [ '-D_LARGEFILE_SOURCE', '-D_LARGEFILE64_SOURCE', '-D_THREAD_SAFE', '-D_REENTRANT' ]
 
 @conf
-def bothlib(bld,*k,**kw):
+def makelib(bld,*k,**kw):
+    kw['includes'] = ['.', 'src', 'src/xutf8/headers' ]
+    kw['cflags'] = [ '-fPIC' ]
+    kw['cxxflags'] = [ '-fPIC' ]
+    kw['defines'] = [ 'FL_LIBRARY=1', 'FL_INTERNALS=1' ]
+    kw['vnum'] = API_VERSION
+    kw['install_path'] = '${LIBDIR}'
     kw['features' ] = 'c cxx cxxshlib'
     bld.stlib(*k,**kw)
     kw['features' ] = 'c cxx cxxstlib'
     bld.shlib(*k,**kw)
-
+    
 def options(opt):
     opt.load('compiler_c')
     opt.load('compiler_cxx')
@@ -352,15 +358,9 @@ src/flstring.c
     # conf.define( 'FL_LIBRARY', 1 )
     # conf.define( 'FL_INTERNALS', 1 )
 
-    bld.bothlib(   source = lib_source,
-           vnum = API_VERSION,
-           target       = 'ntk',
-           cflags = [ '-fPIC' ],
-           cxxflags = [ '-fPIC' ],
-           defines = [ 'FL_LIBRARY=1', 'FL_INTERNALS=1' ],
-           includes     = ['.', 'src', 'FL' ],
-           uselib = [ 'X11', 'XFT', 'CAIRO', 'DL', 'M', 'PTHREAD' ],
-           install_path = '${LIBDIR}')
+    bld.makelib(   source = lib_source,
+                   target       = 'ntk',
+                   uselib = [ 'X11', 'XFT', 'CAIRO', 'DL', 'M', 'PTHREAD' ] )
     
     lib_images_source = '''
 src/fl_images_core.cxx
@@ -373,18 +373,9 @@ src/Fl_PNG_Image.cxx
 src/Fl_PNM_Image.cxx
 '''
 
-    bld.bothlib(    source = lib_images_source,
-           vnum = API_VERSION,
-            target       = 'ntk_images',
-            defines = [ 'FL_LIBRARY=1', 'FL_INTERNALS=1' ],
-            cflags = [ '-fPIC' ],
-            cxxflags = [ '-fPIC' ],
-            uselib_local = [ 'ntk' ],
-            use = [ 'ntk', 'LIBJPEG', 'LIBPNG', 'LIBZ', 'DL', 'M', 'PTHREAD' ],
-            includes =['.', 'src', 'FL', 'src/xutf8/headers' ],
-            install_path = '${LIBDIR}')
-
-    
+    bld.makelib(    source = lib_images_source,
+                    target       = 'ntk_images',
+                    uselib = [ 'LIBJPEG', 'LIBPNG', 'LIBZ', 'DL', 'M', 'PTHREAD', 'XFT' ] )
 
     lib_gl_source = '''
 src/Fl_Gl_Choice.cxx
@@ -395,17 +386,10 @@ src/Fl_Gl_Window.cxx
     
     if bld.env.USE_GL:
         print 'Using GL'
-        bld.bothlib( 
+        bld.makelib( 
             source = lib_gl_source,
-            vnum = API_VERSION,
             target       = 'ntk_gl',
-            includes     = ['.', 'src', 'FL', 'src/xutf8/headers', 'GL' ],
-            defines = [ 'FL_LIBRARY=1', 'FL_INTERNALS=1' ],
-            uselib_local = [ 'ntk' ],
-            cflags = [ '-fPIC' ],
-            cxxflags = [ '-fPIC' ],
-            install_path = '${LIBDIR}',
-            uselib = [ 'X11', 'cairo', 'DL', 'M', 'PTHREAD', 'GL' ] )
+            uselib = [ 'X11', 'DL', 'M', 'PTHREAD', 'GL' ] )
 
     bld( features = 'subst',
          source = 'ntk.pc.in',
