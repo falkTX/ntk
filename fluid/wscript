@@ -33,7 +33,7 @@ def build(bld):
              target='ntk-fluid',
              includes = [ '.', '../' ],
              linkflags = '-L.',
-             depends = [ 'ntk', 'ntk_images' ],
+             after = [ 'ntk', 'ntk_images' ],
              lib = [ 'ntk', 'ntk_images' ],
              uselib = [ 'X11', 'XFT', 'CAIRO' ],
              install_path = '${BINDIR}' )

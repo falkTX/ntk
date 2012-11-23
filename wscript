@@ -448,7 +448,7 @@ src/Fl_Gl_Window.cxx
 	source = 'src/ntk-chtheme.cxx',
 	target = 'ntk-chtheme',
         # force dynamic linkage to ntk
-        depends = [ 'ntk' ],
+        after = [ 'ntk' ],
         lib = [ 'ntk'] ,
         linkflags = '-L.',
         # # 
