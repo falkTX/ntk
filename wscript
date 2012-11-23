@@ -2,6 +2,7 @@
 import subprocess
 import waflib.Options as Options
 from waflib.Configure import conf
+from waflib import Logs
 import string
 import os
 import sys
@@ -41,6 +42,19 @@ def makelib(bld,*k,**kw):
     bld.stlib(*k,**kw)
     kw['features' ] = 'c cxx cxxstlib'
     bld.shlib(*k,**kw)
+
+# from autowaf
+def run_ldconfig(ctx):
+    if (ctx.cmd == 'install'
+        and not ctx.env['RAN_LDCONFIG']
+        and ctx.env['LIBDIR']
+        and not os.environ.has_key('DESTDIR')):
+        try:
+            Logs.info("Waf: Running `/sbin/ldconfig %s'" % ctx.env['LIBDIR'])
+            subprocess.call(['/sbin/ldconfig', ctx.env['LIBDIR']])
+            ctx.env['RAN_LDCONFIG'] = True
+        except:
+            pass
     
 def options(opt):
     opt.load('compiler_c')
@@ -385,7 +399,6 @@ src/Fl_Gl_Window.cxx
 '''
     
     if bld.env.USE_GL:
-        print 'Using GL'
         bld.makelib( 
             source = lib_gl_source,
             target       = 'ntk_gl',
@@ -498,6 +511,8 @@ src/Fl_Gl_Window.cxx
 
     bld.install_files( bld.env.INCLUDEDIR + '/ntk/FL', start_dir.ant_glob('*.H *.h'),
                        cwd=start_dir, relative_trick=True)
+
+    bld.add_post_fun( run_ldconfig )
 
     #  bld.install_files( string.join( [ '${DATADIR}/doc', APPNAME ], '/' ), bld.path.ant_glob( 'doc/*.html doc/*.png' ) )
     
