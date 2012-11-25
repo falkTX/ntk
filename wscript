@@ -38,10 +38,12 @@ def makelib(bld,*k,**kw):
     kw['defines'] = [ 'FL_LIBRARY=1', 'FL_INTERNALS=1' ]
     kw['vnum'] = API_VERSION
     kw['install_path'] = '${LIBDIR}'
-    kw['features' ] = 'c cxx cxxshlib'
-    bld.stlib(*k,**kw)
     kw['features' ] = 'c cxx cxxstlib'
+    kw['name'] = kw['target'] + '_static'
     bld.shlib(*k,**kw)
+    kw['features' ] = 'c cxx cxxshlib'
+    kw['name'] = kw['target'] + '_shared'
+    bld.stlib(*k,**kw)
 
 # from autowaf
 def run_ldconfig(ctx):
@@ -146,6 +148,8 @@ def configure(conf):
         '-g',
         '-O0' ]
 
+    print '---'
+
     if Options.options.debug:
         print 'Building for debugging'
         conf.env.append_value('CFLAGS', debug_flags )
@@ -155,6 +159,10 @@ def configure(conf):
         conf.env.append_value('CFLAGS', optimization_flags )
         conf.env.append_value('CXXFLAGS', optimization_flags )
         conf.define( 'NDEBUG', 1 )
+
+    Logs.info("CFLAGS:\t%s'" % ' '.join(conf.env['CFLAGS']))
+    Logs.info("CXXFLAGS:\t%s'" % ' '.join(conf.env['CXXFLAGS']))
+    Logs.info("LDFLAGS:\t%s'" % ' '.join( conf.env['LDFLAGS']))
 
     if sys.platform == 'darwin':
         conf.define( '__APPLE__', 1 )
@@ -199,16 +207,12 @@ def configure(conf):
     for i in children:
         conf.recurse(i)
 
-
+        
     print('')
 
 def build(bld):
-    #     libs = 'LILV SUIL JACK SERD SRATOM LV2'
 
-
-    libs = '' 
-
-    lib_source = '''
+    bld.makelib(   source = '''
 src/Fl_Cairo_Graphics_Driver.cxx
 src/Fl.cxx
 src/Fl_Adjuster.cxx
@@ -367,16 +371,11 @@ src/xutf8/utf8Utils.c
 src/xutf8/utf8Wrap.c
 src/numericsort.c
 src/flstring.c
-'''
-
-    # conf.define( 'FL_LIBRARY', 1 )
-    # conf.define( 'FL_INTERNALS', 1 )
-
-    bld.makelib(   source = lib_source,
+''',
                    target       = 'ntk',
                    uselib = [ 'X11', 'XFT', 'CAIRO', 'DL', 'M', 'PTHREAD' ] )
     
-    lib_images_source = '''
+    bld.makelib(    source = '''
 src/fl_images_core.cxx
 src/Fl_BMP_Image.cxx
 src/Fl_File_Icon2.cxx
@@ -385,22 +384,18 @@ src/Fl_Help_Dialog.cxx
 src/Fl_JPEG_Image.cxx
 src/Fl_PNG_Image.cxx
 src/Fl_PNM_Image.cxx
-'''
+''',
+                    target = 'ntk_images',
+                    uselib = [ 'LIBJPEG', 'LIBPNG', 'LIBZ', 'DL', 'M', 'PTHREAD' ] )
 
-    bld.makelib(    source = lib_images_source,
-                    target       = 'ntk_images',
-                    uselib = [ 'LIBJPEG', 'LIBPNG', 'LIBZ', 'DL', 'M', 'PTHREAD', 'XFT' ] )
-
-    lib_gl_source = '''
+    if bld.env.USE_GL:
+        bld.makelib( 
+            source = '''
 src/Fl_Gl_Choice.cxx
 src/Fl_Gl_Device_Plugin.cxx
 src/Fl_Gl_Overlay.cxx
 src/Fl_Gl_Window.cxx
-'''
-    
-    if bld.env.USE_GL:
-        bld.makelib( 
-            source = lib_gl_source,
+''',
             target       = 'ntk_gl',
             uselib = [ 'X11', 'DL', 'M', 'PTHREAD', 'GL' ] )
 
@@ -460,13 +455,8 @@ src/Fl_Gl_Window.cxx
     bld.program(
 	source = 'src/ntk-chtheme.cxx',
 	target = 'ntk-chtheme',
-        # force dynamic linkage to ntk
-        after = [ 'ntk' ],
-        lib = [ 'ntk'] ,
-        linkflags = '-L.',
-        # # 
-        uselib = [ 'CAIRO', 'XFT', 'X11' ],
         includes = [ '.' ], 
+        use = ['ntk_images_shared', 'ntk_shared'],
 	install_path = "${BINDIR}" )
 
     # bld( features = 'subst',

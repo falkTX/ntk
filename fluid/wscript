@@ -30,11 +30,8 @@ def build(bld):
         undo.cxx
         widget_panel.cxx
 ''',
-             target='ntk-fluid',
-             includes = [ '.', '../' ],
-             linkflags = '-L.',
-             after = [ 'ntk', 'ntk_images' ],
-             lib = [ 'ntk', 'ntk_images' ],
-             uselib = [ 'X11', 'XFT', 'CAIRO' ],
-             install_path = '${BINDIR}' )
-             
+                 target='ntk-fluid',
+                 includes = [ '.', '../' ],
+                 use = [ 'ntk_images_shared', 'ntk_shared' ],
+                 install_path = '${BINDIR}' )
+    

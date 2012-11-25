@@ -13,8 +13,7 @@ def configure(conf):
 @conf
 def example(bld,*k,**kw):
     kw['features' ] = 'cxx cxxprogram'
-    kw['use'] = [ 'ntk', 'ntk_images' ]
-    kw['uselib'] = [ 'X11', 'XFT', 'CAIRO' ]
+    kw['use'] = [  'ntk_images_static','ntk_static' ]
     kw['includes'] = [ '.', '..' ]
     kw['install_path'] = None
     return bld(*k,**kw)
