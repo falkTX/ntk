@@ -50,7 +50,7 @@ def run_ldconfig(ctx):
     if (ctx.cmd == 'install'
         and not ctx.env['RAN_LDCONFIG']
         and ctx.env['LIBDIR']
-        and not os.environ.has_key('DESTDIR')):
+        and not os.environ.get('DESTDIR')):
         try:
             Logs.info("Waf: Running `/sbin/ldconfig %s'" % ctx.env['LIBDIR'])
             subprocess.call(['/sbin/ldconfig', ctx.env['LIBDIR']])
@@ -148,14 +148,14 @@ def configure(conf):
         '-g',
         '-O0' ]
 
-    print '---'
+    print('---')
 
     if Options.options.debug:
-        print 'Building for debugging'
+        print('Building for debugging')
         conf.env.append_value('CFLAGS', debug_flags )
         conf.env.append_value('CXXFLAGS', debug_flags )
     else:
-        print 'Building for performance'
+        print('Building for performance')
         conf.env.append_value('CFLAGS', optimization_flags )
         conf.env.append_value('CXXFLAGS', optimization_flags )
         conf.define( 'NDEBUG', 1 )
