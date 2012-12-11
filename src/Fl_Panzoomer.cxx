@@ -35,34 +35,80 @@ Fl_Panzoomer::Fl_Panzoomer ( int X, int Y, int W, int H, const char *L ) :
     step( 1 );
 }
 
+int
+Fl_Panzoomer::x_value ( int pos, int size, int first, int total )
+{
+    if ( pos + size > first + total )
+        total = pos+size-first;
+            
+    if ( (int)_xmin == first &&
+         (int)_xmax == total &&
+         (int)_xpos == pos &&
+         (int)_xsize == size )
+        return pos;
+
+    damage( FL_DAMAGE_USER1 );
+
+    _xmin = first;
+    _xmax = total;
+    _xpos = pos;
+    _xsize = size;
+
+    return pos;
+}
+
+int
+Fl_Panzoomer::y_value ( int pos, int size, int first, int total )
+{
+    if ( pos + size > first + total )
+        total = pos+size-first;
+
+    if ( (int)_ymin == first &&
+         (int)_ymax == total &&
+         (int)_ypos == pos &&
+         (int)_ysize == size )
+        return pos;
+
+    damage( FL_DAMAGE_USER1 );
+    
+    _ymin = first;
+    _ymax = total;
+    _ypos = pos;
+    _ysize = size;
+    
+    return pos;
+}
+
 void
-Fl_Panzoomer::x_value ( double v ) { 
+Fl_Panzoomer::x_value ( double v ) 
+{ 
     if ( _xpos == v )
         return;
 
     _xpos = v;
-        if ( _xpos < _xmin )
-            _xpos = _xmin;
-        else if ( _xpos > _xmax - _xsize)
-            _xpos = _xmax - _xsize;
-
-        damage( FL_DAMAGE_USER1 );
-    }
+    if ( _xpos < _xmin )
+        _xpos = _xmin;
+    else if ( _xpos > _xmax - _xsize)
+        _xpos = _xmax - _xsize;
+    
+    damage( FL_DAMAGE_USER1 );
+}
 
 void
-Fl_Panzoomer::y_value ( double v ) {
-        if ( _ypos == v )
-            return;
+Fl_Panzoomer::y_value ( double v )
+{
+    if ( _ypos == v )
+        return;
 
-        _ypos = v; 
+    _ypos = v; 
         
-        if ( _ypos < _ymin )
-            _ypos = _ymin;
-        else if ( _ypos > _ymax - _ysize )
-            _ypos = _ymax - _ysize;
+    if ( _ypos < _ymin )
+        _ypos = _ymin;
+    else if ( _ypos > _ymax - _ysize )
+        _ypos = _ymax - _ysize;
 
-        damage( FL_DAMAGE_USER1 );
-    }
+    damage( FL_DAMAGE_USER1 );
+}
 
 void
 Fl_Panzoomer::zoom ( int v )
@@ -226,7 +272,9 @@ Fl_Panzoomer::handle ( int m, int X, int Y, int W, int H )
                 if ( when() & FL_WHEN_CHANGED )
                     do_callback();
             }
-            
+
+            damage( FL_DAMAGE_USER1 );
+
             return 1;
             break;
         }
@@ -238,6 +286,8 @@ Fl_Panzoomer::handle ( int m, int X, int Y, int W, int H )
             {                
                 zoom( _zoom + d );
                 
+                damage( FL_DAMAGE_USER1 );
+
                 return 1;
             }
             else if (!Fl::event_alt() && !Fl::event_shift())
@@ -246,6 +296,8 @@ Fl_Panzoomer::handle ( int m, int X, int Y, int W, int H )
                 
                 if ( when() & FL_WHEN_CHANGED )
                     do_callback();
+
+                damage( FL_DAMAGE_USER1 );
 
                 return 1;
             }

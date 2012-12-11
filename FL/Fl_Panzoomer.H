@@ -55,39 +55,11 @@ public:
     Fl_Panzoomer ( int X, int Y, int W, int H, const char *L=0 );
     virtual ~Fl_Panzoomer ( ) { }
 
-
     /* these behave like Fl_Scrollbar::value() */
     /* first and total are the bounds, size is the size of the window,
      * and pos is the leftmost edge. */
-    int x_value ( int pos, int size, int first, int total )
-        {
-            if ( pos + size > first + total )
-                total = pos+size-first;
-
-            _xmin = first;
-            _xmax = total;
-            _xpos = pos;
-            _xsize = size;
-
-            damage( FL_DAMAGE_USER1 );
-
-            return pos;
-        }
-
-    int y_value ( int pos, int size, int first, int total )
-        {
-            if ( pos + size > first + total )
-                total = pos+size-first;
-
-            _ymin = first;
-            _ymax = total;
-            _ypos = pos;
-            _ysize = size;
-
-            damage( FL_DAMAGE_USER1 );
-
-            return pos;
-        }
+    int x_value ( int pos, int size, int first, int total );
+    int y_value ( int pos, int size, int first, int total );
 
     double x_value ( void ) const { return _xpos; }
     double y_value ( void ) const { return _ypos; }
