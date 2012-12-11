@@ -28,7 +28,10 @@ out = 'build'
 children = [ 'fluid', 'test' ]
 #children = []
 
-CFLAGS = [ '-D_LARGEFILE_SOURCE', '-D_LARGEFILE64_SOURCE', '-D_THREAD_SAFE', '-D_REENTRANT' ]
+CFLAGS = [ '-pthread',
+           '-D_LARGEFILE64_SOURCE',
+           '-D_FILE_OFFSET_BITS=64',
+           '-D_GNU_SOURCE' ]
 
 @conf
 def makelib(bld,*k,**kw):
@@ -76,9 +79,9 @@ def configure(conf):
     conf.load('gnu_dirs')
     # conf.load('ntk_fluid')
     conf.line_just = 52
-    conf.env.append_value('CFLAGS', CFLAGS + ['-Wall'])
+    conf.env.append_value('CFLAGS', ['-Wall'])
 #    conf.env.append_value('CXXFLAGS',['-Wall','-fno-exceptions', '-fno-rtti'])
-    conf.env.append_value('CXXFLAGS',CFLAGS + ['-Wall'])
+    conf.env.append_value('CXXFLAGS', ['-Wall'])
 
     conf.check_cfg(package='x11', uselib_store='X11', args="--cflags --libs",
                    mandatory=True)
@@ -160,9 +163,8 @@ def configure(conf):
         conf.env.append_value('CXXFLAGS', optimization_flags )
         conf.define( 'NDEBUG', 1 )
 
-    Logs.info("CFLAGS:\t%s'" % ' '.join(conf.env['CFLAGS']))
-    Logs.info("CXXFLAGS:\t%s'" % ' '.join(conf.env['CXXFLAGS']))
-    Logs.info("LDFLAGS:\t%s'" % ' '.join( conf.env['LDFLAGS']))
+    conf.env.append_value('CFLAGS', CFLAGS )
+    conf.env.append_value('CXXFLAGS', CFLAGS )
 
     if sys.platform == 'darwin':
         conf.define( '__APPLE__', 1 )
