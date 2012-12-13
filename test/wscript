@@ -13,7 +13,10 @@ def configure(conf):
 @conf
 def example(bld,*k,**kw):
     kw['features' ] = 'cxx cxxprogram'
-    kw['use'] = [  'ntk_images_static','ntk_static' ]
+    if 'use' in kw:
+        kw['use'] = kw['use'] + [  'ntk_images_static','ntk_static' ]
+    else:
+        kw['use'] = [  'ntk_images_static','ntk_static' ]
     kw['includes'] = [ '.', '..' ]
     kw['install_path'] = None
     return bld(*k,**kw)
@@ -21,6 +24,12 @@ def example(bld,*k,**kw):
 def build(bld):
 
     if bld.env.ENABLE_TEST:
+        bld.example(source='glpuzzle.cxx', target='glpuzzle', use=['ntk_gl_static'])
+        bld.example(source='fractals.cxx fracviewer.cxx', target='fractals', use=['ntk_gl_static'])
+        bld.example(source='gl_overlay.cxx', target='gl_overlay', use=['ntk_gl_static'])
+        bld.example(source='shape.cxx', target='shape', use=['ntk_gl_static'])
+        bld.example(source='fullscreen.cxx', target='fullscreen', use=['ntk_gl_static'])
+        bld.example(source='cube.cxx', target='cube', use=['ntk_gl_static'])
         bld.example(source='hello.cxx', target='hello')
         bld.example(source='input_choice.cxx', target='input_choice')
         bld.example(source='label.cxx', target='label')

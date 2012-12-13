@@ -134,8 +134,10 @@ def configure(conf):
     
     if Options.options.USE_GL:
         conf.env.append_value( 'USE_GL', '1' )
-        conf.check_cfg(package='gl', uselib_store='GL', args="--cflags --libs",
-                   mandatory=True)
+        conf.check_cfg(package='glu', uselib_store='GL', args="--cflags --libs",
+                       mandatory=True)
+        conf.define('HAVE_GL', 1 )
+        conf.check(header_name='GL/glu.h', define_name='HAVE_GL_GLU_H')
 
     # FIXME: HAVE_LONG_LONG
 
@@ -393,13 +395,17 @@ src/Fl_PNM_Image.cxx
     if bld.env.USE_GL:
         bld.makelib( 
             source = '''
+src/gl_draw.cxx
+src/gl_start.cxx
+src/glut_compatability.cxx
+src/glut_font.cxx
 src/Fl_Gl_Choice.cxx
 src/Fl_Gl_Device_Plugin.cxx
 src/Fl_Gl_Overlay.cxx
 src/Fl_Gl_Window.cxx
 ''',
             target       = 'ntk_gl',
-            uselib = [ 'X11', 'DL', 'M', 'PTHREAD', 'GL' ] )
+            uselib = [ 'X11', 'DL', 'M', 'PTHREAD', 'GL'] )
 
     bld( features = 'subst',
          source = 'ntk.pc.in',

@@ -9,5 +9,5 @@ Version: @VERSION@
 
 Requires: gl
 Requires.private: x11 xft
-Libs: -L${libdir} -lntk -lgl -lntk_gl
+Libs: -L${libdir} -lntk -lgl -lglu -lntk_gl
 Cflags: -I${includedir}/ntk @CFLAGS@
