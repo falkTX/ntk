@@ -280,27 +280,34 @@ Fl_Panzoomer::handle ( int m, int X, int Y, int W, int H )
         }
         case FL_MOUSEWHEEL:
         {
-            int d = Fl::event_dy();
+            const int dy = Fl::event_dy();
+            const int dx = Fl::event_dx();
 
-            if ( Fl::event_ctrl() )
+            if ( dy && Fl::event_ctrl() )
             {                
-                zoom( _zoom + d );
+                zoom( _zoom + dy );
                 
                 damage( FL_DAMAGE_USER1 );
 
                 return 1;
             }
-            else if (!Fl::event_alt() && !Fl::event_shift())
+
+            if ( !Fl::event_alt() && !Fl::event_shift())
             {
-                y_value( _ypos + ( (double)d*5 / H ) * _ymax );
+                if ( dy )
+                    y_value( _ypos + ( (double)dy*5 / H ) * _ymax );
+
+                if ( dx )
+                    x_value( _xpos + ( (double)dx*5 / W ) * _xmax );
                 
                 if ( when() & FL_WHEN_CHANGED )
                     do_callback();
-
+                
                 damage( FL_DAMAGE_USER1 );
-
+                
                 return 1;
             }
+
             return 0;
             break;
         }
