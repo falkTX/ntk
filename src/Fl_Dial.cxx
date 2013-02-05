@@ -110,36 +110,20 @@ Fl_Dial::handle ( int m )
         {
             if ( this != Fl::belowmouse() )
                 return 0;
-
-            int steps = 16;
-
-            if ( Fl::event_ctrl() )
-                steps = 128;
-
-            float step = fabs( maximum() - minimum() ) / (float)steps;
-
-            float d = ((float)Fl::event_dy()) * step;
-
-            double v = value() + d;
-
+            if (Fl::e_dy==0)
+                return 0;
+            
+            const int steps = Fl::event_ctrl() ? 128 : 16;
+            
+            const float step = fabs( maximum() - minimum() ) / (float)steps;
+            
+            int dy = Fl::e_dy;
+            
+            /* slider is in 'upside down' configuration, invert meaning of mousewheel */
             if ( maximum() > minimum() )
-            {
-                if ( v < minimum() )
-                    v = minimum();
-                else if ( v > maximum() )
-                    v = maximum();
-            }
-            else
-            {
-                if ( v > minimum() )
-                    v = minimum();
-                else if ( v < maximum() )
-                    v = maximum();
-            }
-
-            value( v );
-            do_callback();
-
+                dy = 0 - dy;
+            
+            handle_drag(clamp(value() + step * dy));
             return 1;
         }
     }

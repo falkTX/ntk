@@ -350,6 +350,26 @@ int Fl_Slider::handle(int event, int X, int Y, int W, int H) {
   case FL_ENTER :
   case FL_LEAVE :
     return 1;
+  case FL_MOUSEWHEEL :
+  {
+      if ( this != Fl::belowmouse() )
+          return 0;
+      if (Fl::e_dy==0)
+          return 0;
+      
+      const int steps = Fl::event_ctrl() ? 128 : 16;
+      
+      const float step = fabs( maximum() - minimum() ) / (float)steps;
+
+      int dy = Fl::e_dy;
+
+      /* slider is in 'upside down' configuration, invert meaning of mousewheel */
+      if ( minimum() > maximum() )
+          dy = 0 - dy;
+
+      handle_drag(clamp(value() + step * dy));
+      return 1;
+  }
   default:
     return 0;
   }
