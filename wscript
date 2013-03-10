@@ -90,7 +90,7 @@ def configure(conf):
                    mandatory=True)
 
     conf.check_cfg(package='cairo', uselib_store='CAIRO', args="--cflags --libs",
-                   atleast_version='1.9.0', mandatory=True)
+                   atleast_version='1.12.0', mandatory=True)
 
 
     conf.check(header_name='unistd.h', define_name='HAVE_UNISTD_H', mandatory=False)
