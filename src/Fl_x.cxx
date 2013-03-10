@@ -665,7 +665,8 @@ void fl_open_display(Display* d) {
   Fl::get_system_colors();
   
   fl_register_themes();
-  Fl_Theme::set();
+
+  Fl_Theme::load_default();
 }
 
 void fl_close_display() {

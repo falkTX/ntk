@@ -56,6 +56,7 @@ class Fl_Color_Scheme
     Fl_Color_Scheme *next;
     static int total;
     static Fl_Color_Scheme *first;
+    static Fl_Color_Scheme *_current;
 
     Fl_Color _bg;
     Fl_Color _bg2;
@@ -63,6 +64,7 @@ class Fl_Color_Scheme
     Fl_Color _sel;
 
     const char *_name;
+    static void refresh ( void );
 
 public:
 
@@ -98,6 +100,8 @@ class Fl_Theme
 
     void (*_init_func)(void);
 
+    static void refresh ( void );
+
 public:
 
     const char *name ( void ) const { return _name; }
@@ -112,9 +116,10 @@ public:
             _init_func = init_func;
         }
 
+    static void save ( void );
     static void add ( Fl_Theme *td );
     static Fl_Theme **get ( void );
-    static int set ( void );
+    static int load_default ( void );
     static int set ( const char *name );
     static const Fl_Theme *current ( void ) { return _current; }
 };

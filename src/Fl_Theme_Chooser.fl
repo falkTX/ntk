@@ -65,7 +65,7 @@ redraw();} open
   } {}
   Fl_Return_Button {} {
     label OK
-    callback {hide();} selected
+    callback {Fl_Theme::save(); Fl_Color_Scheme::save(); hide();} selected
     xywh {355 345 75 25}
   }
   Fl_Group {} {
@@ -104,7 +104,7 @@ Fl::background( r,g,b );
 
 o->window()->redraw();
 
-Fl_Color_Scheme::save();}
+}
     xywh {120 76 300 25} box BORDER_BOX align 4 when 6
     code0 {\#include <FL/fl_ask.H>}
     code1 {o->color( FL_BACKGROUND_COLOR );}
@@ -119,8 +119,7 @@ Fl::get_color( o->color(), r,g,b );
 Fl::background2( r,g,b );
 
 o->window()->redraw();
-
-Fl_Color_Scheme::save();}
+}
     xywh {120 104 300 25} box BORDER_BOX align 4
     code1 {o->color( FL_BACKGROUND2_COLOR );}
     class Fl_Color_Button
@@ -135,7 +134,7 @@ Fl::foreground( r,g,b );
 
 o->window()->redraw();
 
-Fl_Color_Scheme::save();}
+}
     xywh {120 132 300 25} box BORDER_BOX align 4
     code1 {o->color( FL_FOREGROUND_COLOR );}
     class Fl_Color_Button

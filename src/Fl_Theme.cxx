@@ -25,6 +25,7 @@
 Fl_Theme *Fl_Theme::first;
 Fl_Theme *Fl_Theme::_current;
 Fl_Color_Scheme *Fl_Color_Scheme::first;
+Fl_Color_Scheme *Fl_Color_Scheme::_current;
 
 int Fl_Theme::total;
 int Fl_Color_Scheme::total;
@@ -112,21 +113,15 @@ conf_get_color ( const char *key, Fl_Color def )
     return (Fl_Color)c;
 }
 
-static bool dont_save = false;
-
 /* sets the configured default */
 int
-Fl_Theme::set ( void )
+Fl_Theme::load_default ( void )
 {
-    const char *name = conf_get( "theme", "clean" );
+    const char *name = conf_get( "theme", "cairo" );
 
     int rv = set( name );
 
-    dont_save = true;
-
-    Fl_Color_Scheme::set( "System" );
-
-    dont_save = false;
+    Fl_Color_Scheme::set( "Dark" );
 
     uchar r, g, b;
     
@@ -140,6 +135,12 @@ Fl_Theme::set ( void )
     return rv;
 }
 
+void
+Fl_Theme::save ( void )
+{
+    conf_set( "theme", Fl_Theme::_current->name() );
+}
+
 int
 Fl_Theme::set ( const char *name )
 {
@@ -149,19 +150,22 @@ Fl_Theme::set ( const char *name )
             /* reset boxtypes */
             Fl::reload_scheme();
 
-            printf( "Theme set to %s\n", t->name() );
             t->_init_func();
             Fl_Theme::_current = t;
-
-            conf_set( "theme", t->name() );
-
-            for ( Fl_Window *w = Fl::first_window(); w; w = Fl::next_window( w ) )
-                w->redraw();
+            
+            refresh();
 
             return 1;
         }
 
     return 0;
+}
+
+void
+Fl_Theme::refresh ( void )
+{
+    for ( Fl_Window *w = Fl::first_window(); w; w = Fl::next_window( w ) )
+        w->redraw();
 }
 
 void
@@ -189,13 +193,15 @@ Fl_Color_Scheme::get ( void )
 void
 Fl_Color_Scheme::save ( void )
 {
-    if ( ! dont_save )
-    {
-        conf_set( "background", Fl::get_color( FL_BACKGROUND_COLOR ) );
-        conf_set( "foreground", Fl::get_color( FL_FOREGROUND_COLOR ) );
-        conf_set( "background2", Fl::get_color( FL_BACKGROUND2_COLOR ) );
-    }
+    conf_set( "color_scheme", Fl_Color_Scheme::_current->name() );
+    conf_set( "background", Fl::get_color( FL_BACKGROUND_COLOR ) );
+    conf_set( "foreground", Fl::get_color( FL_FOREGROUND_COLOR ) );
+    conf_set( "background2", Fl::get_color( FL_BACKGROUND2_COLOR ) );
+}
 
+void 
+Fl_Color_Scheme::refresh ( void )
+{
     for ( Fl_Window *w = Fl::first_window(); w; w = Fl::next_window( w ) )
         w->redraw();
 }
@@ -217,9 +223,9 @@ Fl_Color_Scheme::set ( const char *name )
             /* Fl::get_color( t->_sel, r, g, b );             */
             /* Fl::selection( r, g, b ); */
 
-            conf_set( "color_scheme", t->name() );
+            Fl_Color_Scheme::_current = t;
 
-            save();
+            refresh();
 
             return 1;
         }

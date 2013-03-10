@@ -48,7 +48,7 @@ void Fl_Theme_Chooser::cb_color_scheme_choice(Fl_Choice* o, void* v) {
 }
 
 void Fl_Theme_Chooser::cb_OK_i(Fl_Return_Button*, void*) {
-  hide();
+  Fl_Theme::save(); Fl_Color_Scheme::save(); hide();
 }
 void Fl_Theme_Chooser::cb_OK(Fl_Return_Button* o, void* v) {
   ((Fl_Theme_Chooser*)(o->parent()))->cb_OK_i(o,v);
@@ -62,8 +62,6 @@ Fl::get_color( o->color(), r,g,b );
 Fl::background( r,g,b );
 
 o->window()->redraw();
-
-Fl_Color_Scheme::save();
 }
 void Fl_Theme_Chooser::cb_background_color_button(Fl_Color_Button* o, void* v) {
   ((Fl_Theme_Chooser*)(o->parent()))->cb_background_color_button_i(o,v);
@@ -77,8 +75,6 @@ Fl::get_color( o->color(), r,g,b );
 Fl::background2( r,g,b );
 
 o->window()->redraw();
-
-Fl_Color_Scheme::save();
 }
 void Fl_Theme_Chooser::cb_background2_color_button(Fl_Color_Button* o, void* v) {
   ((Fl_Theme_Chooser*)(o->parent()))->cb_background2_color_button_i(o,v);
@@ -92,8 +88,6 @@ Fl::get_color( o->color(), r,g,b );
 Fl::foreground( r,g,b );
 
 o->window()->redraw();
-
-Fl_Color_Scheme::save();
 }
 void Fl_Theme_Chooser::cb_foreground_color_button(Fl_Color_Button* o, void* v) {
   ((Fl_Theme_Chooser*)(o->parent()))->cb_foreground_color_button_i(o,v);
