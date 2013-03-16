@@ -276,6 +276,8 @@ const char* fl_close= "Close";   ///< string pointer used in common dialogs, you
    \note \#include <FL/fl_ask.H>
  */
 void fl_beep(int type) {
+#if 0
+    /* disable beeping until it can be made optional. */
 #ifdef WIN32
   switch (type) {
     case FL_BEEP_QUESTION :
@@ -319,6 +321,7 @@ void fl_beep(int type) {
       break;
   }
 #endif // WIN32
+#endif
 }
 
 /** Shows an information message dialog box.
