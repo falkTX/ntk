@@ -86,6 +86,9 @@ def configure(conf):
     conf.check_cfg(package='x11', uselib_store='X11', args="--cflags --libs",
                    mandatory=True)
 
+    conf.check_cfg(package='fontconfig', uselib_store='FONTCONFIG', args="--cflags --libs",
+                   mandatory=True)
+
     conf.check_cfg(package='xft', uselib_store='XFT', args="--cflags --libs",
                    mandatory=True)
 
@@ -377,7 +380,7 @@ src/numericsort.c
 src/flstring.c
 ''',
                    target       = 'ntk',
-                   uselib = [ 'X11', 'XFT', 'CAIRO', 'DL', 'M', 'PTHREAD' ] )
+                   uselib = [ 'X11', 'FONTCONFIG', 'XFT', 'CAIRO', 'DL', 'M', 'PTHREAD' ] )
     
     bld.makelib(    source = '''
 src/fl_images_core.cxx
