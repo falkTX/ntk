@@ -24,6 +24,7 @@ def example(bld,*k,**kw):
 def build(bld):
 
     if bld.env.ENABLE_TEST:
+        bld.example(source='embed.cxx', target='embed')
         bld.example(source='glpuzzle.cxx', target='glpuzzle', use=['ntk_gl_static'])
         bld.example(source='fractals.cxx fracviewer.cxx', target='fractals', use=['ntk_gl_static'])
         bld.example(source='gl_overlay.cxx', target='gl_overlay', use=['ntk_gl_static'])

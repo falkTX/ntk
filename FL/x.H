@@ -185,6 +185,7 @@ public:
 
 extern FL_EXPORT char fl_override_redirect; // hack into Fl_X::make_xid()
 extern FL_EXPORT int fl_background_pixel;  // hack into Fl_X::make_xid()
+extern FL_EXPORT Window fl_parent_window;  // hack into Fl_X::make_xid()
 
 inline Window fl_xid(const Fl_Window* w) { Fl_X *temp = Fl_X::i(w); return temp ? temp->xid : 0; }
 
@@ -196,7 +197,7 @@ extern Window fl_xid_(const Fl_Window* w);
 #endif // FL_LIBRARY || FL_INTERNALS
 
 FL_EXPORT Fl_Window* fl_find(Window xid);
-
+FL_EXPORT void fl_embed ( Fl_Window *w, Window parent );
 
 // Dummy function to register a function for opening files via the window manager...
 inline void fl_open_callback(void (*)(const char *)) {}

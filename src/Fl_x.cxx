@@ -52,6 +52,7 @@
 #  include <X11/Xlocale.h>
 #  include <X11/Xlib.h>
 #  include <X11/keysym.h>
+#include <FL/Fl_Socket_Window.H>
 
 #include <FL/themes.H>
 
@@ -110,6 +111,31 @@ struct FD {
 };
 
 static FD *fd = 0;
+
+/* XEMBED messages */
+#define XEMBED_EMBEDDED_NOTIFY		0
+#define XEMBED_WINDOW_ACTIVATE  	1
+#define XEMBED_WINDOW_DEACTIVATE  	2
+#define XEMBED_REQUEST_FOCUS	 	3
+#define XEMBED_FOCUS_IN 	 	4
+#define XEMBED_FOCUS_OUT  		5
+#define XEMBED_FOCUS_NEXT 		6
+#define XEMBED_FOCUS_PREV 		7
+/* 8-9 were used for XEMBED_GRAB_KEY/XEMBED_UNGRAB_KEY */
+#define XEMBED_MODALITY_ON 		10
+#define XEMBED_MODALITY_OFF 		11
+#define XEMBED_REGISTER_ACCELERATOR     12
+#define XEMBED_UNREGISTER_ACCELERATOR   13
+#define XEMBED_ACTIVATE_ACCELERATOR     14
+
+/* Details for  XEMBED_FOCUS_IN: */
+#define XEMBED_FOCUS_CURRENT		0
+#define XEMBED_FOCUS_FIRST 		1
+#define XEMBED_FOCUS_LAST		2
+
+#define XEMBED_MAPPED (1<<0)
+
+Window fl_parent_window = 0;                                    /* hack into Fl_X::make_xid() */
 
 void Fl::add_fd(int n, int events, void (*cb)(int, void*), void *v) {
   remove_fd(n,events);
@@ -343,6 +369,8 @@ Atom fl_XaUtf8String;
 Atom fl_XaTextUriList;
 Atom fl_NET_WM_NAME;			// utf8 aware window label
 Atom fl_NET_WM_ICON_NAME;		// utf8 aware window icon name
+Atom fl_XEMBED;
+Atom fl_XEMBED_INFO;
 
 /*
   X defines 32-bit-entities to have a format value of max. 32,
@@ -640,6 +668,8 @@ void fl_open_display(Display* d) {
   fl_XaTextUriList      = XInternAtom(d, "text/uri-list",       0);
   fl_NET_WM_NAME        = XInternAtom(d, "_NET_WM_NAME",        0);
   fl_NET_WM_ICON_NAME   = XInternAtom(d, "_NET_WM_ICON_NAME",   0);
+  fl_XEMBED             = XInternAtom(d, "_XEMBED",             0);
+  fl_XEMBED_INFO        = XInternAtom(d, "_XEMBED_INFO",        0);
 
   if (sizeof(Atom) < 4)
     atom_bits = sizeof(Atom) * 8;
@@ -879,6 +909,242 @@ static int wasXExceptionRaised() {
 
 }
 
+void fl_embed ( Fl_Window *w, Window parent )
+{
+    /* this destroys the existing window */
+    w->hide();
+    /* embedded windows don't need borders */
+    w->border(0);
+
+    fl_parent_window = parent;
+    Fl_X::make_xid( w, fl_visual, fl_colormap );
+    fl_parent_window = 0;
+    
+    /* mark this window as wanting to be embedded */
+    unsigned long buffer[2];
+
+    buffer[0] = 1;                                              /* protocol version */
+    buffer[1] = 0;
+/* XEMBED_MAPPED; */
+    
+    XChangeProperty (fl_display,
+                     fl_xid( w ),
+                     fl_XEMBED_INFO, fl_XEMBED_INFO, 32,
+                     PropModeReplace,
+                     (unsigned char *)buffer, 2);
+
+    XSync(fl_display, False );
+}
+
+
+static void
+xembed_send_configure_event ( Fl_Socket_Window *w )
+{
+    /* printf( "NTK: Sending synthetic configure event to embedded window\n" ); */
+
+    XConfigureEvent xc;
+    
+    memset( &xc, 0, sizeof( xc ) );
+
+    xc.type = ConfigureNotify;
+    xc.event = w->plug_xid();
+    xc.window = w->plug_xid();
+
+    /* xc.x = w->x(); */
+    /* xc.y = w->y(); */
+    xc.x = 0;
+    xc.y = 0;
+    xc.width = w->w();
+    xc.height = w->h();
+    
+    xc.border_width = 0;
+    xc.above = None;
+    xc.override_redirect = False;
+
+    XSendEvent( fl_display, w->plug_xid(), False, NoEventMask, (XEvent*)&xc );
+}
+
+static int
+xembed_get_info ( Window window, unsigned long *version, unsigned long *flags )
+{
+    int r;
+
+    Atom type;
+    int format;
+    unsigned long nitems, bytes_after;
+    unsigned char *data;
+    unsigned long *data_long;
+    
+    r = XGetWindowProperty( fl_display, window, fl_XEMBED_INFO, 0, 2, False, fl_XEMBED_INFO, &type, &format, &nitems, &bytes_after, &data );
+ 
+    if ( r != Success || type != fl_XEMBED_INFO )
+        return 0;
+    
+    if ( nitems < 2 )
+    {
+        XFree(data);
+        return 0;
+    }
+
+    data_long = (unsigned long*)data;
+
+    if ( version )
+        *version = data_long[0];
+    if ( flags )
+        *flags = data_long[1] & XEMBED_MAPPED;
+
+    XFree(data);
+
+    return 1;
+}
+
+static int
+xembed_maybe_embed_window ( Window parent, Window window )
+{
+    if ( parent != window )
+    {
+        Fl_Socket_Window *p = (Fl_Socket_Window*)fl_find( parent );
+    
+        if ( p )
+        {
+            if ( Fl_Socket_Window::is_socket( p ) )
+            {
+                if ( p->plug_xid() )
+                {
+                    // error, already embedded.
+                }
+                else
+                {
+                    /* printf( "NTK: Got embed request... Replying with XEMBED_EMBEDDED_NOTIFY\n" ); */
+
+                    fl_sendClientMessage(window, fl_XEMBED, CurrentTime, XEMBED_EMBEDDED_NOTIFY, 0, window, 0 );
+                    fl_sendClientMessage(window, fl_XEMBED, CurrentTime, XEMBED_WINDOW_ACTIVATE );
+                    p->plug_xid( window );
+
+
+                    XMapWindow( fl_display, window );
+
+                    xembed_send_configure_event( p );
+                    return 1;
+                }
+            }
+        }   
+    }
+
+    return 0;
+}
+
+static int fl_handle_xembed ( const XEvent &xevent )
+{
+    switch (xevent.type) {
+        case DestroyNotify:
+        {
+            /* printf( "Got destroy notify\n" ); */
+
+            Fl_Socket_Window *p = (Fl_Socket_Window*)fl_find( xevent.xdestroywindow.event );
+
+            if ( p && Fl_Socket_Window::is_socket( p ) )
+            {
+                /* printf( "Ending embedding\n" ); */
+                p->plug_xid( 0 );
+                return 1;
+            }
+
+            return 0;
+            break;
+        }
+        case MapRequest:
+        {
+            /* printf( "Got map request\n" ); */
+          
+            return xembed_maybe_embed_window( xevent.xmaprequest.parent, xevent.xmaprequest.window );
+            break;
+        }
+        case CreateNotify:
+        {
+            /* printf( "Got create notify\n" ); */
+            const XCreateWindowEvent *cw = &fl_xevent->xcreatewindow;
+
+            return xembed_maybe_embed_window( cw->parent, cw->window );
+            break;
+        }
+        case ReparentNotify:
+            /* printf( "Got reparent notify\n" ); */
+            return xembed_maybe_embed_window( xevent.xreparent.parent, xevent.xreparent.window );
+            break;
+        case ConfigureRequest:
+        {
+            /* printf( "Got configure request\n" ); */
+            XConfigureRequestEvent *xe = (XConfigureRequestEvent*)&fl_xevent->xconfigurerequest;
+          
+            xembed_maybe_embed_window( xe->parent, xe->window );
+
+            printf( "Got configure request for %ix%i... Not gonna happen.\n", xe->width, xe->height );
+
+            Fl_Socket_Window *p = (Fl_Socket_Window*)fl_find( xe->parent );
+            if ( p && Fl_Socket_Window::is_socket( p ) )
+            {
+                xembed_send_configure_event( p );
+                return 1;
+            }
+            return 0;
+            break;
+        }
+        case PropertyNotify:
+        {
+            /* printf( "Got property notify.\n" ); */
+            if ( xevent.xproperty.atom == fl_XEMBED_INFO )
+            {
+                unsigned long version, flags;
+
+                xembed_get_info( xevent.xproperty.window, &version, &flags );
+
+                if ( (flags & XEMBED_MAPPED) )
+                {
+                    XMapWindow( fl_display, xevent.xproperty.window );
+                }
+
+                return 1;
+            }
+            return 0;
+            break;
+        }
+        case ClientMessage: {
+            Fl_Window* window = fl_find(fl_xevent->xclient.window);
+            Atom message = fl_xevent->xclient.message_type;
+            const long* data = fl_xevent->xclient.data.l;
+       
+            if ( message == fl_XEMBED  )
+            {
+                switch ( data[1] )
+                {
+                    case XEMBED_EMBEDDED_NOTIFY:
+                        /* printf( "NTK: Got XEMBED_EMBEDDED_NOTIFY\n" ); */
+                        window->resize( 0, 0, window->w(), window->h() );
+                        break;
+                    case XEMBED_WINDOW_ACTIVATE:
+                        /* printf( "NTK: Got XEMBED_WINDOW_ACTIVATE\n" ); */
+                        /* window->resize( 0, 0, window->w(), window->h() ); */
+                        break;
+                    case XEMBED_WINDOW_DEACTIVATE:
+                        /* printf( "NTK: Got XEMBED_WINDOW_DEACTIVATE\n" ); */
+                        break;
+                    default:
+                        /* unsupported message */
+                        break;
+                }
+                return 1;
+            }
+           
+            return 0;
+            break;
+        }
+        default: 
+            return 0;
+    }
+    
+    return 0;
+}
 
 int fl_handle(const XEvent& thisevent)
 {
@@ -945,7 +1211,10 @@ int fl_handle(const XEvent& thisevent)
 
   if ( XFilterEvent((XEvent *)&xevent, 0) )
       return(1);
-
+  
+  if ( fl_handle_xembed( xevent ) )
+      return 1;
+  
   switch (xevent.type) {
 
   case KeymapNotify:
@@ -1667,7 +1936,12 @@ ExposureMask|StructureNotifyMask
 |KeyPressMask|KeyReleaseMask|KeymapStateMask|FocusChangeMask
 |ButtonPressMask|ButtonReleaseMask
 |EnterWindowMask|LeaveWindowMask
-|PointerMotionMask;
+    |PointerMotionMask;
+
+static const int XEmbedEventMask = XEventMask |
+                                SubstructureRedirectMask |
+                                SubstructureNotifyMask |
+                                PropertyChangeMask;
 
 void Fl_X::make_xid(Fl_Window* win, XVisualInfo *visual, Colormap colormap)
 {
@@ -1723,9 +1997,16 @@ void Fl_X::make_xid(Fl_Window* win, XVisualInfo *visual, Colormap colormap)
   ulong root = win->parent() ?
     fl_xid(win->window()) : RootWindow(fl_display, fl_screen);
 
+  if ( fl_parent_window )
+      root = fl_parent_window;
+
   XSetWindowAttributes attr;
   int mask = CWBorderPixel|CWColormap|CWEventMask|CWBitGravity;
   attr.event_mask = win->parent() ? childEventMask : XEventMask;
+
+  if ( Fl_Socket_Window::is_socket( win ) )
+      attr.event_mask = XEmbedEventMask;
+
   attr.colormap = colormap;
   attr.border_pixel = 0;
   attr.bit_gravity = 0; // StaticGravity;
