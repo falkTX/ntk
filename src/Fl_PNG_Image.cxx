@@ -155,10 +155,27 @@ void Fl_PNG_Image::load_png_(const char *name_png, const unsigned char *buffer_p
 
   // Get the image dimensions and convert to grayscale or RGB...
   png_read_info(pp, info);
+  
+  int color_type;
 
-  if (png_get_color_type(pp, info) == PNG_COLOR_TYPE_PALETTE)
-    png_set_expand(pp);
+  color_type = png_get_color_type(pp, info);
+  if ( color_type == PNG_COLOR_TYPE_PALETTE)
+  {
+      png_set_palette_to_rgb(pp);
+      png_set_expand(pp);
+  }
+  
+  if (color_type == PNG_COLOR_TYPE_GRAY )
+  {
+      png_set_expand_gray_1_2_4_to_8 (pp);
+  }
 
+  if (color_type == PNG_COLOR_TYPE_GRAY ||
+      color_type == PNG_COLOR_TYPE_GRAY_ALPHA)
+  {
+      png_set_gray_to_rgb (pp);
+  }
+  
   if (png_get_color_type(pp, info) & PNG_COLOR_MASK_COLOR)
     channels = 3;
   else
@@ -169,9 +186,6 @@ void Fl_PNG_Image::load_png_(const char *name_png, const unsigned char *buffer_p
   if ((png_get_color_type(pp, info) & PNG_COLOR_MASK_ALPHA) || (num_trans != 0))
     channels ++;
 
-  w((int)(png_get_image_width(pp, info)));
-  h((int)(png_get_image_height(pp, info)));
-  d(channels);
 
   if (png_get_bit_depth(pp, info) < 8)
   {
@@ -181,14 +195,23 @@ void Fl_PNG_Image::load_png_(const char *name_png, const unsigned char *buffer_p
   else if (png_get_bit_depth(pp, info) == 16)
     png_set_strip_16(pp);
 
-#  if defined(HAVE_PNG_GET_VALID) && defined(HAVE_PNG_SET_TRNS_TO_ALPHA)
+/* #  if defined(HAVE_PNG_GET_VALID) && defined(HAVE_PNG_SET_TRNS_TO_ALPHA) */
   // Handle transparency...
   if (png_get_valid(pp, info, PNG_INFO_tRNS))
     png_set_tRNS_to_alpha(pp);
-#  endif // HAVE_PNG_GET_VALID && HAVE_PNG_SET_TRNS_TO_ALPHA
+/* #  endif // HAVE_PNG_GET_VALID && HAVE_PNG_SET_TRNS_TO_ALPHA */
 
-//  png_set_swap_alpha(pp);
+ /* png_set_swap_alpha(pp); */
   png_set_bgr(pp);
+
+  png_set_filler (pp, 0xff, PNG_FILLER_AFTER);
+
+  png_read_update_info( pp, info );
+
+  w((int)(png_get_image_width(pp, info)));
+  h((int)(png_get_image_height(pp, info)));
+  d(4);
+  channels = 4;
 
   array = new uchar[w() * h() * d()];
   alloc_array = 1;
@@ -203,15 +226,12 @@ void Fl_PNG_Image::load_png_(const char *name_png, const unsigned char *buffer_p
   for (i = png_set_interlace_handling(pp); i > 0; i --)
     png_read_rows(pp, rows, NULL, h());
 
-#ifdef WIN32
-  // Some Windows graphics drivers don't honor transparency when RGB == white
   if (channels == 4) {
     // Convert RGB to 0 when alpha == 0...
     uchar *ptr = (uchar *)array;
     for (i = w() * h(); i > 0; i --, ptr += 4)
       if (!ptr[3]) ptr[0] = ptr[1] = ptr[2] = 0;
   }
-#endif // WIN32
 
   // Free memory and return...
   delete[] rows;
