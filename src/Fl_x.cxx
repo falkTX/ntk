@@ -2053,7 +2053,7 @@ void Fl_X::make_xid(Fl_Window* win, XVisualInfo *visual, Colormap colormap)
       char *p; const char *q;
       // replace punctuation with underscores, because it breaks XResource lookup
       for (p = buffer, q = win->xclass(); *q || (*q&128); q++)
-          *p++ = isalnum(*q) ? *q : '_';
+          *p++ = isalnum(*q) || *q == '-' || *q == ' ' ? *q : '_';
       *p++ = 0;
       // create the capitalized version:
       q = buffer;
