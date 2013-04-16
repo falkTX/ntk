@@ -389,7 +389,7 @@ void Fl_Text_Display::resize(int X, int Y, int W, int H) {
        you first see a line that is too wide in the window, but then
        don't turn it off (ie mix both of your solutions). */
       if (scrollbar_align() & (FL_ALIGN_TOP|FL_ALIGN_BOTTOM) &&
-          (mVScrollBar->visible() || longest_vline() > text_area.w))
+          (longest_vline() > text_area.w))
       {
         if (!mHScrollBar->visible()) {
           mHScrollBar->set_visible();
