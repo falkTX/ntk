@@ -93,7 +93,10 @@ int Fl::dnd() {
   fl_local_grab = grabfunc;
   Window target_window = 0;
   Fl_Window* local_window = 0;
-  int dndversion = 4; int dest_x, dest_y;
+  int dndversion = 4; int dest_x, dest_y, old_dest_x, old_dest_y;
+
+  old_dest_y = old_dest_x = -1;
+
   XSetSelectionOwner(fl_display, fl_XdndSelection, fl_message_window, fl_event_time);
 
   while (Fl::pushed()) {
@@ -154,12 +157,19 @@ int Fl::dnd() {
 	}
       }
     }
-    if (local_window) {
-      local_handle(FL_DND_DRAG, local_window);
-    } else if (dndversion) {
-      fl_sendClientMessage(target_window, fl_XdndPosition, source_window,
-			   0, (e_x_root<<16)|e_y_root, fl_event_time,
-			   fl_XdndActionCopy);
+    
+    if ( old_dest_x != dest_x || old_dest_y != dest_y )
+    { 
+        if (local_window) {
+            local_handle(FL_DND_DRAG, local_window);
+        } else if (dndversion) {
+            fl_sendClientMessage(target_window, fl_XdndPosition, source_window,
+                                 0, (e_x_root<<16)|e_y_root, fl_event_time,
+                                 fl_XdndActionCopy);
+        }
+
+        old_dest_x = dest_x;
+        old_dest_y = dest_y;
     }
     Fl::wait();
   }
