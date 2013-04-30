@@ -153,9 +153,6 @@ protected:
    */
   virtual void *item_at(int index) const { (void)index; return 0L; }
   // you don't have to provide these but it may help speed it up:
-  virtual int full_width() const ;	// current width of all items
-  virtual int full_height() const ;	// current height of all items
-  virtual int incr_height() const ;	// average height of an item
   // These only need to be done by subclass if you want a multi-browser:
   virtual void item_select(void *item,int val=1);
   virtual int item_selected(void *item) const ;
@@ -193,6 +190,10 @@ protected:
   Fl_Browser_(int X,int Y,int W,int H,const char *L=0);
 
 public:
+
+  virtual int full_width() const ;	// current width of all items
+  virtual int full_height() const ;	// current height of all items
+  virtual int incr_height() const ;	// average height of an item
 
   /**
     Vertical scrollbar. Public, so that it can be accessed directly.
