@@ -18,7 +18,7 @@
 // You should have received a copy of the GNU Library General Public
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
-// USA.
+// USA.x
 //
 // Please report all bugs and problems on the following page:
 //
@@ -52,9 +52,8 @@ void Fl_Overlay_Window::flush() {
     return;
   }
 #endif
-  int erase_overlay = (damage()&FL_DAMAGE_OVERLAY);
   clear_damage(damage()&~FL_DAMAGE_OVERLAY);
-  Fl_Double_Window::flush(erase_overlay);
+  Fl_Double_Window::flush(1);
   Fl_X* myi = Fl_X::i(this);
   draw_overlay();
 }
