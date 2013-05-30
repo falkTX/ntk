@@ -99,6 +99,8 @@ int Fl::dnd() {
 
   XSetSelectionOwner(fl_display, fl_XdndSelection, fl_message_window, fl_event_time);
 
+  Fl_Widget *pushed = Fl::pushed();
+
   while (Fl::pushed()) {
 
     // figure out what window we are pointing at:
@@ -178,8 +180,10 @@ int Fl::dnd() {
     fl_i_own_selection[0] = 1;
     if (local_handle(FL_DND_RELEASE, local_window)) paste(*belowmouse(), 0);
   } else if (dndversion) {
-    fl_sendClientMessage(target_window, fl_XdndDrop, source_window,
+
+      fl_sendClientMessage(target_window, fl_XdndDrop, source_window,
 			 0, fl_event_time);
+      
   } else if (target_window) {
     // fake a drop by clicking the middle mouse button:
     XButtonEvent msg;
@@ -199,6 +203,13 @@ int Fl::dnd() {
     msg.state = 0x200;
     msg.type = ButtonRelease;
     XSendEvent(fl_display, target_window, False, 0L, (XEvent*)&msg);
+  }
+
+  if ( !local_window )
+  {
+      /* let the source widget know that DND is over */
+      pushed->handle( FL_DND_RELEASE );
+      pushed->handle( FL_RELEASE );
   }
 
   fl_local_grab = 0;
