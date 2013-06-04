@@ -107,6 +107,9 @@ private:
   static Fl_Widget* widget_; //!< Keeps track of the current target widget
 };
 
+extern void (*fl_show_tooltip)( const char *s );
+extern void (*fl_hide_tooltip)( void );
+
 #endif
 
 //

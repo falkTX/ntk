@@ -77,6 +77,32 @@ Fl_Window *Fl_Tooltip::current_window(void)
 }
 #endif
 
+
+static void show_tooltip_func ( const char *s )
+{
+      if (!window) window = new Fl_TooltipBox;
+      // this cast bypasses the normal Fl_Window label() code:
+      ((Fl_Widget*)window)->label(s);
+      window->layout();
+      window->redraw();
+  //    printf("tooltip_timeout: Showing window %p with tooltip \"%s\"...\n",
+  //           window, tip ? tip : "(null)");
+      window->show();
+}
+
+static void hide_tooltip_func ( void )
+{
+    if (window) window->hide();
+}
+
+static void ensure_callbacks ( void )
+{
+    if ( ! fl_hide_tooltip )
+        fl_hide_tooltip = hide_tooltip_func;
+    if ( ! fl_show_tooltip )
+        fl_show_tooltip = show_tooltip_func;
+}
+
 void Fl_TooltipBox::layout() {
   fl_font(Fl_Tooltip::font(), Fl_Tooltip::size());
   int ww, hh;
@@ -124,7 +150,13 @@ static void recent_timeout(void*) {
 
 static char recursion;
 
+void (*fl_show_tooltip)( const char *s ) = 0;
+void (*fl_hide_tooltip)( void ) = 0;
+
 static void tooltip_timeout(void*) {
+    
+    ensure_callbacks();
+
 #ifdef DEBUG
   puts("tooltip_timeout();");
 #endif // DEBUG
@@ -132,22 +164,14 @@ static void tooltip_timeout(void*) {
   if (recursion) return;
   recursion = 1;
   if (!tip || !*tip) {
-    if (window) window->hide();
+      fl_hide_tooltip();
   } else {
     int condition = 1;
 #if !(defined(__APPLE__) || defined(WIN32))
     condition = (Fl::grab() == NULL);
 #endif
-    if ( condition ) {
-      if (!window) window = new Fl_TooltipBox;
-      // this cast bypasses the normal Fl_Window label() code:
-      ((Fl_Widget*)window)->label(tip);
-      window->layout();
-      window->redraw();
-  //    printf("tooltip_timeout: Showing window %p with tooltip \"%s\"...\n",
-  //           window, tip ? tip : "(null)");
-      window->show();
-    }
+    if ( condition ) 
+        fl_show_tooltip( tip );
   }
 
   Fl::remove_timeout(recent_timeout);
@@ -212,11 +236,13 @@ void Fl_Tooltip::exit_(Fl_Widget *w) {
   printf("    widget=%p, window=%p\n", widget_, window);
 #endif // DEBUG
 
+  ensure_callbacks();
+
   if (!widget_ || (w && w == window)) return;
   widget_ = 0;
   Fl::remove_timeout(tooltip_timeout);
   Fl::remove_timeout(recent_timeout);
-  if (window && window->visible()) window->hide();
+  fl_hide_tooltip();
   if (recent_tooltip) {
     if (Fl::event_state() & FL_BUTTONS) recent_tooltip = 0;
     else Fl::add_timeout(Fl_Tooltip::hoverdelay(), recent_timeout);
@@ -242,6 +268,8 @@ void Fl_Tooltip::enter_area(Fl_Widget* wid, int x,int y,int w,int h, const char*
 {
   (void)x;
   (void)w;
+  
+  ensure_callbacks();
 
 #ifdef DEBUG
   printf("Fl_Tooltip::enter_area(wid=%p, x=%d, y=%d, w=%d, h=%d, t=\"%s\")\n",
@@ -262,17 +290,17 @@ void Fl_Tooltip::enter_area(Fl_Widget* wid, int x,int y,int w,int h, const char*
   widget_ = wid; Y = y; H = h; tip = t;
   // popup the tooltip immediately if it was recently up:
   if (recent_tooltip) {
-    if (window) window->hide();
+      fl_hide_tooltip();
     Fl::add_timeout(Fl_Tooltip::hoverdelay(), tooltip_timeout);
   } else if (Fl_Tooltip::delay() < .1) {
 #ifdef WIN32
     // possible fix for the Windows titlebar, it seems to want the
     // window to be destroyed, moving it messes up the parenting:
-    if (window && window->visible()) window->hide();
+      fl_hide_tooltip();
 #endif // WIN32
     tooltip_timeout(0);
   } else {
-    if (window && window->visible()) window->hide();
+      fl_hide_tooltip();
     Fl::add_timeout(Fl_Tooltip::delay(), tooltip_timeout);
   }
 
