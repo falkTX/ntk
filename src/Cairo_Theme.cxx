@@ -28,7 +28,7 @@
 #include "FL/Fl_Theme.H"
 #include <math.h>
 
-float fl_box_saturation = 0.6f;
+float fl_box_saturation = 0.2f;
 bool fl_boxes_use_gradients = true;
 bool fl_debug_boxes = false;
 
@@ -67,7 +67,7 @@ static void rect_path ( int x, int y, int w, int h, double radius )
     cairo_close_path (cr);
 }
 
-static void draw_rect(int x, int y, int w, int h, Fl_Color bc, double radius = 2 )
+static void draw_rect(int x, int y, int w, int h, Fl_Color bc, double radius = 1.5 )
 {
     cairo_t *cr = Fl::cairo_cc();
 
@@ -80,7 +80,7 @@ static void draw_rect(int x, int y, int w, int h, Fl_Color bc, double radius = 2
     cairo_set_line_width (cr, 1);
 }
 
-static void draw_rectf(int x, int y, int w, int h, Fl_Color bc, double radius = 2 )
+static void draw_rectf(int x, int y, int w, int h, Fl_Color bc, double radius = 1.5 )
 {
     /* // Draw the outline around the perimeter of the box */
     /* fl_color(fl_color_average(FL_BLACK, FL_BACKGROUND_COLOR, .1)); */
@@ -178,50 +178,9 @@ static void thin_down_box(int x, int y, int w, int h, Fl_Color c)
     down_box(x, y, w, h, fl_lighter(c));
 }
 
-static void round_box(int x, int y, int w, int h, Fl_Color c)
-{
-    cairo_t *cr = Fl::cairo_cc();
-
-    if ( w > 20 && h > 20 )
-        draw_rectf( x, y, w, h, c, 20.0 );
-    if ( w > 10 && h > 10 )
-        draw_rectf( x, y, w, h, c, 10.0 );
-    else
-    {
-        cairo_save( cr );
-        cairo_translate( cr, x + w / 2, y + w / 2 );
-        cairo_scale( cr, w, h );
-        cairo_arc( cr, 0, 0, 0.5, 0, M_PI * 2 );
-       
-        cairo_restore( cr );
-
-        cairo_color( c );
-        cairo_fill_preserve( cr );
-        cairo_set_source_rgb( cr, 0, 0, 0 );
-        cairo_set_line_width( cr, 1 );
-        cairo_stroke( cr );
-    }
-}
-
-static void round_shadow_box(int x, int y, int w, int h, Fl_Color c)
-{
-    cairo_t *cr = Fl::cairo_cc();
-
-    rect_path( x + 5, y + 5, w, h, 10.0 );
-
-    cairo_set_source_rgba( cr, 0, 0, 0, 0.5 );
-   
-    cairo_fill( cr );
-   
-    draw_rectf( x, y, w, h, c, 10.0 );
-}
-
-
 static void
 init_theme ( void )
 {
-    Fl::set_boxtype(  _FL_RSHADOW_BOX,         round_shadow_box,           5,5,10,10 );
-    Fl::set_boxtype(  _FL_ROUNDED_BOX,         round_box,           4,4, 8,8 );
     Fl::set_boxtype(  FL_UP_BOX,         up_box,           DX,DX,DX*2,DX*2 );
     Fl::set_boxtype(  FL_DOWN_BOX,       down_box,         DX,DX,DX*2,DX*2 );
     Fl::set_boxtype(  FL_THIN_UP_BOX,         up_box,      DX,DX,DX*2,DX*2  );

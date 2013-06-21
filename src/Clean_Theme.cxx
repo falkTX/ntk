@@ -27,7 +27,7 @@
 
 static void clean_color(Fl_Color c)
 {
-    c = fl_color_average( FL_GRAY, c, 0.4 );
+    c = fl_color_average( FL_GRAY, c, 0.2 );
 
     if (Fl::draw_box_active())
         fl_color(c);
@@ -37,13 +37,12 @@ static void clean_color(Fl_Color c)
 
 static void rect(int x, int y, int w, int h, Fl_Color bc)
 {
-//    clean_color( bc );
     fl_rect( x, y, w, h, bc );
 }
 
 static void rectf ( int x, int y,int w, int h, Fl_Color bc )
 {
-    clean_color(fl_color_average( FL_WHITE, bc, 0.05 ) );
+    clean_color( bc );
     fl_rectf( x, y, w, h );
 }
 
@@ -65,8 +64,8 @@ static void down_frame(int x, int y, int w, int h, Fl_Color c)
 
 static void down_box(int x, int y, int w, int h, Fl_Color c)
 {
-    rectf(x, y, w, h, fl_color_average( FL_WHITE, c, 0.2 ) );
-    rect(x, y, w, h, fl_color_average( FL_WHITE, c, 0.4 ) );
+    rectf(x, y, w, h, c );
+    rect(x, y, w, h, fl_color_average( FL_WHITE, c, 0.2 ) );
 }
 
 static void flat_box( int x, int y, int w, int h, Fl_Color c )
