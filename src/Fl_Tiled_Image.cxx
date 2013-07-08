@@ -115,9 +115,9 @@ Fl_Tiled_Image::draw(int X,	// I - Starting X position
 
   X += cx;
   Y += cy;
-
-  X = X - (X % image_->w());
-  Y = Y - (Y % image_->h());
+ 
+  /* X = X - (X % image_->w()); */
+  /* Y = Y - (Y % image_->h()); */
 
   W += X;
   H += Y;
