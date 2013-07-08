@@ -28,7 +28,7 @@
 #include "FL/Fl_Theme.H"
 #include <math.h>
 
-static const int DX = 1;
+static const int DX = 2;
 
 static void cairo_color(Fl_Color c)
 {
@@ -45,15 +45,26 @@ static void cairo_color(Fl_Color c)
     cairo_set_source_rgb( cr, r / 255.0, g / 255.0, b / 255.0 );
 }
 
-static void rect_path ( int x, int y, int w, int h, double radius )
+static Fl_Color border_color ( Fl_Color c )
 {
+    return fl_color_average( FL_FOREGROUND_COLOR, c, 0.20f );
+}
+
+static Fl_Color interior_color ( Fl_Color c )
+{
+    return fl_color_average( FL_BACKGROUND_COLOR, c, 0.50f );
+}
+
+static void rect_path ( float x, float y, float w, float h, double radius )
+{
+    x+= 0.5f;
+    y+= 0.5f;
+    w-=1;
+    h-=2;
+
     cairo_t *cr = Fl::cairo_cc();
 
     double degrees = M_PI / 180.0;
-    
-//    x += 2;  y += 2; w -= 4; h -= 4;
-
-    x += DX;  y += DX; w -= DX*2; h -= DX*2;
 
     cairo_new_sub_path (cr);
     cairo_arc (cr, x + w - radius, y + radius, radius, -90 * degrees, 0 * degrees);
@@ -63,81 +74,47 @@ static void rect_path ( int x, int y, int w, int h, double radius )
     cairo_close_path (cr);
 }
 
-static void draw_rect(int x, int y, int w, int h, Fl_Color bc, double radius = 2 )
+static void draw_rect(int x, int y, int w, int h, Fl_Color bc, double radius = 3 )
 {
     cairo_t *cr = Fl::cairo_cc();
 
     rect_path( x, y, w, h, radius );
-    
-       
     cairo_color( bc );
-
-    cairo_set_line_width (cr, DX + 0.5);
     cairo_stroke (cr);
-    cairo_set_line_width (cr, 1);
 }
 
-static void draw_rectf(int x, int y, int w, int h, Fl_Color bc, double radius = 2 )
+static void draw_rectf(int x, int y, int w, int h, Fl_Color bc, double radius = 3 )
 {
-    /* // Draw the outline around the perimeter of the box */
-    /* fl_color(fl_color_average(FL_BLACK, FL_BACKGROUND_COLOR, .1)); */
-
     cairo_t *cr = Fl::cairo_cc();
 
     rect_path( x, y, w, h, radius );
 
     cairo_color( bc );
     cairo_fill (cr);
-
-//    cairo_set_line_width (cr, 1);
 }
 
-static void border_box(int x, int y, int w, int h, Fl_Color bc)
+static void up_box(int x, int y, int w, int h, Fl_Color bc)
 {
-    draw_rectf( x, y, w, h, FL_BACKGROUND_COLOR );
-    
-    draw_rect( x, y, w, h, bc );
+    draw_rectf( x, y, w, h, interior_color( bc ) );
+    draw_rect( x, y, w, h, border_color( bc ) );
 }
 
-static void shade_rect_up(int x, int y, int w, int h, Fl_Color bc)
+static void up_frame(int x, int y, int w, int h, Fl_Color bc)
 {
-    draw_rectf( x, y, w, h, fl_darker( bc ) );
+    draw_rect( x,y,w,h, border_color(bc) );
 }
 
-static void frame_rect_up(int x, int y, int w, int h, Fl_Color bc)
-{
-    draw_rect( x,y,w,h, fl_darker( bc ));
-}
-
-static void frame_rect_down(int x, int y, int w, int h, Fl_Color bc)
+static void down_frame(int x, int y, int w, int h, Fl_Color bc)
 {
     draw_rect( x,y,w,h, bc );
 }
 
-static void shade_rect_down(int x, int y, int w, int h, Fl_Color bc)
+static void down_box(int x, int y, int w, int h, Fl_Color bc)
 {
-    draw_rectf( x, y, w, h, bc );
+    draw_rectf( x, y, w, h, interior_color( bc ) );
+    draw_rect( x, y, w, h, bc );
 }
 
-static void up_frame(int x, int y, int w, int h, Fl_Color c)
-{
-    frame_rect_up(x, y, w, h, fl_darker(c));
-}
-
-static void up_box(int x, int y, int w, int h, Fl_Color c)
-{
-    shade_rect_up(x, y, w, h, c);
-}
-
-static void down_frame(int x, int y, int w, int h, Fl_Color c)
-{
-    frame_rect_down(x, y, w, h, c);
-}
-
-static void down_box(int x, int y, int w, int h, Fl_Color c)
-{
-    shade_rect_down(x, y, w, h,  c);
-}
 
 static void
 init_theme ( void )
@@ -150,7 +127,7 @@ init_theme ( void )
     Fl::set_boxtype(  FL_DOWN_FRAME,     down_frame,         DX,DX,DX*2,DX*2  );
     Fl::set_boxtype(  FL_ROUND_UP_BOX,   up_box,             DX,DX,DX*2,DX*2  );
     Fl::set_boxtype(  FL_ROUND_DOWN_BOX, down_box,           DX,DX,DX*2,DX*2  );
-    Fl::set_boxtype(  FL_BORDER_BOX,     border_box,         DX,DX,DX*2,DX*2  );
+    Fl::set_boxtype(  FL_BORDER_BOX,     up_box,             DX,DX,DX*2,DX*2  );
 }
 
 void
