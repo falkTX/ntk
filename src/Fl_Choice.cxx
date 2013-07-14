@@ -35,8 +35,8 @@
 // button: it draws the text of the current pick and a down-arrow.
 
 void Fl_Choice::draw() {
-  int dx = Fl::box_dx(FL_DOWN_BOX);
-  int dy = Fl::box_dy(FL_DOWN_BOX);
+    int dx = Fl::box_dx(down_box());
+    int dy = Fl::box_dy(down_box());
   int H = h() - 2 * dy;
   int W = (H > 20) ? 20 : H;
   int X = x() + w() - W - dx;
@@ -45,38 +45,13 @@ void Fl_Choice::draw() {
   int x1 = X + (W - 2 * w1 - 1) / 2;
   int y1 = Y + (H - w1 - 1) / 2;
 
-  if (Fl::scheme()) {
-    draw_box(FL_UP_BOX, color());
+  /* if (Fl::scheme()) { */
+  draw_box(box(), color());
 
-    fl_color(active_r() ? labelcolor() : fl_inactive(labelcolor()));
-    if (!strcmp(Fl::scheme(), "plastic")) {
+  fl_color(active_r() ? labelcolor() : fl_inactive(labelcolor()));
       // Show larger up/down arrows...
-      fl_polygon(x1, y1 + 3, x1 + w1, y1 + w1 + 3, x1 + 2 * w1, y1 + 3);
-      fl_polygon(x1, y1 + 1, x1 + w1, y1 - w1 + 1, x1 + 2 * w1, y1 + 1);
-    } else {
-      // Show smaller up/down arrows with a divider...
-      x1 = x() + w() - 13 - dx;
-      y1 = y() + h() / 2;
-      fl_polygon(x1, y1 - 2, x1 + 3, y1 - 5, x1 + 6, y1 - 2);
-      fl_polygon(x1, y1 + 2, x1 + 3, y1 + 5, x1 + 6, y1 + 2);
-
-      fl_color(fl_darker(color()));
-      fl_yxline(x1 - 7, y1 - 8, y1 + 8);
-
-      fl_color(fl_lighter(color()));
-      fl_yxline(x1 - 6, y1 - 8, y1 + 8);
-    }
-  } else {
-    if (fl_contrast(textcolor(), FL_BACKGROUND2_COLOR) == textcolor()) {
-      draw_box(FL_DOWN_BOX, FL_BACKGROUND2_COLOR);
-    } else {
-      draw_box(FL_DOWN_BOX, fl_lighter(color()));
-    }
-    draw_box(FL_UP_BOX,X,Y,W,H,color());
-
-    fl_color(active_r() ? labelcolor() : fl_inactive(labelcolor()));
-    fl_polygon(x1, y1, x1 + w1, y1 + w1, x1 + 2 * w1, y1);
-  }
+  fl_polygon(x1, y1 + 3, x1 + w1, y1 + w1 + 3, x1 + 2 * w1, y1 + 3);
+  fl_polygon(x1, y1 + 1, x1 + w1, y1 - w1 + 1, x1 + 2 * w1, y1 + 1);
 
   W += 2 * dx;
 
@@ -131,8 +106,9 @@ Fl_Choice::Fl_Choice(int X, int Y, int W, int H, const char *L)
   align(FL_ALIGN_LEFT);
   when(FL_WHEN_RELEASE);
   textfont(FL_HELVETICA);
-  box(FL_FLAT_BOX);
+  box(FL_UP_BOX);
   down_box(FL_BORDER_BOX);
+  color(FL_BACKGROUND_COLOR);
 }
 
 /**
@@ -175,17 +151,7 @@ int Fl_Choice::handle(int e) {
   case FL_PUSH:
     if (Fl::visible_focus()) Fl::focus(this);
   J1:
-    if (Fl::scheme()
-	|| fl_contrast(textcolor(), FL_BACKGROUND2_COLOR) != textcolor()) {
-      v = menu()->pulldown(x(), y(), w(), h(), mvalue(), this);
-    } else {
-      // In order to preserve the old look-n-feel of "white" menus,
-      // temporarily override the color() of this widget...
-      Fl_Color c = color();
-      color(FL_BACKGROUND2_COLOR);
-      v = menu()->pulldown(x(), y(), w(), h(), mvalue(), this);
-      color(c);
-    }
+    v = menu()->pulldown(x(), y(), w(), h(), mvalue(), this);
     if (!v || v->submenu()) return 1;
     if (v != mvalue()) redraw();
     picked(v);

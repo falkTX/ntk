@@ -163,6 +163,7 @@ void Fl_Menu_Item::draw(int x, int y, int w, int h, const Fl_Menu_* m,
   l.font    = labelsize_ || labelfont_ ? labelfont_ : (m ? m->textfont() : FL_HELVETICA);
   l.size    = labelsize_ ? labelsize_ : m ? m->textsize() : FL_NORMAL_SIZE;
   l.color   = labelcolor_ ? labelcolor_ : m ? m->textcolor() : int(FL_FOREGROUND_COLOR);
+
   if (!active()) l.color = fl_inactive((Fl_Color)l.color);
   Fl_Color color = m ? m->color() : FL_GRAY;
   if (selected) {
@@ -443,8 +444,10 @@ void menuwindow::drawentry(const Fl_Menu_Item* m, int n, int eraseit) {
   int yy = BW+1+n*itemheight;
   int hh = itemheight - LEADING;
 
+
   if ( n != selected) {
     fl_push_clip(xx, yy-(LEADING)/2, ww, hh+(LEADING));
+    fl_rectf( 0,0,w(),h(), FL_BACKGROUND_COLOR );
     draw_box(box(), 0, 0, w(), h(), button ? button->color() : color());
     fl_pop_clip();
   }
@@ -488,6 +491,8 @@ void menutitle::draw() {
 
 void menuwindow::draw() {
   if (damage() != FL_DAMAGE_CHILD) {	// complete redraw
+    fl_rectf( 0,0,w(),h(), FL_BACKGROUND_COLOR );
+
     fl_draw_box(box(), 0, 0, w(), h(), button ? button->color() : color());
     if (menu) {
       const Fl_Menu_Item* m; int j;
