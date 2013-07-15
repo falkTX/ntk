@@ -1813,6 +1813,7 @@ int fl_handle(const XEvent& thisevent)
   // So anyway, do a round trip to find the correct x,y:
   case MapNotify:
     event = FL_SHOW;
+    break;
 
   case ConfigureNotify: {
     if (window->parent()) break; // ignore child windows
@@ -2114,7 +2115,7 @@ void Fl_X::make_xid(Fl_Window* win, XVisualInfo *visual, Colormap colormap)
     int old_event = Fl::e_number;
     win->handle(Fl::e_number = FL_SHOW); // get child windows to appear
     Fl::e_number = old_event;
-    win->redraw();
+    // win->redraw();
   }
 }
 

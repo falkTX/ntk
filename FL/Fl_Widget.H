@@ -49,7 +49,7 @@ typedef long fl_intptr_t;
 typedef unsigned long fl_uintptr_t;
 #endif
 
-typedef unsigned short fl_damage_t;
+typedef unsigned char fl_damage_t;
 
 class Fl_Widget;
 class Fl_Window;

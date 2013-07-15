@@ -332,6 +332,22 @@ void Fl_Double_Window::flush(int eraseoverlay) {
   
   fl_clip_region(myi->region);
 
+  if ( damage() & FL_DAMAGE_EXPOSE )
+  {
+      /* copy exposed area from backbuffer before drawing anything
+         else.  this is because when a window is hidden/shown, the focus
+         changes and any widgets that handle FL_FOCUS may have requested
+         a redraw... and yet we still have this pristine back buffer
+         ready to be copied to the screen and it would be a shame to
+         waste it and redraw everything just because one widget wants to
+         change its border color */
+
+      cairo_set_source_surface( myi->cc, cairo_get_target( myi->other_cc ), 0, 0 );
+      cairo_set_operator( myi->cc, CAIRO_OPERATOR_SOURCE );
+      cairo_paint( myi->cc );
+      cairo_set_operator( myi->cc, CAIRO_OPERATOR_OVER );
+  }
+
   if (damage() & ~FL_DAMAGE_EXPOSE) {
 
   Fl::cairo_make_current( myi->other_cc );
@@ -363,6 +379,10 @@ void Fl_Double_Window::flush(int eraseoverlay) {
 
     draw();
 
+  #ifdef DEBUG_EXPOSE
+    fl_rectf( 0,0, w(), h(), fl_color_add_alpha( FL_RED, 20 ));
+  #endif
+
     /* cairo_surface_flush( myi->other_cs ); */
 
     fl_window = myi->xid;
@@ -393,14 +413,6 @@ void Fl_Double_Window::flush(int eraseoverlay) {
   if (myi->other_xid) fl_copy_offscreen(X, Y, W, H, myi->other_xid, X, Y);
 #endif
 
-  #ifdef DEBUG_EXPOSE 
-if ( damage() & FL_DAMAGE_EXPOSE )
-  {
-      #if FLTK_HAVE_CAIRO
-      fl_rectf( 0,0, w(), h(), fl_color_add_alpha( FL_RED, 50 ));
-      #endif
-  }
-  #endif 
 }
 
 void Fl_Double_Window::resize(int X,int Y,int W,int H) {

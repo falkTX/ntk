@@ -1687,11 +1687,6 @@ void Fl_Widget::damage(fl_damage_t fl, int X, int Y, int W, int H) {
     fl = hit_opaque_widget ? FL_DAMAGE_CHILD : FL_DAMAGE_ALL;
   }
 
-  fl = FL_DAMAGE_CHILD;
-
-  if ( ! hit_opaque_widget )
-      fl |= FL_DAMAGE_BACKGROUND;
-
   /* at this point 'wi' is the window */
 
   Fl_X* i = Fl_X::i((Fl_Window*)wi);

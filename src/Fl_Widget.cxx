@@ -231,8 +231,8 @@ void Fl_Widget::show() {
   if (!visible()) {
     clear_flag(INVISIBLE);
     if (visible_r()) {
-      redraw();
-      redraw_label();
+        damage( FL_DAMAGE_EXPOSE );
+//      redraw_label();
       handle(FL_SHOW);
       if (inside(Fl::focus())) Fl::focus()->take_focus();
     }
