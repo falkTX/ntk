@@ -339,7 +339,7 @@ public:
     ). You can tell if a window is iconified with (w->shown()
     && !w->visible()).
   */
-  int shown() {return i != 0;}
+  int shown() const {return i != 0;}
   /**
     Puts the window on the screen. Usually (on X) this has the side
     effect of opening the display.
