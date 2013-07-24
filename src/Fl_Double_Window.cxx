@@ -328,6 +328,8 @@ void Fl_Double_Window::flush(int eraseoverlay) {
     cairo_surface_t *cs = Fl::cairo_create_surface( myi->other_xid, w(), h() );
     myi->other_cc = cairo_create( cs );
     cairo_surface_destroy( cs );
+
+    if ( myi->region ) { cairo_region_destroy( myi->region ); myi->region = 0; }
   }
   
   fl_clip_region(myi->region);
