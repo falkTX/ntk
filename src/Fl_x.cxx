@@ -1095,7 +1095,8 @@ static int fl_handle_xembed ( const XEvent &xevent )
             /* printf( "Got property notify.\n" ); */
             if ( xevent.xproperty.atom == fl_XEMBED_INFO )
             {
-                unsigned long version, flags;
+                unsigned long version = 0;
+      		unsigned long flags = 0;
 
                 xembed_get_info( xevent.xproperty.window, &version, &flags );
 

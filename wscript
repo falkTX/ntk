@@ -29,6 +29,8 @@ children = [ 'fluid', 'test' ]
 #children = []
 
 CFLAGS = [ '-pthread',
+	   '-ansi',
+	   '-pedantic',
            '-D_LARGEFILE64_SOURCE',
            '-D_FILE_OFFSET_BITS=64',
            '-D_GNU_SOURCE' ]
