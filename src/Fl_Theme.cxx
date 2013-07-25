@@ -56,13 +56,11 @@ Fl_Theme::get ( void )
 static 
 Fl_Preferences *prefs ( void )
 {
-    char *path;
+    char path[512];
 
-    asprintf( &path, "%s/.config/ntk/", getenv("HOME" )  );
+    snprintf( path, sizeof(path), "%s/.config/ntk/", getenv("HOME" )  );
     
     Fl_Preferences *p = new Fl_Preferences( path, "ntk", "theme" );
-
-    free( path );
 
     return p;
 }
