@@ -729,6 +729,8 @@ int Fl_Graphics_Driver::clip_box(int x, int y, int w, int h, int& X, int& Y, int
 
   cairo_region_overlap_t o = cairo_region_contains_rectangle( r, &rect );
   
+  cairo_region_destroy(t);
+
   switch ( o )
   {
       case CAIRO_REGION_OVERLAP_IN:
