@@ -48,10 +48,6 @@
 # endif
 #endif
 
-#if FLTK_HAVE_CAIRO
-#include <FL/Fl_Cairo.H>
-#endif
-
 // recent versions of MinGW warn: "Please include winsock2.h before windows.h",
 // hence we must include winsock2.h before FL/Fl.H (A.S. Dec. 2010, IMM May 2011)
 #if defined(WIN32) && !defined(__CYGWIN__)
@@ -1437,17 +1433,12 @@ void Fl_Window::hide() {
   if ( ip->xid == fl_window && !parent() )
     fl_window = 0;
 #endif
-  if (ip->region)
-  {
-      cairo_region_destroy( ip->region );
-      ip->region = 0;
-  }
+
+  if (ip->region) cairo_region_destroy( ip->region ); ip->region = 0;
 
 #if defined(USE_X11)
-#if FLTK_HAVE_CAIRO
-  cairo_destroy( ip->cc ); ip->cc = 0;
-  cairo_surface_destroy( ip->cs ); ip->cs = 0;
-#endif
+  if ( ip->cc )
+      cairo_destroy( ip->cc ); ip->cc = 0;
 # if USE_XFT
   fl_destroy_xft_draw(ip->xid);
 # endif
@@ -1759,10 +1750,6 @@ void Fl_Widget::damage(fl_damage_t fl, int X, int Y, int W, int H) {
 }
 void Fl_Window::flush() {
   draw();
-
-#if FLTK_HAVE_CAIRO
-  cairo_surface_flush( i->cs );
-#endif
 }
 
 #ifdef WIN32
