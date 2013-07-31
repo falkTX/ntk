@@ -609,12 +609,15 @@ void Fl_Graphics_Driver::restore_clip() {
 
 void Fl_Graphics_Driver::clip_region(Fl_Region r) {
   Fl_Region oldr = rstack[rstackptr];
-if (oldr && r != oldr )
+  
+  if ( r != oldr )
   {
-      cairo_region_destroy( oldr );
-  }
+      if ( oldr )
+          cairo_region_destroy( oldr );
  
-  rstack[rstackptr] = r ? cairo_region_reference( r ) : 0;
+      rstack[rstackptr] = r ? cairo_region_reference( r ) : 0;
+  }
+
   fl_restore_clip();
 }
 
