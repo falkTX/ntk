@@ -102,7 +102,7 @@ Fl_Color fl_color_add_alpha ( Fl_Color c, uchar alpha )
 
 static double lw = 1;
 static double hlw;
-static cairo_antialias_t aa = CAIRO_ANTIALIAS_GRAY;
+//static cairo_antialias_t aa = CAIRO_ANTIALIAS_GRAY;
 
 static int npoints = 0;
 
@@ -167,8 +167,6 @@ void Fl_Cairo_Graphics_Driver::push_matrix ( void )
 
 void Fl_Cairo_Graphics_Driver::pop_matrix ( void )
 {
-    cairo_t *cr = Fl::cairo_cc();
-    
     if (sptr==0)
         Fl::error("fl_pop_matrix(): matrix stack underflow.");
     else 
@@ -179,7 +177,6 @@ void Fl_Cairo_Graphics_Driver::pop_matrix ( void )
 
 void Fl_Cairo_Graphics_Driver::translate ( double x, double y )
 {
-    cairo_t *cr = Fl::cairo_cc();
     cairo_matrix_translate( &m, x, y );
 
     set_cairo_matrix();
@@ -187,7 +184,6 @@ void Fl_Cairo_Graphics_Driver::translate ( double x, double y )
 
 void Fl_Cairo_Graphics_Driver::scale ( double x, double y )
 {
-    cairo_t *cr = Fl::cairo_cc();
     cairo_matrix_scale( &m, x, y );
 
     set_cairo_matrix();
@@ -195,7 +191,6 @@ void Fl_Cairo_Graphics_Driver::scale ( double x, double y )
 
 void Fl_Cairo_Graphics_Driver::rotate ( double a )
 {
-    cairo_t *cr = Fl::cairo_cc();
     cairo_matrix_rotate( &m, a * ( M_PI / 180.0 ) );
 
     set_cairo_matrix();
@@ -203,8 +198,6 @@ void Fl_Cairo_Graphics_Driver::rotate ( double a )
 
 void Fl_Cairo_Graphics_Driver::mult_matrix ( double a, double b, double c, double d, double x, double y )
 {
-    cairo_t *cr = Fl::cairo_cc();
-
     cairo_matrix_t m2;
 
     cairo_matrix_init( &m2, a, b, c, d, x, y );
@@ -303,8 +296,6 @@ void Fl_Cairo_Graphics_Driver::color ( uchar r, uchar g, uchar b )
 
 void fl_set_antialias ( int v )
 {
-    cairo_t *cr = Fl::cairo_cc();
-
     switch ( v )
     {
         case FL_ANTIALIAS_DEFAULT:
@@ -918,7 +909,7 @@ Fl_Cairo_Graphics_Driver::draw(Fl_RGB_Image *img, int XP, int YP, int WP, int HP
   
   cairo_t *cr = Fl::cairo_cc();
 
-  cairo_format_t fmt;
+  cairo_format_t fmt = CAIRO_FORMAT_ARGB32;
 
   switch (img->d() )
   {
