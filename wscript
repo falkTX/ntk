@@ -78,9 +78,9 @@ def configure(conf):
     conf.load('gnu_dirs')
     # conf.load('ntk_fluid')
     conf.line_just = 52
-    conf.env.append_value('CFLAGS', ['-Wall', '-ansi','-pedantic'])
+    conf.env.append_value('CFLAGS', ['-Wall'])
 #    conf.env.append_value('CXXFLAGS',['-Wall','-fno-exceptions', '-fno-rtti'])
-    conf.env.append_value('CXXFLAGS', ['-Wall', '-ansi','-pedantic'])
+    conf.env.append_value('CXXFLAGS', ['-Wall'])
 
     conf.check_cfg(package='x11', uselib_store='X11', args="--cflags --libs",
                    mandatory=True)

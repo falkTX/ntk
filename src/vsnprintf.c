@@ -26,6 +26,8 @@
  */
 
 #include <stdio.h>
+#include <stdarg.h>
+#include <string.h>
 #include "flstring.h"
 
 #ifdef HAVE_SYS_STDTYPES_H
