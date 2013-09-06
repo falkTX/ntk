@@ -306,8 +306,26 @@ Fl_Panzoomer::handle ( int m, int X, int Y, int W, int H )
 
                 return 1;
             }
+            
+            if ( Fl::event_alt() )
+                return 0;
 
-            if ( !Fl::event_alt() && !Fl::event_shift())
+            if ( Fl::event_shift())
+            {
+                if ( dx )
+                    y_value( _ypos + ( (double)dx*5 / H ) * _ymax );
+
+                if ( dy )
+                    x_value( _xpos + ( (double)dy*5 / W ) * _xmax );
+                
+                if ( when() & FL_WHEN_CHANGED )
+                    do_callback();
+                
+                damage( FL_DAMAGE_USER1 );
+                
+                return 1;
+            }
+            else
             {
                 if ( dy )
                     y_value( _ypos + ( (double)dy*5 / H ) * _ymax );
