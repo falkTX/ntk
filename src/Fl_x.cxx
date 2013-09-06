@@ -1733,14 +1733,18 @@ int fl_handle(const XEvent& thisevent)
     set_event_xy();
     if (xevent.xbutton.button == Button4) {
       Fl::e_dy = -1; // Up
+      Fl::e_dx = 0;
       event = FL_MOUSEWHEEL;
     } else if (xevent.xbutton.button == Button5) {
       Fl::e_dy = +1; // Down
+      Fl::e_dx = 0;
       event = FL_MOUSEWHEEL;
     } else if (xevent.xbutton.button == 6) {
+      Fl::e_dy = 0;
       Fl::e_dx = -1; // Left
       event = FL_MOUSEWHEEL;
     } else if (xevent.xbutton.button == 7) {
+      Fl::e_dy = 0;
       Fl::e_dx = +1; // Right
       event = FL_MOUSEWHEEL;      
     } else {
