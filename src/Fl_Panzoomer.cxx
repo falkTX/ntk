@@ -172,15 +172,18 @@ Fl_Panzoomer::draw_cursor ( int X, int Y, int W, int H )
     cursor_bounds( cx,cy,cw,ch );
 
     fl_rectf( cx,cy,cw,ch,
-              fl_color_add_alpha( FL_WHITE, 50 ));
+              fl_color_add_alpha( FL_WHITE, 40 ));
 
     fl_rect( cx,cy,cw,ch,
-              fl_color_add_alpha( FL_WHITE, 80 ));
+              fl_color_add_alpha( FL_WHITE, 200 ));
 }
 
 void
 Fl_Panzoomer::cursor_bounds ( int &cx, int &cy, int &cw, int &ch ) const
 {
+    const int minh = 12;
+    const int minw = 12;
+
     int X,Y,W,H;
     
     X = cx;
@@ -214,6 +217,9 @@ Fl_Panzoomer::cursor_bounds ( int &cx, int &cy, int &cw, int &ch ) const
     cy = _ymax ? Y + (vval) * H + .5 : Y;
     cw = W * (_xsize/_xmax);
     ch = _ymax ? H * (_ysize/_ymax) : H;
+
+    cw = cw < minw ? minw : cw;
+    ch = ch < minh ? minh : ch;
 }
 
 int
@@ -247,14 +253,23 @@ Fl_Panzoomer::handle ( int m, int X, int Y, int W, int H )
             
             cursor_bounds( cx,cy,cw,ch );
 
-            xoffset = Fl::event_x() - cx;
-            yoffset = Fl::event_y() - cy;
+            if ( Fl::event_inside( cx,cy,cw,ch ) )
+            {
+                xoffset = Fl::event_x() - cx;
+                yoffset = Fl::event_y() - cy;
+            }
+            else
+            {
+                xoffset = cw / 2;
+                yoffset = ch / 2;
+            }
 
-            if ( Fl::event_inside( cx,cy,cw,ch ) &&
+            if (// Fl::event_inside( cx,cy,cw,ch ) &&
                  Fl::event_button1() )
                 drag = true;
 
-            return 1;
+            /* fallthrough */
+//            return 1;
         }
         case FL_DRAG:
         {
