@@ -273,12 +273,15 @@ done:
     if ( _mouse_inside == this )
     {
         /* TODO: Make this optional */
-        char s[10];
+        char s[128];
     
         fl_font( FL_HELVETICA, 10 );
     
-        snprintf( s, sizeof( s ), "%.1f", value() );
-
+        char buf[128];
+        format(buf);
+        
+        snprintf( s, sizeof( s ), buf, value()  );
+        
         fl_color( FL_FOREGROUND_COLOR );
         fl_draw( s, X, Y, S, S, FL_ALIGN_CENTER );
     }
