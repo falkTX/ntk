@@ -532,12 +532,15 @@ public:
   */
   static void get_mouse(int &,int &); // platform dependent
   /**
+    Set the pointer position in screen relative coordinates
+  */
+  static void set_mouse(int x,int y); // platform dependent
+  /**
     Returns non zero if we had a double click event.
     \retval Non-zero if the most recent FL_PUSH or FL_KEYBOARD was a "double click".  
     \retval  N-1 for  N clicks. 
     A double click is counted if the same button is pressed
-    again while event_is_click() is true.
-    
+    again while event_is_click() is true.    
    */
   static int event_clicks()	{return e_clicks;}
   /**

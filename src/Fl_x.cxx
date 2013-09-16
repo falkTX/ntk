@@ -765,6 +765,13 @@ void Fl::get_mouse(int &xx, int &yy) {
   yy = my;
 }
 
+void Fl::set_mouse(int x, int y) {
+  fl_open_display();
+  Window root = RootWindow(fl_display, fl_screen);
+  XWarpPointer(fl_display,None,root,0,0,0,0,x,y);
+}
+
+
 ////////////////////////////////////////////////////////////////
 // Code used for paste and DnD into the program:
 
