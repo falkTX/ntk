@@ -60,7 +60,7 @@ static void rect_path ( float x, float y, float w, float h, double radius )
     x+= 0.5f;
     y+= 0.5f;
     w-=1;
-    h-=2;
+    h-=1;
 
     cairo_t *cr = Fl::cairo_cc();
 
