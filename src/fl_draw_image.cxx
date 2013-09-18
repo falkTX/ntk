@@ -292,26 +292,9 @@ static void rrr_converter(const uchar *from, uchar *to, int w, int delta) {
 ////////////////////////////////////////////////////////////////
 // 32bit TrueColor converters on a 32 or 64-bit machine:
 
-#  ifdef U64
-#    define STORETYPE U64
-#    if WORDS_BIGENDIAN
-#      define INNARDS32(f) \
-  U64 *t = (U64*)to; \
-  int w1 = w/2; \
-  for (; w1--; from += delta) {U64 i = f; from += delta; *t++ = (i<<32)|(f);} \
-  if (w&1) *t++ = (U64)(f)<<32;
-#    else
-#      define INNARDS32(f) \
-  U64 *t = (U64*)to; \
-  int w1 = w/2; \
-  for (; w1--; from += delta) {U64 i = f; from += delta; *t++ = ((U64)(f)<<32)|i;} \
-  if (w&1) *t++ = (U64)(f);
-#    endif
-#  else
 #    define STORETYPE U32
 #    define INNARDS32(f) \
   U32 *t = (U32*)to; for (; w--; from += delta) *t++ = f
-#  endif
 
 static void rgbx_converter(const uchar *from, uchar *to, int w, int delta) {
   INNARDS32((unsigned(from[0])<<24)+(from[1]<<16)+(from[2]<<8));
