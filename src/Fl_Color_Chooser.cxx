@@ -27,6 +27,7 @@
 
 #include <FL/Fl.H>
 #include <FL/Fl_Color_Chooser.H>
+#include <FL/Fl_Double_Window.H>
 #include <FL/fl_draw.H>
 #include <FL/math.h>
 #include <stdio.h>
@@ -572,7 +573,7 @@ static void cc_cancel_cb (Fl_Widget *o, void *p) {
  */
 int fl_color_chooser(const char* name, double& r, double& g, double& b, int cmode) {
   int ret = 0;
-  Fl_Window window(215,200,name);
+  Fl_Double_Window window(215,200,name);
   window.callback(cc_cancel_cb,&ret);
   Fl_Color_Chooser chooser(10, 10, 195, 115);
   ColorChip ok_color(10, 130, 95, 25);
