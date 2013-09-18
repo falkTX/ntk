@@ -141,7 +141,72 @@ def configure(conf):
         conf.define('HAVE_GL', 1 )
         conf.check(header_name='GL/glu.h', define_name='HAVE_GL_GLU_H')
 
-    # FIXME: HAVE_LONG_LONG
+    conf.check( fragment='#include <stdio.h>\n int main ( int argc, char **argv ) { printf("%u", (unsigned)sizeof(long long)); return 0; }',
+                   execute=False,
+                   define_name='HAVE_LONG_LONG',
+                 msg='Checking for long long type',
+                mandatory=False);
+
+
+    if sys.platform == 'darwin':
+        conf.define( '__APPLE__', 1 )
+    if sys.platform == 'win32':
+        conf.define( 'WIN32', 1 )
+    else:
+        conf.define( 'HAVE_X11', 1 )
+        conf.define( 'USE_X11', 1 )
+        conf.define( 'USE_XFT', 1 )
+
+    conf.define( 'USE_POLL', 1 )
+    conf.define( 'BORDER_WIDTH', 1 )
+
+    conf.define( 'HAVE_SCANDIR_POSIX', 1 )
+
+    conf.check(function_name='strcasecmp', header_name="strings.h", define_name='HAVE_STRCASECMP', mandatory=False)
+    conf.check(function_name='snprintf', header_name="stdio.h", define_name='HAVE_SNPRINTF', mandatory=False)
+    conf.check(function_name='vsnprintf', header_name=['stdio.h','stdarg.h'], define_name='HAVE_SNPRINTF', mandatory=False)
+
+    conf.define( 'HAVE_DLSYM', 1 )
+    
+#    print conf.env
+
+    conf.check( fragment='#include <stdio.h>\n int main ( int argc, char **argv ) { printf("%u", (unsigned)sizeof(short)); return 0; }',
+                   execute=True,
+                   define_ret=True,
+                   quote=False,
+                   define_name='SIZEOF_SHORT',
+                 msg='Checking sizeof short',
+                               mandatory=True);
+
+    conf.check( fragment='#include <stdio.h>\n int main ( int argc, char **argv ) { printf("%u", (unsigned)sizeof(int)); return 0; }',
+                   execute=True,
+                   quote=False,
+                   define_ret=True,
+                 msg='Checking sizeof int',
+                   define_name='SIZEOF_INT', mandatory=True );
+
+    conf.check( fragment='#include <stdio.h>\n int main ( int argc, char **argv ) { printf("%u", (unsigned)sizeof(long)); return 0; }',
+                   quote=False,
+                   execute=True,
+                   define_ret=True,
+                 msg='Checking sizeof long',
+                   define_name='SIZEOF_LONG', mandatory=True );
+    
+    if int(conf.get_define('SIZEOF_SHORT')) == 2:
+        conf.define( 'U16', 'unsigned short', quote=False )
+
+    if int(conf.get_define('SIZEOF_INT')) == 4:
+        conf.define( 'U32', 'unsigned int', quote=False )
+    elif int(conf.get_define('SIZEOF_LONG')) == 4:
+        conf.define( 'U32', 'unsigned long', quote=False )
+
+    if int(conf.get_define('SIZEOF_INT')) == 8:
+        conf.define( 'U64', 'unsigned int', quote=False )
+    elif int(conf.get_define('SIZEOF_LONG')) == 8:
+        conf.define( 'U64', 'unsigned long', quote=False )
+
+    # FIXME: use a test for this
+    conf.define( 'WORDS_BIGENDIAN', 0 )
 
     optimization_flags = [
         "-O3",
@@ -157,6 +222,10 @@ def configure(conf):
 
     print('---')
 
+    print('Note: "not found" is OK for optional items.')
+
+    print('---')
+
     if Options.options.debug:
         print('Building for debugging')
         conf.env.append_value('CFLAGS', debug_flags )
@@ -169,35 +238,6 @@ def configure(conf):
 
     conf.env.append_value('CFLAGS', CFLAGS )
     conf.env.append_value('CXXFLAGS', CFLAGS )
-
-    if sys.platform == 'darwin':
-        conf.define( '__APPLE__', 1 )
-    if sys.platform == 'win32':
-        conf.define( 'WIN32', 1 )
-    else:
-        conf.define( 'HAVE_X11', 1 )
-        conf.define( 'USE_X11', 1 )
-
-    conf.define( 'USE_POLL', 1 )
-    conf.define( 'USE_XFT', 1 )
-    conf.define( 'BORDER_WIDTH', 1 )
-
-    conf.define( 'HAVE_SCANDIR_POSIX', 1 )
-    conf.define( 'HAVE_STRCASECMP', 1 )
-    conf.define( 'HAVE_VSNPRINTF', 1 )
-    conf.define( 'HAVE_SNPRINTF', 1 )
-    conf.define( 'HAVE_STRTOLL', 1 )
-
-    conf.define( 'HAVE_DLSYM', 1 )
-    
-#    print conf.env
-# FIXME: use tests for these
-
-    conf.define( 'U16', 'unsigned short', quote=False )
-    conf.define( 'U32', 'unsined', quote=False )
-    conf.define( 'U64', 'unsigned long', quote=False )
-
-    conf.define( 'WORDS_BIGENDIAN', 0 )
 
     conf.define('VERSION', PACKAGE_VERSION)
     conf.define('FLTK_DOCDIR', conf.env.DOCDIR );
