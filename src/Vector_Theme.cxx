@@ -115,6 +115,13 @@ static void down_box(int x, int y, int w, int h, Fl_Color bc)
     draw_rect( x, y, w, h, bc );
 }
 
+static void border_box(int x, int y, int w, int h, Fl_Color bc)
+{
+    cairo_color( interior_color( bc ) );
+    fl_rectf( x, y, w, h );
+    cairo_color( border_color( bc ) );
+    fl_rect( x, y, w, h, bc );
+}
 
 static void
 init_theme ( void )
@@ -127,7 +134,7 @@ init_theme ( void )
     Fl::set_boxtype(  FL_DOWN_FRAME,     down_frame,         DX,DX,DX*2,DX*2  );
     Fl::set_boxtype(  FL_ROUND_UP_BOX,   up_box,             DX,DX,DX*2,DX*2  );
     Fl::set_boxtype(  FL_ROUND_DOWN_BOX, down_box,           DX,DX,DX*2,DX*2  );
-    Fl::set_boxtype(  FL_BORDER_BOX,     up_box,             DX,DX,DX*2,DX*2  );
+    Fl::set_boxtype(  FL_BORDER_BOX,     border_box,         1,1,2,2  );
 }
 
 void

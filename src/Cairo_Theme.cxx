@@ -178,19 +178,31 @@ static void thin_down_box(int x, int y, int w, int h, Fl_Color c)
     down_box(x, y, w, h, fl_lighter(c));
 }
 
+static void border_box(int x, int y, int w, int h, Fl_Color c)
+{
+    cairo_color(c);
+
+    fl_rectf( x,y,w,h );
+
+    cairo_color(fl_darker(c));
+
+    fl_rect(x,y,w,h);
+}
+
 static void
 init_theme ( void )
 {
     Fl::set_boxtype(  FL_UP_BOX,         up_box,           DX,DX,DX*2,DX*2 );
     Fl::set_boxtype(  FL_DOWN_BOX,       down_box,         DX,DX,DX*2,DX*2 );
-    Fl::set_boxtype(  FL_THIN_UP_BOX,         up_box,      DX,DX,DX*2,DX*2  );
-    Fl::set_boxtype(  FL_THIN_DOWN_BOX,       down_box,    DX,DX,DX*2,DX*2  );
+    Fl::set_boxtype(  FL_THIN_UP_BOX,         thin_up_box,      DX,DX,DX*2,DX*2  );
+    Fl::set_boxtype(  FL_THIN_DOWN_BOX,       thin_down_box,    DX,DX,DX*2,DX*2  );
     Fl::set_boxtype(  FL_UP_FRAME,       up_frame,         DX,DX,DX*2,DX*2  );
     Fl::set_boxtype(  FL_DOWN_FRAME,     down_frame,       DX,DX,DX*2,DX*2  );
     /* Fl::set_boxtype(  FL_THIN_UP_BOX,    thin_up_box,      1,1,1,1 ); */
     /* Fl::set_boxtype(  FL_THIN_DOWN_BOX,  thin_down_box,    1,1,1,1 ); */
     Fl::set_boxtype(  FL_ROUND_UP_BOX,   up_box,           DX,DX,DX*2,DX*2 );
     Fl::set_boxtype(  FL_ROUND_DOWN_BOX, down_box,         DX,DX,DX*2,DX*2 );
+    Fl::set_boxtype(  FL_BORDER_BOX,   border_box,           1,1,2,2 );
 }
 
 void

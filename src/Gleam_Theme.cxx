@@ -146,6 +146,15 @@ static void down_box(int x, int y, int w, int h, Fl_Color c)
 	//frame_rect(x + 1, y + 1, w - 3, h - 3, fl_color_average(c, FL_BLACK, .65));
 }
 
+
+static void border_box(int x, int y, int w, int h, Fl_Color c)
+{
+    gleam_color(c);
+    fl_rectf(x,y,w,h);
+    gleam_color(fl_darker(c));
+    fl_rect(x+1,y+1,w-2,h-2);
+}
+
 static void
 init_theme ( void )
 {
@@ -158,6 +167,7 @@ init_theme ( void )
     Fl::set_boxtype(  FL_DOWN_FRAME,     down_frame,       2,2,3,3 );
     Fl::set_boxtype(  FL_ROUND_UP_BOX,   up_box,           2,2,3,3 );
     Fl::set_boxtype(  FL_ROUND_DOWN_BOX, down_box,         2,2,3,3 );
+    Fl::set_boxtype(  FL_BORDER_BOX,       border_box,      1,1,2,2 );
 }
 
 void

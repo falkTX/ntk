@@ -73,6 +73,12 @@ static void flat_box( int x, int y, int w, int h, Fl_Color c )
     rectf( x, y, w, h, c );
 }
 
+static void border_box( int x, int y, int w, int h, Fl_Color c )
+{
+    rectf( x, y, w, h, c );
+    rect(x, y, w, h, fl_color_average( FL_WHITE, c, 0.2 ) );
+}
+
 static void
 init_theme ( void )
 {
@@ -84,7 +90,8 @@ init_theme ( void )
     Fl::set_boxtype(  FL_DOWN_FRAME,     down_frame,       1,1,2,2 );
     Fl::set_boxtype(  FL_ROUND_UP_BOX,   up_box,           1,1,2,2 );
     Fl::set_boxtype(  FL_ROUND_DOWN_BOX, down_box,         1,1,2,2 );
-    Fl::set_boxtype(  FL_FLAT_BOX,       flat_box,         0, 0, 0, 0 );
+//    Fl::set_boxtype(  FL_FLAT_BOX,       flat_box,         0, 0, 0, 0 );
+    Fl::set_boxtype(  FL_BORDER_BOX,       border_box,      1,1,2,2 );
 }
 
 void

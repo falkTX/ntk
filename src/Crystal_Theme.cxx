@@ -369,6 +369,15 @@ down_round ( int x, int y, int w, int h, Fl_Color c )
     frame_round( x, y, w, h, "IJLM", c );
 }
 
+static void
+border_box ( int x, int y, int w, int h, Fl_Color c )
+{
+    fl_color(c);
+    fl_rectf( x,y,w,h );
+    fl_color(fl_darker(c));
+    fl_rect(x,y,w,h);
+}
+
 
 static void
 init_theme ( void )
@@ -384,6 +393,7 @@ init_theme ( void )
     Fl::set_boxtype(  FL_THIN_DOWN_BOX,  down_box,    1,1,2,2 );
     Fl::set_boxtype(  FL_ROUND_UP_BOX,   up_round,    1,1,2,2 );
     Fl::set_boxtype(  FL_ROUND_DOWN_BOX, down_round,  1,1,2,2 );
+    Fl::set_boxtype(  FL_BORDER_BOX, border_box,  1,1,2,2 );
 }
 
 void
