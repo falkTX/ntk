@@ -34,6 +34,8 @@ bool fl_debug_boxes = false;
 
 static const int DX = 1;
 
+#define BSCALE 0.00392156862f
+
 static void cairo_color(Fl_Color c)
 {
     cairo_t *cr = Fl::cairo_cc();
@@ -48,7 +50,7 @@ static void cairo_color(Fl_Color c)
     
     Fl::get_color( bc, r, g, b );
 
-    cairo_set_source_rgb( cr, r / 255.0, g / 255.0, b / 255.0 );
+    cairo_set_source_rgb( cr, r * BSCALE, g * BSCALE, b * BSCALE );
 }
 
 static void rect_path ( int x, int y, int w, int h, double radius )
@@ -95,9 +97,9 @@ static void draw_rectf(int x, int y, int w, int h, Fl_Color bc, double radius = 
 
     Fl::get_color( fl_color(), r, g, b );
 
-    float rf = r / 255.0;
-    float gf = g / 255.0;
-    float bf = b / 255.0;
+    float rf = r * BSCALE;
+    float gf = g * BSCALE;
+    float bf = b * BSCALE;
 
     cairo_pattern_t *grad = 0;
 

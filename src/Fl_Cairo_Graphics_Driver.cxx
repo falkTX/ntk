@@ -62,6 +62,8 @@ double fl_hwo = 1.0;
 #define VHO(n) ( n + fl_vho )
 #define HWO(n) ( n + fl_hwo )
 
+#define BSCALE 0.00392156862f
+
 Fl_Color fl_color_add_alpha ( Fl_Color c, uchar alpha )
 {
     if ( !( c & 0xFFFFFF00 ) )
@@ -291,7 +293,7 @@ void Fl_Cairo_Graphics_Driver::color ( uchar r, uchar g, uchar b )
     if ( ! cr )
         return;
     
-    cairo_set_source_rgb( cr, r /  255.0f, g / 255.0f, b / 255.0f );
+    cairo_set_source_rgb( cr, r * BSCALE, g * BSCALE, b * BSCALE );
 }
 
 void fl_set_antialias ( int v )
@@ -331,7 +333,7 @@ void Fl_Cairo_Graphics_Driver::color (uchar r, uchar g, uchar b, uchar a  )
     if ( ! cr )
         return;
 
-    cairo_set_source_rgba( cr, r /  255.0f, g / 255.0f, b / 255.0f, a / 255.0f );
+    cairo_set_source_rgba( cr, r * BSCALE, g * BSCALE, b * BSCALE, a * BSCALE );
 }
 
 void Fl_Cairo_Graphics_Driver::circle( double x, double y, double r )
