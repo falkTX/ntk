@@ -38,7 +38,7 @@ def makelib(bld,*k,**kw):
     kw['cflags'] = [ '-fPIC' ]
     kw['cxxflags'] = [ '-fPIC' ]
     kw['defines'] = [ 'FL_LIBRARY=1', 'FL_INTERNALS=1' ]
-    kw['vnum'] = API_VERSION
+    kw['vnum'] = PACKAGE_VERSION
     kw['install_path'] = '${LIBDIR}'
     kw['features' ] = 'c cxx cxxstlib'
     kw['name'] = kw['target'] + '_static'

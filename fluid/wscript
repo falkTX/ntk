@@ -33,5 +33,9 @@ def build(bld):
                  target='ntk-fluid',
                  includes = [ '.', '../' ],
                  use = [ 'ntk_images_shared', 'ntk_shared' ],
+		 # FIXME: why is this now neccessary with new waf version?
+                 uselib = [
+ 'LIBJPEG', 'LIBPNG', 'LIBZ', 'DL', 'M', 'PTHREAD' ,
+                    'X11', 'FONTCONFIG', 'XFT', 'CAIRO', 'DL', 'M', 'PTHREAD' ], 
                  install_path = '${BINDIR}' )
     
