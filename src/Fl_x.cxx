@@ -916,8 +916,11 @@ static int wasXExceptionRaised() {
 
 }
 
+bool fl_embed_called = false;
+
 void fl_embed ( Fl_Window *w, Window parent )
 {
+    fl_embed_called = true;
     /* this destroys the existing window */
     w->hide();
     /* embedded windows don't need borders */

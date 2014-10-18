@@ -35,6 +35,7 @@
 #include <FL/Fl_Menu_Window.H>
 #include <FL/Fl_Menu_.H>
 #include <FL/fl_draw.H>
+#include <FL/x.H>
 #include <stdio.h>
 #include "flstring.h"
 
@@ -827,7 +828,7 @@ const Fl_Menu_Item* Fl_Menu_Item::pulldown(
   Fl_Group::current(0); // fix possible user error...
 
   button = pbutton;
-  if (pbutton && pbutton->window()) {
+  if (pbutton && pbutton->window() && ! fl_embed_called) {
     for (Fl_Window* w = pbutton->window(); w; w = w->window()) {
       X += w->x();
       Y += w->y();

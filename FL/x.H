@@ -198,6 +198,7 @@ extern Window fl_xid_(const Fl_Window* w);
 
 FL_EXPORT Fl_Window* fl_find(Window xid);
 FL_EXPORT void fl_embed ( Fl_Window *w, Window parent );
+extern FL_EXPORT bool fl_embed_called;
 
 // Dummy function to register a function for opening files via the window manager...
 inline void fl_open_callback(void (*)(const char *)) {}
