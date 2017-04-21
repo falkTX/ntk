@@ -282,10 +282,10 @@ Fl_Widget::label(const char *a) {
 
 void
 Fl_Widget::copy_label(const char *a) {
-  if (flags() & COPIED_LABEL) free((void *)(label_.value));
-
   if ( ( !a || !label_.value ) || strcmp( a, label_.value ) )
       redraw_label();
+
+  if (flags() & COPIED_LABEL) free((void *)(label_.value));
 
   if (a) {
     set_flag(COPIED_LABEL);
@@ -294,6 +294,7 @@ Fl_Widget::copy_label(const char *a) {
     clear_flag(COPIED_LABEL);
     label_.value=(char *)0;
   }
+
 }
 
 /** Calls the widget callback.
