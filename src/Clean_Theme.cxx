@@ -64,7 +64,10 @@ static void down_frame(int x, int y, int w, int h, Fl_Color c)
 
 static void down_box(int x, int y, int w, int h, Fl_Color c)
 {
-    rectf(x, y, w, h, c );
+    rectf(x, y, w, h,
+	  FL_BACKGROUND_COLOR == c || FL_BACKGROUND2_COLOR == c
+	  ? fl_darker(c)
+	  : c );
     rect(x, y, w, h, fl_color_average( FL_WHITE, c, 0.2 ) );
 }
 

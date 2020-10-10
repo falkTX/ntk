@@ -140,7 +140,10 @@ static void down_frame(int x, int y, int w, int h, Fl_Color c)
 
 static void down_box(int x, int y, int w, int h, Fl_Color c)
 {
-	shade_rect_down(x + 1, y, w - 2, h, c);
+	shade_rect_down(x + 1, y, w - 2, h,
+			FL_BACKGROUND_COLOR == c || FL_BACKGROUND2_COLOR == c
+			? fl_darker(c)
+			: c );
 	down_frame(x, y, w, h, fl_darker(c));
 	//draw the inner rect.
 	//frame_rect(x + 1, y + 1, w - 3, h - 3, fl_color_average(c, FL_BLACK, .65));

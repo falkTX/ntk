@@ -28,7 +28,7 @@
 #include "FL/Fl_Theme.H"
 #include <math.h>
 
-float fl_box_saturation = 0.2f;
+float fl_box_saturation = 0.8f;
 bool fl_boxes_use_gradients = true;
 bool fl_debug_boxes = false;
 
@@ -152,7 +152,7 @@ static void shade_rect_down(int x, int y, int w, int h, Fl_Color bc)
 
 static void up_frame(int x, int y, int w, int h, Fl_Color c)
 {
-    frame_rect_up(x, y, w, h, fl_darker(c));
+    frame_rect_up(x, y, w, h, c);
 }
 
 static void thin_up_box(int x, int y, int w, int h, Fl_Color c)
@@ -172,12 +172,15 @@ static void down_frame(int x, int y, int w, int h, Fl_Color c)
 
 static void down_box(int x, int y, int w, int h, Fl_Color c)
 {
-    shade_rect_down(x, y, w, h, fl_lighter(c));
+    shade_rect_down(x, y, w, h, c == FL_BACKGROUND_COLOR || c == FL_BACKGROUND2_COLOR ? fl_darker(c) : c );
 }
 
 static void thin_down_box(int x, int y, int w, int h, Fl_Color c)
 {
-    down_box(x, y, w, h, fl_lighter(c));
+    down_box(x, y, w, h,
+	     FL_BACKGROUND_COLOR == c || FL_BACKGROUND2_COLOR == c
+	     ? fl_darker(c)
+	     : c );
 }
 
 static void border_box(int x, int y, int w, int h, Fl_Color c)

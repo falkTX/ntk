@@ -352,7 +352,10 @@ down_box ( int x, int y, int w, int h, Fl_Color c )
     if ( w > 6 && h > 6 )
     {
 //        shade_rect( x + 2, y + 2, w - 4, h - 5, "STUVWWWVT", c );
-        fl_rectf( x + 2, y + 2, w - 4, h - 5 , fl_darker( c ) );
+        fl_rectf( x + 2, y + 2, w - 4, h - 5 ,
+		  FL_BACKGROUND_COLOR == c || FL_BACKGROUND2_COLOR == c
+		  ? fl_darker(c)
+		  : c );
         down_frame( x, y, w, h, c );
     }
     else

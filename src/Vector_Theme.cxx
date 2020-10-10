@@ -48,11 +48,19 @@ static void cairo_color(Fl_Color c)
 static Fl_Color border_color ( Fl_Color c )
 {
     return fl_color_average( FL_FOREGROUND_COLOR, c, 0.20f );
+    /* return fl_color_average( FL_FOREGROUND_COLOR, c, 0.33f ); */
+    /* return fl_color_average( FL_FOREGROUND_COLOR, c, 0.50f ); */
 }
 
 static Fl_Color interior_color ( Fl_Color c )
 {
-    return fl_color_average( FL_BACKGROUND_COLOR, c, 0.50f );
+    return fl_color_average( FL_BACKGROUND_COLOR, c, 0.33f );
+}
+
+static Fl_Color outer_border_color ( Fl_Color c )
+{
+    /* return fl_darker( interior_color( c ) ); */
+    return fl_color_average( c, FL_BACKGROUND_COLOR, 0.50f );
 }
 
 static void rect_path ( float x, float y, float w, float h, double radius )
@@ -96,23 +104,34 @@ static void draw_rectf(int x, int y, int w, int h, Fl_Color bc, double radius = 
 static void up_box(int x, int y, int w, int h, Fl_Color bc)
 {
     draw_rectf( x, y, w, h, interior_color( bc ) );
-    draw_rect( x, y, w, h, border_color( bc ) );
+    /* draw_rect( x, y, w, h, border_color( bc ) ); */
+    draw_rect( x+1, y+1, w-2, h-2, border_color( bc ) );
+    draw_rect( x, y, w, h, outer_border_color( bc ) );
 }
 
 static void up_frame(int x, int y, int w, int h, Fl_Color bc)
 {
-    draw_rect( x,y,w,h, border_color(bc) );
+        /* draw_rect( x, y, w, h, border_color( bc ) ); */
+    draw_rect( x+1,y+1,w-2,h-2, border_color(bc) );
+    draw_rect( x, y, w, h, outer_border_color( bc ) );
 }
 
 static void down_frame(int x, int y, int w, int h, Fl_Color bc)
 {
-    draw_rect( x,y,w,h, bc );
+        /* draw_rect( x, y, w, h, bc  ); */
+    draw_rect( x+1,y+1,w-2,h-2, bc );
+    draw_rect( x, y, w, h, outer_border_color( bc ) );
 }
 
 static void down_box(int x, int y, int w, int h, Fl_Color bc)
 {
-    draw_rectf( x, y, w, h, interior_color( bc ) );
-    draw_rect( x, y, w, h, bc );
+    draw_rectf( x, y, w, h,
+		FL_BACKGROUND_COLOR == bc || FL_BACKGROUND2_COLOR == bc
+		? fl_darker(interior_color(bc))
+		: interior_color( bc ) );
+        /* draw_rect( x, y, w, h, bc  ); */
+    draw_rect( x+1, y+1, w-2, h-2, bc );
+    draw_rect( x, y, w, h, outer_border_color( bc ) );
 }
 
 static void border_box(int x, int y, int w, int h, Fl_Color bc)
@@ -120,6 +139,9 @@ static void border_box(int x, int y, int w, int h, Fl_Color bc)
     cairo_color( interior_color( bc ) );
     fl_rectf( x, y, w, h );
     cairo_color( border_color( bc ) );
+    /* fl_rect( x, y, w, h, bc ); */
+    fl_rect( x+1, y+1, w-2, h-2, bc );
+    cairo_color( outer_border_color( bc ) );
     fl_rect( x, y, w, h, bc );
 }
 
