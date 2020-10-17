@@ -108,7 +108,12 @@ void Fl_Window::draw() {
 
     if ( damage() & ~FL_DAMAGE_CHILD) {	 // draw the entire thing
 //    /* always draw the box because the children may be transparent */
-        draw_box(box(),0,0,w(),h(),color()); // draw box with x/y = 0
+        draw_box(
+	    /* workaround for ZynAddSubFX */
+	    FL_NO_BOX == box() && NULL == Fl::scheme_bg_
+	    ? FL_FLAT_BOX
+	    : box(),
+	    0,0,w(),h(),color()); // draw box with x/y = 0
    }
     draw_children();
 
