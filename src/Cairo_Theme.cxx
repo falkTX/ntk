@@ -110,7 +110,7 @@ static void draw_rectf(int x, int y, int w, int h, Fl_Color bc, double radius = 
     
         cairo_pattern_add_color_stop_rgb( grad, 0.0, rf, gf, bf );
         cairo_pattern_add_color_stop_rgb( grad, 0.4, rf, gf, bf );
-        cairo_pattern_add_color_stop_rgb( grad, 1.0, rf + 0.1, gf + 0.1, bf + 0.1 );
+        cairo_pattern_add_color_stop_rgb( grad, 0.8, rf + 0.1, gf + 0.1, bf + 0.1 );
 
         cairo_set_source( cr, grad );
     }
@@ -121,7 +121,13 @@ static void draw_rectf(int x, int y, int w, int h, Fl_Color bc, double radius = 
 
     cairo_fill_preserve (cr);
     cairo_set_line_width (cr, DX);
-    cairo_set_source_rgba (cr, 0, 0, 0, 0.6 );
+
+    Fl::get_color( fl_color_average( FL_FOREGROUND_COLOR, FL_BACKGROUND_COLOR, 0.1f),
+		   r,g,b);
+    
+    cairo_set_source_rgba(cr, r*BSCALE,g*BSCALE,b*BSCALE,1);
+    
+    /* cairo_set_source_rgba (cr, 0, 0, 0, 0.6 ); */
     cairo_stroke (cr);
 
     if ( grad )

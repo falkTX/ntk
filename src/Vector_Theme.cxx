@@ -47,20 +47,22 @@ static void cairo_color(Fl_Color c)
 
 static Fl_Color border_color ( Fl_Color c )
 {
-    return fl_color_average( FL_FOREGROUND_COLOR, c, 0.20f );
+    return fl_color_average( FL_FOREGROUND_COLOR, c, 0.25f );
     /* return fl_color_average( FL_FOREGROUND_COLOR, c, 0.33f ); */
     /* return fl_color_average( FL_FOREGROUND_COLOR, c, 0.50f ); */
 }
 
 static Fl_Color interior_color ( Fl_Color c )
 {
-    return fl_color_average( FL_BACKGROUND_COLOR, c, 0.33f );
+    /* return fl_color_average( FL_BACKGROUND_COLOR, c, 0.33f ); */
+    return fl_color_average( FL_BACKGROUND_COLOR, c, 0.25f );
 }
 
 static Fl_Color outer_border_color ( Fl_Color c )
 {
     /* return fl_darker( interior_color( c ) ); */
-    return fl_color_average( c, FL_BACKGROUND_COLOR, 0.50f );
+    /* return fl_color_average( c, FL_BACKGROUND_COLOR, 0.50f ); */
+        return fl_color_average( c, FL_BACKGROUND_COLOR, 0.25f );
 }
 
 static void rect_path ( float x, float y, float w, float h, double radius )
