@@ -65,6 +65,14 @@ void fl_register_themes ( void )
         Fl_Color_Scheme::add( o );
     }
     {
+        Fl_Color_Scheme *o = new Fl_Color_Scheme( "Washed out",
+                                                  fl_rgb_color( 135, 135, 135 ),
+                                                  fl_rgb_color( 203, 203, 203 ),
+                                                  fl_rgb_color( 0, 0, 0 ),
+						  fl_rgb_color( 0xf0,0xad,0x3f ) );
+        Fl_Color_Scheme::add( o );
+    }
+    {
         Fl_Color_Scheme *o = new Fl_Color_Scheme( "Black",
                                                   fl_rgb_color( 0, 0, 0 ),
                                                   fl_rgb_color( 20, 20, 20 ),
@@ -87,7 +95,7 @@ void fl_register_themes ( void )
                                                   (Fl_Color)Fl::get_color( FL_BACKGROUND_COLOR ),
                                                   (Fl_Color)Fl::get_color( FL_BACKGROUND2_COLOR  ),
                                                   (Fl_Color)Fl::get_color( FL_FOREGROUND_COLOR  ),
-                                                  FL_BLUE );
+                                                  (Fl_Color)Fl::get_color( FL_SELECTION_COLOR  ));
         Fl_Color_Scheme::add( o );
     }
 }

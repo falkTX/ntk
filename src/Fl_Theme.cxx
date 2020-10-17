@@ -129,6 +129,10 @@ Fl_Theme::load_default ( void )
     Fl::background2( r, g, b );
     Fl::get_color( conf_get_color( "foreground", FL_FOREGROUND_COLOR ), r, g, b );            
     Fl::foreground( r, g, b );
+    Fl::get_color( conf_get_color( "selection", FL_SELECTION_COLOR ), r, g, b );
+    /* doesn't exist */
+    /* Fl::selection( r, g, b ); */
+    Fl::set_color( FL_SELECTION_COLOR,r,g,b);
     
     return rv;
 }
@@ -195,6 +199,7 @@ Fl_Color_Scheme::save ( void )
     conf_set( "background", Fl::get_color( FL_BACKGROUND_COLOR ) );
     conf_set( "foreground", Fl::get_color( FL_FOREGROUND_COLOR ) );
     conf_set( "background2", Fl::get_color( FL_BACKGROUND2_COLOR ) );
+    conf_set( "selection", Fl::get_color( FL_SELECTION_COLOR ) );
 }
 
 void 
@@ -218,8 +223,9 @@ Fl_Color_Scheme::set ( const char *name )
             Fl::background2( r, g, b );
             Fl::get_color( t->_fg, r, g, b );            
             Fl::foreground( r, g, b );
-            /* Fl::get_color( t->_sel, r, g, b );             */
+            Fl::get_color( t->_sel, r, g, b );
             /* Fl::selection( r, g, b ); */
+	    Fl::set_color( FL_SELECTION_COLOR,r,g,b);
 
             Fl_Color_Scheme::_current = t;
 
