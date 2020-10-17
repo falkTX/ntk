@@ -55,7 +55,10 @@ static Fl_Color border_color ( Fl_Color c )
 static Fl_Color interior_color ( Fl_Color c )
 {
     /* return fl_color_average( FL_BACKGROUND_COLOR, c, 0.33f ); */
-    return fl_color_average( FL_BACKGROUND_COLOR, c, 0.25f );
+    /* if ( FL_BACKGROUND_COLOR == c ) */
+	return fl_color_average( FL_FOREGROUND_COLOR, c, 0.05f );
+    /* else */
+    /* 	return fl_color_average( FL_BACKGROUND_COLOR, c, 0.25f ); */
 }
 
 static Fl_Color outer_border_color ( Fl_Color c )

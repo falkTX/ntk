@@ -91,28 +91,37 @@ static void draw_rectf(int x, int y, int w, int h, Fl_Color bc, double radius = 
 
     rect_path( x, y, w, h, radius );
            
-    uchar r,g,b;
+    uchar r,g,b, br,bg,bb;
     
     cairo_color( bc );
 
     Fl::get_color( fl_color(), r, g, b );
+    
+    Fl::get_color( FL_BACKGROUND_COLOR, br, bg, bb );
 
-    float rf = r * BSCALE;
-    float gf = g * BSCALE;
-    float bf = b * BSCALE;
-
+    float rf = r * BSCALE,
+	gf = g * BSCALE,
+	bf = b * BSCALE,
+	brf = br * BSCALE,
+	bgf = bg * BSCALE,
+	bbf = bb * BSCALE;
+    
     cairo_pattern_t *grad = 0;
 
     if ( fl_boxes_use_gradients )
     {
 
-        grad = cairo_pattern_create_linear( x, y, x, y + h );//,  350.0, 350.0);
+        /* grad = cairo_pattern_create_linear( x, y, x, y + h );//,  350.0, 350.0); */
+        grad = cairo_pattern_create_linear( x, y, x, y + 5 );//,  350.0, 350.0);
     
-        cairo_pattern_add_color_stop_rgb( grad, 0.0, rf, gf, bf );
-        cairo_pattern_add_color_stop_rgb( grad, 0.4, rf, gf, bf );
-        cairo_pattern_add_color_stop_rgb( grad, 0.8, rf + 0.1, gf + 0.1, bf + 0.1 );
+        /* cairo_pattern_add_color_stop_rgb( grad, 0.8, rf + 0.05, gf + 0.05, bf + 0.05 ); */
+        /* cairo_pattern_add_color_stop_rgb( grad, 0.2, rf + 0.05, gf + 0.05, bf + 0.05 ); */
+        /* cairo_pattern_add_color_stop_rgb( grad, 0.0, rf  + 0.2, gf + 0.2, bf + 0.2 ); */
 
-        cairo_set_source( cr, grad );
+        cairo_pattern_add_color_stop_rgb( grad, 1.0, rf + 0.05, gf + 0.05, bf + 0.05 );
+        cairo_pattern_add_color_stop_rgb( grad, 0.0, rf  + 0.2, gf + 0.2, bf + 0.2 );
+
+	cairo_set_source( cr, grad );
     }
     else
     {
@@ -122,8 +131,16 @@ static void draw_rectf(int x, int y, int w, int h, Fl_Color bc, double radius = 
     cairo_fill_preserve (cr);
     cairo_set_line_width (cr, DX);
 
-    Fl::get_color( fl_color_average( FL_FOREGROUND_COLOR, FL_BACKGROUND_COLOR, 0.1f),
-		   r,g,b);
+    if ( brf + bgf + bbf > 1.5f )
+    {
+	Fl::get_color( fl_color_average( FL_BLACK, fl_color(), 0.5f),
+		       r,g,b);
+    }
+    else
+    {
+	Fl::get_color( fl_color_average( FL_BLACK, fl_color(), 0.8f),
+		       r,g,b);
+    }
     
     cairo_set_source_rgba(cr, r*BSCALE,g*BSCALE,b*BSCALE,1);
     

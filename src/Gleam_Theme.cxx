@@ -46,30 +46,19 @@ static void frame_rect(int x, int y, int w, int h, Fl_Color bc)
 
 static void shade_rect_up(int x, int y, int w, int h, Fl_Color bc)
 {
-	// Draws the shiny
-	float third = (float) h / 3;
-	gleam_color(bc);
-	fl_rectf(x, y, w, third + 1);
+    // Draws the shiny
+    const float third = 5;
+    gleam_color(bc);
+    fl_rectf(x, y, w, third + 1);
+    const float step_size = 0.10;
+    float k = 0.5f;
 
-	//gleam_color(fl_color_average(bc, FL_WHITE, .90f));
-	//fl_rectf(x, y, w, half + 1);
-
-	float step_size = 0.10 / ((float) h - third);
-	int j = 0;
-	//step_size = (.1 / (float) half);
-	//printf("1 / %i = %f \n", half, (1.0/half));
-
-	/**
-	 * This loop generates the nice gradient at the bottom of the
-	 * widget
-	 **/
-	for (float k = 1; k >= .90; k -= step_size)
-	{
-		j++;
-		gleam_color(fl_color_average(bc, FL_WHITE, k));
-		fl_line(x, y + j + third - 1, x + w - 1, y + j + third - 1);
-	}
-
+    for (int j = 0; j < third; k -= step_size, j++ )
+    {
+	gleam_color(fl_color_average( FL_WHITE, bc, k));
+	fl_line(x, y + j, x + w - 1, y + j);
+    }
+    
 }
 
 static void frame_rect_up(int x, int y, int w, int h, Fl_Color bc)

@@ -27,12 +27,17 @@
 
 static void clean_color(Fl_Color c)
 {
-    c = fl_color_average( FL_GRAY, c, 0.2 );
+    c = fl_color_average( FL_WHITE, c, 0.15f );
 
     if (Fl::draw_box_active())
         fl_color(c);
     else
         fl_color(fl_inactive(c));
+}
+
+static Fl_Color border_color (Fl_Color c)
+{
+    return fl_color_average( FL_BLACK, FL_BACKGROUND_COLOR,0.70f);
 }
 
 static void rect(int x, int y, int w, int h, Fl_Color bc)
@@ -48,13 +53,13 @@ static void rectf ( int x, int y,int w, int h, Fl_Color bc )
 
 static void up_frame(int x, int y, int w, int h, Fl_Color c)
 {
-    rect(x, y, w, h, fl_color_average( FL_WHITE, c, 0.2 ) );
+    rect(x, y, w, h, border_color( c ));
 }
 
 static void up_box(int x, int y, int w, int h, Fl_Color c)
 {
     rectf(x, y, w, h, c );
-    rect(x, y, w, h, fl_color_average( FL_WHITE, c, 0.2 ) );
+    rect(x, y, w, h, border_color( c ));
 }
 
 static void down_frame(int x, int y, int w, int h, Fl_Color c)
@@ -68,7 +73,7 @@ static void down_box(int x, int y, int w, int h, Fl_Color c)
 	  FL_BACKGROUND_COLOR == c || FL_BACKGROUND2_COLOR == c
 	  ? fl_darker(c)
 	  : c );
-    rect(x, y, w, h, fl_color_average( FL_WHITE, c, 0.2 ) );
+    rect(x, y, w, h, border_color( c ));
 }
 
 static void flat_box( int x, int y, int w, int h, Fl_Color c )
@@ -79,7 +84,7 @@ static void flat_box( int x, int y, int w, int h, Fl_Color c )
 static void border_box( int x, int y, int w, int h, Fl_Color c )
 {
     rectf( x, y, w, h, c );
-    rect(x, y, w, h, fl_color_average( FL_WHITE, c, 0.2 ) );
+    rect(x, y, w, h, border_color( c ));
 }
 
 static void
