@@ -395,6 +395,12 @@ Fl_Color fl_inactive(Fl_Color c) {
   return fl_color_average(c, FL_GRAY, .33f);
 }
 
+
+static int get_luminosity ( Fl_Color c1 )
+{
+    return  ((c1 >> 24) * 30 + ((c1 >> 16) & 255) * 59 + ((c1 >> 8) & 255) * 11) / 100;
+}
+
 /**
   Returns a color that contrasts with the background color.
   This will be the foreground color if it contrasts sufficiently with the
@@ -404,8 +410,8 @@ Fl_Color fl_inactive(Fl_Color c) {
   \return contrasting color
 */
 Fl_Color fl_contrast(Fl_Color fg, Fl_Color bg) {
-  unsigned c1, c2;	// RGB colors
-  int l1, l2;		// Luminosities
+    unsigned c1, c2, flbg, flfg;	// RGB colors
+    int l1, l2, l3, l4;		// Luminosities
 
 
   // Get the RGB values for each color...
@@ -414,16 +420,26 @@ Fl_Color fl_contrast(Fl_Color fg, Fl_Color bg) {
 
   if (bg & 0xffffff00) c2 = (unsigned)bg;
   else c2 = fl_cmap[bg];
+  
+  if (FL_BACKGROUND_COLOR & 0xffffff00) flbg = (unsigned)FL_BACKGROUND_COLOR;
+  else flbg = fl_cmap[FL_BACKGROUND_COLOR];
+
+  if (FL_FOREGROUND_COLOR & 0xffffff00) flfg = (unsigned)FL_FOREGROUND_COLOR;
+  else flfg = fl_cmap[FL_FOREGROUND_COLOR];
 
   // Compute the luminosity...
-  l1 = ((c1 >> 24) * 30 + ((c1 >> 16) & 255) * 59 + ((c1 >> 8) & 255) * 11) / 100;
-  l2 = ((c2 >> 24) * 30 + ((c2 >> 16) & 255) * 59 + ((c2 >> 8) & 255) * 11) / 100;
-
+  l1 = get_luminosity(c1);
+  l2 = get_luminosity(c2);
+  l3 = get_luminosity(flbg);
+  l4 = get_luminosity(flfg);
+  
   // Compare and return the contrasting color...
   if ((l1 - l2) > 99) return fg;
   else if ((l2 - l1) > 99) return fg;
-  else if (l2 > 127) return FL_BLACK;
-  else return FL_WHITE;
+  else
+  {
+      return abs( l2 - l3 ) > abs( l2 - l4 ) ? FL_BACKGROUND_COLOR : FL_FOREGROUND_COLOR;
+  }
 }
 /**
    @}
