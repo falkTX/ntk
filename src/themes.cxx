@@ -41,10 +41,10 @@ void fl_register_themes ( void )
     init_vector_theme();
 
     {
-        Fl_Color_Scheme *o = new Fl_Color_Scheme( "Dark",
-                                                  fl_rgb_color( 50, 50, 50 ),
-                                                  fl_rgb_color( 100, 100, 100 ),
-                                                  fl_rgb_color( 255, 255, 255 ),
+        Fl_Color_Scheme *o = new Fl_Color_Scheme( "Black",
+                                                  fl_rgb_color( 0, 0, 0 ),
+                                                  fl_rgb_color( 20, 20, 20 ),
+                                                  fl_rgb_color( 240, 240, 240 ),
                                                   FL_YELLOW );
         Fl_Color_Scheme::add( o );
     }
@@ -57,6 +57,14 @@ void fl_register_themes ( void )
         Fl_Color_Scheme::add( o );
     }
     {
+        Fl_Color_Scheme *o = new Fl_Color_Scheme( "Dark",
+                                                  fl_rgb_color( 50, 50, 50 ),
+                                                  fl_rgb_color( 100, 100, 100 ),
+                                                  fl_rgb_color( 255, 255, 255 ),
+                                                  FL_YELLOW );
+        Fl_Color_Scheme::add( o );
+    }    
+    {
         Fl_Color_Scheme *o = new Fl_Color_Scheme( "Gray",
                                                   fl_rgb_color( 100, 100, 100 ),
                                                   fl_rgb_color( 127, 127, 127 ),
@@ -64,27 +72,41 @@ void fl_register_themes ( void )
                                                   FL_YELLOW );
         Fl_Color_Scheme::add( o );
     }
+
+	
     {
         Fl_Color_Scheme *o = new Fl_Color_Scheme( "Washed out",
                                                   fl_rgb_color( 135, 135, 135 ),
                                                   fl_rgb_color( 203, 203, 203 ),
-                                                  fl_rgb_color( 0, 0, 0 ),
+                                                  fl_rgb_color( 1, 1, 1 ),
 						  fl_rgb_color( 0xf0,0xad,0x3f ) );
         Fl_Color_Scheme::add( o );
     }
+    
     {
-        Fl_Color_Scheme *o = new Fl_Color_Scheme( "Black",
-                                                  fl_rgb_color( 0, 0, 0 ),
-                                                  fl_rgb_color( 20, 20, 20 ),
-                                                  fl_rgb_color( 240, 240, 240 ),
-                                                  FL_YELLOW );
+        Fl_Color_Scheme *o = new Fl_Color_Scheme( "Beige",
+                                                  fl_rgb_color( 0xb7,0xb5,0x9e ),
+//						  fl_rgb_color( 0x28, 0x27, 0x23 ),
+						  fl_rgb_color( 0x91, 0x8f, 0x7c ),
+						  /* fl_rgb_color( 0x28, 0x27, 0x23 ), */
+						  fl_rgb_color( 0x18, 0x17, 0x13 ),
+                                                  /* fl_rgb_color( 1, 1, 1 ), */
+						  fl_rgb_color( 0xeb,0x7b,0x19 ) );
+        Fl_Color_Scheme::add( o );
+    }
+    {
+        Fl_Color_Scheme *o = new Fl_Color_Scheme( "Muted",
+                                                  fl_rgb_color( 195, 195, 195 ),
+                                                  fl_rgb_color( 220, 220, 220 ),
+                                                  fl_rgb_color( 1,1,1 ),
+						  fl_rgb_color( 0xf0,0xad,0x3f ) );
         Fl_Color_Scheme::add( o );
     }
     {
         Fl_Color_Scheme *o = new Fl_Color_Scheme( "Light",
                                                   fl_rgb_color( 220, 220, 220 ),
                                                   fl_rgb_color( 192, 192, 192 ),
-                                                  fl_rgb_color( 0, 0, 0 ),
+                                                  fl_rgb_color( 1,1,1 ),
                                                   FL_BLUE );
         Fl_Color_Scheme::add( o );
     }
