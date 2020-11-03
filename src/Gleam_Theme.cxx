@@ -52,13 +52,15 @@ static void shade_rect_up(int x, int y, int w, int h, Fl_Color bc)
     fl_rectf(x, y, w, third + 1);
     const float step_size = 0.10;
     float k = 0.5f;
-
-    for (int j = 0; j < third; k -= step_size, j++ )
+    int j = 0;
+    for (; j < third; k -= step_size, j++ )
     {
 	gleam_color(fl_color_average( FL_WHITE, bc, k));
 	fl_line(x, y + j, x + w - 1, y + j);
     }
-    
+
+    gleam_color(bc);
+    fl_rectf( x, y + j, x + w - 1, h - j );
 }
 
 static void frame_rect_up(int x, int y, int w, int h, Fl_Color bc)
