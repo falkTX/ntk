@@ -42,7 +42,7 @@ void fl_register_themes ( void )
 
     {
         Fl_Color_Scheme *o = new Fl_Color_Scheme( "Black",
-                                                  fl_rgb_color( 0, 0, 0 ),
+                                                  fl_rgb_color( 4, 4, 4 ),
                                                   fl_rgb_color( 20, 20, 20 ),
                                                   fl_rgb_color( 240, 240, 240 ),
                                                   FL_YELLOW );
